@@ -1,0 +1,638 @@
+{
+  "schema": "kilix.help-llm.candidates/v1",
+  "verified_on": "2026-09-22",
+  "status": "candidate-catalog-only",
+  "tasks": [
+    "document-answering",
+    "help-topic-selection",
+    "help-topic-ranking"
+  ],
+  "selection": {
+    "provider": "plebian-model-sizer",
+    "integration_status": "not-implemented",
+    "automatic_selection": "unavailable",
+    "fit_status": "unmeasured",
+    "policy": "smallest candidate passing task quality and independent training/inference resource checks"
+  },
+  "user_data": {
+    "default_root": "~/.local/gpu_terminal/kilix-help-llm",
+    "root_environment": "GPU_TERMINAL_HOME",
+    "root_suffix": "kilix-help-llm"
+  },
+  "candidates": [
+    {
+      "id": "qwen3-0.6b",
+      "label": "Qwen3 0.6B",
+      "nominal_parameters_billions": 0.6,
+      "evaluation_role": "smoke",
+      "architecture_class": "attention",
+      "generation_checkpoint": {
+        "model_id": "Qwen/Qwen3-0.6B",
+        "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+        "upstream_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+        "model_type": "qwen3",
+        "architectures": [
+          "Qwen3ForCausalLM"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/README.md",
+            "sha256": "1ab64a26fcb3b461423b89a433a8c858f1bf8d4086f979cbb3ff878d47cf20e9"
+          },
+          "license_files": {
+            "LICENSE": {
+              "url": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+              "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            }
+          },
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/config.json",
+          "sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors",
+            "bytes": 1503300328,
+            "sha256": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b"
+          }
+        ],
+        "checkpoint_bytes": 1503300328
+      },
+      "decision_checkpoint": {
+        "model_id": "Qwen/Qwen3-0.6B-Base",
+        "revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+        "upstream_url": "https://huggingface.co/Qwen/Qwen3-0.6B-Base",
+        "model_type": "qwen3",
+        "architectures": [
+          "Qwen3ForCausalLM"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/Qwen/Qwen3-0.6B-Base/blob/da87bfb608c14b7cf20ba1ce41287e8de496c0cd/README.md",
+            "sha256": "910d9be25c648ab1cb5a7b1d20d67ca6d43d43559a705010198886f9af68e8f1"
+          },
+          "license_files": {
+            "LICENSE": {
+              "url": "https://huggingface.co/Qwen/Qwen3-0.6B-Base/blob/da87bfb608c14b7cf20ba1ce41287e8de496c0cd/LICENSE",
+              "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            }
+          },
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen3-0.6B-Base/blob/da87bfb608c14b7cf20ba1ce41287e8de496c0cd/config.json",
+          "sha256": "504a6b58c4271583724e66584b6b7698aea18450209df6b2f7582df0e89cee59"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors",
+            "bytes": 1192135096,
+            "sha256": "cd2a512003e2f9f3cd3c32a9c3573f820bb28c940f73c57b1ddaa983d9223eba"
+          }
+        ],
+        "checkpoint_bytes": 1192135096
+      },
+      "training_method": "lora-candidate",
+      "decision_readout": "pointer-or-scoring-head-candidate",
+      "qualification": {
+        "generation_training": "unmeasured",
+        "decision_training": "unmeasured",
+        "generation_inference": "unmeasured",
+        "decision_inference": "unmeasured",
+        "gguf_export": "unverified",
+        "task_quality": "unmeasured"
+      }
+    },
+    {
+      "id": "qwen3-1.7b",
+      "label": "Qwen3 1.7B",
+      "nominal_parameters_billions": 1.7,
+      "evaluation_role": "primary",
+      "architecture_class": "attention",
+      "generation_checkpoint": {
+        "model_id": "Qwen/Qwen3-1.7B",
+        "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+        "upstream_url": "https://huggingface.co/Qwen/Qwen3-1.7B",
+        "model_type": "qwen3",
+        "architectures": [
+          "Qwen3ForCausalLM"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/Qwen/Qwen3-1.7B/blob/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e/README.md",
+            "sha256": "257e52c419dac2258852643f18af6c974f21f8c6c1b6f371b6cca6201cf29091"
+          },
+          "license_files": {
+            "LICENSE": {
+              "url": "https://huggingface.co/Qwen/Qwen3-1.7B/blob/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e/LICENSE",
+              "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            }
+          },
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen3-1.7B/blob/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e/config.json",
+          "sha256": "1ddb5b89ebc90dcb417a45c213d818577e65976454d29385c8f6140771d95197"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model-00001-of-00002.safetensors",
+            "bytes": 3441185608,
+            "sha256": "169ad53ec313c3a34b06c0809216e4fc072cce444a5d4ff2b59690d064130ed5"
+          },
+          {
+            "path": "model-00002-of-00002.safetensors",
+            "bytes": 622329984,
+            "sha256": "912becff8d60672aa8628ef08c05898d9adf17c2ad4ae3caf99b065622fdeff9"
+          }
+        ],
+        "checkpoint_bytes": 4063515592
+      },
+      "decision_checkpoint": {
+        "model_id": "Qwen/Qwen3-1.7B-Base",
+        "revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+        "upstream_url": "https://huggingface.co/Qwen/Qwen3-1.7B-Base",
+        "model_type": "qwen3",
+        "architectures": [
+          "Qwen3ForCausalLM"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/Qwen/Qwen3-1.7B-Base/blob/ea980cb0a6c2ae4b936e82123acc929f1cec04c1/README.md",
+            "sha256": "579b9d7052fa567f439114f01feceed2b06f47d830d06c8ac829f389fd2e39a4"
+          },
+          "license_files": {
+            "LICENSE": {
+              "url": "https://huggingface.co/Qwen/Qwen3-1.7B-Base/blob/ea980cb0a6c2ae4b936e82123acc929f1cec04c1/LICENSE",
+              "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            }
+          },
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen3-1.7B-Base/blob/ea980cb0a6c2ae4b936e82123acc929f1cec04c1/config.json",
+          "sha256": "1bb33a92c3548fbc68b889b490e810440435253598835bd71dff0396060c12db"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors",
+            "bytes": 3441185608,
+            "sha256": "6df85b39330e5a425ee36253d0f894e4387e4f0a15b9c53cb467d668e6b3a841"
+          }
+        ],
+        "checkpoint_bytes": 3441185608
+      },
+      "training_method": "lora-candidate",
+      "decision_readout": "pointer-or-scoring-head-candidate",
+      "qualification": {
+        "generation_training": "unmeasured",
+        "decision_training": "unmeasured",
+        "generation_inference": "unmeasured",
+        "decision_inference": "unmeasured",
+        "gguf_export": "unverified",
+        "task_quality": "unmeasured"
+      }
+    },
+    {
+      "id": "qwen3.5-0.8b",
+      "label": "Qwen3.5 0.8B",
+      "nominal_parameters_billions": 0.8,
+      "evaluation_role": "compact-challenger",
+      "architecture_class": "hybrid-attention-recurrent",
+      "generation_checkpoint": {
+        "model_id": "Qwen/Qwen3.5-0.8B",
+        "revision": "2fc06364715b967f1860aea9cf38778875588b17",
+        "upstream_url": "https://huggingface.co/Qwen/Qwen3.5-0.8B",
+        "model_type": "qwen3_5",
+        "architectures": [
+          "Qwen3_5ForConditionalGeneration"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B/blob/2fc06364715b967f1860aea9cf38778875588b17/README.md",
+            "sha256": "87a163af54f32fa608a0f8d3ac67945c53dd2b4a7c96740b3d7fdc28e8458864"
+          },
+          "license_files": {
+            "LICENSE": {
+              "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B/blob/2fc06364715b967f1860aea9cf38778875588b17/LICENSE",
+              "sha256": "bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a"
+            }
+          },
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B/blob/2fc06364715b967f1860aea9cf38778875588b17/config.json",
+          "sha256": "b90b86f35c8e6925ef74ee04d0e758f0a845c83a42089ad82bbaa948de9b4204"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors-00001-of-00001.safetensors",
+            "bytes": 1746942600,
+            "sha256": "04b1c301231dd422b8860db31311ab2721511346a32cb1e079c4c4e5f1fe4696"
+          }
+        ],
+        "checkpoint_bytes": 1746942600
+      },
+      "decision_checkpoint": {
+        "model_id": "Qwen/Qwen3.5-0.8B-Base",
+        "revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+        "upstream_url": "https://huggingface.co/Qwen/Qwen3.5-0.8B-Base",
+        "model_type": "qwen3_5",
+        "architectures": [
+          "Qwen3_5ForConditionalGeneration"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B-Base/blob/dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68/README.md",
+            "sha256": "3cff39d2674e28b95e2df75cdb2d7a687ec391931065b05df83dbae12b447b11"
+          },
+          "license_files": {
+            "LICENSE": {
+              "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B-Base/blob/dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68/LICENSE",
+              "sha256": "50cbab8a892c5f2993b8c7351a99182507472def3b1374558308605d99b86b32"
+            }
+          },
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen3.5-0.8B-Base/blob/dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68/config.json",
+          "sha256": "b90b86f35c8e6925ef74ee04d0e758f0a845c83a42089ad82bbaa948de9b4204"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors-00001-of-00001.safetensors",
+            "bytes": 1746942600,
+            "sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c"
+          }
+        ],
+        "checkpoint_bytes": 1746942600
+      },
+      "training_method": "lora-candidate",
+      "decision_readout": "pointer-or-scoring-head-candidate",
+      "qualification": {
+        "generation_training": "unmeasured",
+        "decision_training": "unmeasured",
+        "generation_inference": "unmeasured",
+        "decision_inference": "unmeasured",
+        "gguf_export": "unverified",
+        "task_quality": "unmeasured"
+      }
+    },
+    {
+      "id": "qwen3.5-2b",
+      "label": "Qwen3.5 2B",
+      "nominal_parameters_billions": 2.0,
+      "evaluation_role": "primary-challenger",
+      "architecture_class": "hybrid-attention-recurrent",
+      "generation_checkpoint": {
+        "model_id": "Qwen/Qwen3.5-2B",
+        "revision": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+        "upstream_url": "https://huggingface.co/Qwen/Qwen3.5-2B",
+        "model_type": "qwen3_5",
+        "architectures": [
+          "Qwen3_5ForConditionalGeneration"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/Qwen/Qwen3.5-2B/blob/15852e8c16360a2fea060d615a32b45270f8a8fc/README.md",
+            "sha256": "c0e83a849c776e6fa843d011f023132d942a0f0140d903205bf1c363adad2275"
+          },
+          "license_files": {
+            "LICENSE": {
+              "url": "https://huggingface.co/Qwen/Qwen3.5-2B/blob/15852e8c16360a2fea060d615a32b45270f8a8fc/LICENSE",
+              "sha256": "bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a"
+            }
+          },
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen3.5-2B/blob/15852e8c16360a2fea060d615a32b45270f8a8fc/config.json",
+          "sha256": "ed1c1723241f23f7f4e23430759cbd7dcfb4103cbdfe052bfe7626b57c2615b4"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors-00001-of-00001.safetensors",
+            "bytes": 4548221488,
+            "sha256": "aa33250c4fc64891ddfaba3a314fd9542ea371843c387178b425fbcc5ed680b1"
+          }
+        ],
+        "checkpoint_bytes": 4548221488
+      },
+      "decision_checkpoint": {
+        "model_id": "Qwen/Qwen3.5-2B-Base",
+        "revision": "b1485b2fa6dfa1287294f269f5fb618e03d52d7c",
+        "upstream_url": "https://huggingface.co/Qwen/Qwen3.5-2B-Base",
+        "model_type": "qwen3_5",
+        "architectures": [
+          "Qwen3_5ForConditionalGeneration"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/Qwen/Qwen3.5-2B-Base/blob/b1485b2fa6dfa1287294f269f5fb618e03d52d7c/README.md",
+            "sha256": "50ca45b87d976d9850de95ad00e76fba77e105c2cdef1093b8e3bb261d9a1787"
+          },
+          "license_files": {
+            "LICENSE": {
+              "url": "https://huggingface.co/Qwen/Qwen3.5-2B-Base/blob/b1485b2fa6dfa1287294f269f5fb618e03d52d7c/LICENSE",
+              "sha256": "50cbab8a892c5f2993b8c7351a99182507472def3b1374558308605d99b86b32"
+            }
+          },
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen3.5-2B-Base/blob/b1485b2fa6dfa1287294f269f5fb618e03d52d7c/config.json",
+          "sha256": "ed1c1723241f23f7f4e23430759cbd7dcfb4103cbdfe052bfe7626b57c2615b4"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors-00001-of-00001.safetensors",
+            "bytes": 4548221488,
+            "sha256": "928acbf11878c32185bbd863514d191769285065ab9ea14fbfe431303f5fdf2d"
+          }
+        ],
+        "checkpoint_bytes": 4548221488
+      },
+      "training_method": "lora-candidate",
+      "decision_readout": "pointer-or-scoring-head-candidate",
+      "qualification": {
+        "generation_training": "unmeasured",
+        "decision_training": "unmeasured",
+        "generation_inference": "unmeasured",
+        "decision_inference": "unmeasured",
+        "gguf_export": "unverified",
+        "task_quality": "unmeasured"
+      }
+    },
+    {
+      "id": "qwen3.5-4b",
+      "label": "Qwen3.5 4B",
+      "nominal_parameters_billions": 4.0,
+      "evaluation_role": "larger-budget",
+      "architecture_class": "hybrid-attention-recurrent",
+      "generation_checkpoint": {
+        "model_id": "Qwen/Qwen3.5-4B",
+        "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "upstream_url": "https://huggingface.co/Qwen/Qwen3.5-4B",
+        "model_type": "qwen3_5",
+        "architectures": [
+          "Qwen3_5ForConditionalGeneration"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/Qwen/Qwen3.5-4B/blob/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/README.md",
+            "sha256": "1406be1b6b8fd8a6545870da516912804756593628a1d0fb0a7965211e82a7bb"
+          },
+          "license_files": {
+            "LICENSE": {
+              "url": "https://huggingface.co/Qwen/Qwen3.5-4B/blob/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/LICENSE",
+              "sha256": "bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a"
+            }
+          },
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen3.5-4B/blob/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/config.json",
+          "sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors-00001-of-00002.safetensors",
+            "bytes": 5329398688,
+            "sha256": "26a93f066e1916adb13453dae5a0c707c0fbc71299ed98779571a907b8e74c61"
+          },
+          {
+            "path": "model.safetensors-00002-of-00002.safetensors",
+            "bytes": 3990429408,
+            "sha256": "cb544bd9bfae93dc59b0f22b292f5933573854a7f9b97835c67060d7d910e188"
+          }
+        ],
+        "checkpoint_bytes": 9319828096
+      },
+      "decision_checkpoint": {
+        "model_id": "Qwen/Qwen3.5-4B-Base",
+        "revision": "1001bb4d826a52d1f399e183466143f4da7b741b",
+        "upstream_url": "https://huggingface.co/Qwen/Qwen3.5-4B-Base",
+        "model_type": "qwen3_5",
+        "architectures": [
+          "Qwen3_5ForConditionalGeneration"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/Qwen/Qwen3.5-4B-Base/blob/1001bb4d826a52d1f399e183466143f4da7b741b/README.md",
+            "sha256": "76ead24ea3de5a52610c755ffa0b6e7cb51e3c413f124a3776bc6f16b694474e"
+          },
+          "license_files": {
+            "LICENSE": {
+              "url": "https://huggingface.co/Qwen/Qwen3.5-4B-Base/blob/1001bb4d826a52d1f399e183466143f4da7b741b/LICENSE",
+              "sha256": "50cbab8a892c5f2993b8c7351a99182507472def3b1374558308605d99b86b32"
+            }
+          },
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen3.5-4B-Base/blob/1001bb4d826a52d1f399e183466143f4da7b741b/config.json",
+          "sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors-00001-of-00002.safetensors",
+            "bytes": 5329398712,
+            "sha256": "df547074dce70532a0493e5433152bd17a65efb89088cfabc2e7e2371a93d712"
+          },
+          {
+            "path": "model.safetensors-00002-of-00002.safetensors",
+            "bytes": 3990429344,
+            "sha256": "590fbaac095dd31db886c322d9d2f7df47777966391acf306ddddc3e4e3a15ef"
+          }
+        ],
+        "checkpoint_bytes": 9319828056
+      },
+      "training_method": "lora-candidate",
+      "decision_readout": "pointer-or-scoring-head-candidate",
+      "qualification": {
+        "generation_training": "unmeasured",
+        "decision_training": "unmeasured",
+        "generation_inference": "unmeasured",
+        "decision_inference": "unmeasured",
+        "gguf_export": "unverified",
+        "task_quality": "unmeasured"
+      }
+    },
+    {
+      "id": "smollm2-1.7b",
+      "label": "SmolLM2 1.7B",
+      "nominal_parameters_billions": 1.7,
+      "evaluation_role": "independent-control",
+      "architecture_class": "attention",
+      "generation_checkpoint": {
+        "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+        "revision": "31b70e2e869a7173562077fd711b654946d38674",
+        "upstream_url": "https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B-Instruct",
+        "model_type": "llama",
+        "architectures": [
+          "LlamaForCausalLM"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B-Instruct/blob/31b70e2e869a7173562077fd711b654946d38674/README.md",
+            "sha256": "b00c0570dbc43674a0028d088fc72f40d83eea90f47cd987706ca2f95ed114c0"
+          },
+          "license_files": {},
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B-Instruct/blob/31b70e2e869a7173562077fd711b654946d38674/config.json",
+          "sha256": "994f50b16abb4ae00880baefe03c10260b5bd608d2bf586f7056ca05a534feea"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors",
+            "bytes": 3422777952,
+            "sha256": "f55217be716b6a997b97b9d8d7eb6fad02e00858f5010ec24f64603c3a98a0e8"
+          }
+        ],
+        "checkpoint_bytes": 3422777952
+      },
+      "decision_checkpoint": {
+        "model_id": "HuggingFaceTB/SmolLM2-1.7B",
+        "revision": "effd688a12921b4cc83e3312b6feb579f70f9c71",
+        "upstream_url": "https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B",
+        "model_type": "llama",
+        "architectures": [
+          "LlamaForCausalLM"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B/blob/effd688a12921b4cc83e3312b6feb579f70f9c71/README.md",
+            "sha256": "83c5404c1162e01c59e08fec9e8233b357ecf0ca3249e78f4b1ee13c5b3c320c"
+          },
+          "license_files": {},
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B/blob/effd688a12921b4cc83e3312b6feb579f70f9c71/config.json",
+          "sha256": "33397f6af8090f7290f27ce6fb1cd23a95fd0915a5c648dfd10b6002aaf7fc48"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model.safetensors",
+            "bytes": 3422777952,
+            "sha256": "1193528982f4ac0c0b707ce36fd7dc03a0ef6f3e1a432deb886dce2e90c300c0"
+          }
+        ],
+        "checkpoint_bytes": 3422777952
+      },
+      "training_method": "lora-candidate",
+      "decision_readout": "pointer-or-scoring-head-candidate",
+      "qualification": {
+        "generation_training": "unmeasured",
+        "decision_training": "unmeasured",
+        "generation_inference": "unmeasured",
+        "decision_inference": "unmeasured",
+        "gguf_export": "unverified",
+        "task_quality": "unmeasured"
+      }
+    },
+    {
+      "id": "smollm3-3b",
+      "label": "SmolLM3 3B",
+      "nominal_parameters_billions": 3.0,
+      "evaluation_role": "alternative",
+      "architecture_class": "attention",
+      "generation_checkpoint": {
+        "model_id": "HuggingFaceTB/SmolLM3-3B",
+        "revision": "a07cc9a04f16550a088caea529712d1d335b0ac1",
+        "upstream_url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B",
+        "model_type": "smollm3",
+        "architectures": [
+          "SmolLM3ForCausalLM"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B/blob/a07cc9a04f16550a088caea529712d1d335b0ac1/README.md",
+            "sha256": "24f16f90b883af3618425a589783a944356a7fc2e3cfa69b579c9ff06963e178"
+          },
+          "license_files": {},
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B/blob/a07cc9a04f16550a088caea529712d1d335b0ac1/config.json",
+          "sha256": "c72b1031274ff4626e434d0019e88e95a767460135db9ee492eb80652b786af1"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model-00001-of-00002.safetensors",
+            "bytes": 4966315264,
+            "sha256": "e5eed4113a925264c33e3cdf76cd9f547c06a207ef2270914a7274a2bf685ffd"
+          },
+          {
+            "path": "model-00002-of-00002.safetensors",
+            "bytes": 1183919744,
+            "sha256": "6c3ad90646457295723e4da5ee8afac47006e20407b122df5174693dd8d68a43"
+          }
+        ],
+        "checkpoint_bytes": 6150235008
+      },
+      "decision_checkpoint": {
+        "model_id": "HuggingFaceTB/SmolLM3-3B-Base",
+        "revision": "d78a42f79198603e614095753484a04c10c2b940",
+        "upstream_url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-Base",
+        "model_type": "smollm3",
+        "architectures": [
+          "SmolLM3ForCausalLM"
+        ],
+        "declared_license": "Apache-2.0",
+        "license_evidence": {
+          "model_card": {
+            "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-Base/blob/d78a42f79198603e614095753484a04c10c2b940/README.md",
+            "sha256": "9bb1fff003df8f9497d2589c345b80817af6864a39938c14edc5207bc5717009"
+          },
+          "license_files": {},
+          "redistribution_review": "pending"
+        },
+        "config": {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-Base/blob/d78a42f79198603e614095753484a04c10c2b940/config.json",
+          "sha256": "e8336e843aecb733691a043ad4209168e1730158b5e03c2672591cc946036a47"
+        },
+        "checkpoint_files": [
+          {
+            "path": "model-00001-of-00002.safetensors",
+            "bytes": 4966315264,
+            "sha256": "7e270ac568ee1880ddbadad66ccdcd9906d52415e8904e2f300c75250b9c7d49"
+          },
+          {
+            "path": "model-00002-of-00002.safetensors",
+            "bytes": 1183919744,
+            "sha256": "c6a6e7690a66dcc386a6a9b456686e7c308d45cba884d116c928dafa7fa987ae"
+          }
+        ],
+        "checkpoint_bytes": 6150235008
+      },
+      "training_method": "lora-candidate",
+      "decision_readout": "pointer-or-scoring-head-candidate",
+      "qualification": {
+        "generation_training": "unmeasured",
+        "decision_training": "unmeasured",
+        "generation_inference": "unmeasured",
+        "decision_inference": "unmeasured",
+        "gguf_export": "unverified",
+        "task_quality": "unmeasured"
+      }
+    }
+  ]
+}

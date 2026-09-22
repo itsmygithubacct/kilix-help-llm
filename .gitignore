@@ -1,0 +1,32 @@
+# Python and editor output
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+*.swp
+*~
+
+# Generated and private material belongs outside the source repository.
+/build/
+/dist/
+/research/
+/runs/
+/logs/
+/cache/
+/data/
+/datasets/
+/documents/
+/models/
+/adapters/
+/checkpoints/
+*.gguf
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.jsonl
+.env
+.env.*
