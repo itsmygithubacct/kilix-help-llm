@@ -123,6 +123,22 @@ def encoded(tokenizer, prompt, answer=None, context=384):
     return {"input_ids": ids, "labels": labels}
 
 
+def chat_encoded(tokenizer, prompt, answer=None, context=384):
+    """Use the checkpoint's native non-thinking chat format and assistant boundary."""
+    messages = [{"role": "user", "content": prompt}]
+    options = dict(tokenize=True, return_dict=False, enable_thinking=False)
+    prefix = tokenizer.apply_chat_template(messages, add_generation_prompt=True, **options)
+    ids = prefix
+    if answer is not None:
+        ids = tokenizer.apply_chat_template(messages + [{"role": "assistant", "content": answer}],
+                                            add_generation_prompt=False, **options)
+        if ids[:len(prefix)] != prefix or len(ids) <= len(prefix):
+            raise ValueError("chat template training/inference assistant prefixes differ")
+    if not ids or len(ids) > context:
+        raise ValueError("chat example exceeds planned context; shorten evidence or increase --context")
+    return {"input_ids": ids, "labels": [-100] * len(prefix) + ids[len(prefix):]}
+
+
 def examples(data, tokenizer, task, context, split):
     chunks = {c["id"]: c for c in data["chunks"]}
     rows = []
@@ -131,7 +147,7 @@ def examples(data, tokenizer, task, context, split):
             continue
         chunk = chunks[label["source"]]
         if task == "answer":
-            rows.append(encoded(tokenizer, answer_prompt(label["question"], chunk),
+            rows.append(chat_encoded(tokenizer, answer_prompt(label["question"], chunk),
                                 f" {label['answer']} [{chunk['id']}]", context))
         else:
             rows.append({**encoded(tokenizer, rank_prompt(label["question"], chunk), context=context), "target": 1})
@@ -232,6 +248,7 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
                   "runtime": {k: importlib.metadata.version(k) for k in
                               ("torch", "transformers", "peft", "safetensors", "accelerate")},
                   "code_sha256": code_sha256, "trainable_parameters": trainable,
+                  "answer_format": "chat-nonthinking-v2",
                   "artifacts": artifacts, "quality": "unmeasured", "qualification_eligible": False}
         write_json(directory / "run.json", report)
         return {"run": name, "task": task, "steps": steps, "dev_loss": dev_loss,
@@ -286,9 +303,10 @@ def ranked(data, model, tokenizer, head, question, context, limit=5):
     return sorted(pool, key=lambda c: (-c["relevance_score"], c["id"]))
 
 
-def generated(model, tokenizer, question, chunk, context, max_new_tokens):
+def generated(model, tokenizer, question, chunk, context, max_new_tokens, answer_format="plain-v1"):
     import torch
-    row = encoded(tokenizer, answer_prompt(question, chunk), context=context)
+    encoder = chat_encoded if answer_format == "chat-nonthinking-v2" else encoded
+    row = encoder(tokenizer, answer_prompt(question, chunk), context=context)
     remaining = context - len(row["input_ids"])
     if remaining < 1:
         raise ValueError("no planned context remains for generation")
@@ -321,7 +339,8 @@ def query(name, task, question, sizer=None, limit=5, max_new_tokens=96):
         return {**identity, "results": results, "topics": list(topics.values()),
                 "calibrated": False, "qualification_eligible": False}
     chunk = retrieve(data, question, 1)[0]
-    return {**identity, **generated(model, tokenizer, question, chunk, report["context"], max_new_tokens)}
+    return {**identity, **generated(model, tokenizer, question, chunk, report["context"], max_new_tokens,
+                                   report.get("answer_format", "plain-v1"))}
 
 
 def evaluate(name, split, sizer=None):
@@ -341,9 +360,11 @@ def evaluate(name, split, sizer=None):
             position = next((i + 1 for i, c in enumerate(result) if c["id"] == label["source"]), None)
             row.update(top1=position == 1, reciprocal_rank=1 / position if position else 0)
         else:
-            result = generated(model, tokenizer, label["question"], baseline[0], report["context"], 96)
+            result = generated(model, tokenizer, label["question"], baseline[0], report["context"], 96,
+                               report.get("answer_format", "plain-v1"))
             with model.disable_adapter():
-                unchanged = generated(model, tokenizer, label["question"], baseline[0], report["context"], 96)
+                unchanged = generated(model, tokenizer, label["question"], baseline[0], report["context"], 96,
+                                      report.get("answer_format", "plain-v1"))
             # This is an extractive regression check, not semantic correctness.
             row.update(citation_valid=result["citation_valid"], abstained=result["abstained"],
                        reference_substring=bool(result["answer"] and label["answer"] in result["answer"]),
@@ -359,3 +380,26 @@ def evaluate(name, split, sizer=None):
     output = private_dir(state_root() / "evaluations") / f"{name}-{split}-{time.time_ns()}.json"
     write_json(output, result)
     return {**result, "saved_to": str(output)}
+
+
+def baseline(dataset, candidate, context, split, sizer=None):
+    configure()
+    bundle = load_dataset(dataset)
+    plan = recommend(bundle, context, 4, sizer, candidate, "answer")
+    model, tokenizer = load_base(plan["candidate"]["generation_checkpoint"], "answer")
+    model.eval()
+    rows = []
+    for label in bundle["data"]["examples"]:
+        if label["split"] != split:
+            continue
+        chunk = retrieve(bundle["data"], label["question"], 1)[0]
+        result = generated(model, tokenizer, label["question"], chunk, context, 96, "chat-nonthinking-v2")
+        rows.append({"id": label["id"], "reference": label["answer"], "output": result,
+                     "retrieval_top1": chunk["id"] == label["source"]})
+    report = {"schema": "kilix.help-llm.baseline/v1", "dataset": dataset, "dataset_sha256": bundle["sha256"],
+              "candidate": plan["candidate"]["id"], "checkpoint": plan["candidate"]["generation_checkpoint"],
+              "answer_format": "chat-nonthinking-v2", "split": split, "context": context, "examples": rows,
+              "qualification_eligible": False}
+    output = private_dir(state_root() / "evaluations") / f"baseline-{dataset}-{candidate}-{split}-{time.time_ns()}.json"
+    write_json(output, report)
+    return {"saved_to": str(output), "count": len(rows), "examples": rows}

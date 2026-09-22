@@ -22,13 +22,15 @@ def parser():
     search = commands.add_parser("search", help="BM25 retrieval baseline; no model needed")
     search.add_argument("--dataset", required=True)
     search.add_argument("question")
-    for name in ("plan", "fetch", "train"):
+    for name in ("plan", "fetch", "train", "baseline"):
         command = commands.add_parser(name)
         command.add_argument("--dataset", required=True)
         command.add_argument("--candidate")
         command.add_argument("--sizer")
         command.add_argument("--context", type=int, default=384)
         command.add_argument("--lora-rank", type=int, default=4)
+        if name == "baseline":
+            command.add_argument("--split", choices=["dev", "calibration", "test"], default="dev")
         command.add_argument("--task", choices=["answer", "rank"] if name == "train" else ["answer", "rank", "both"],
                              required=name == "train", default="both" if name != "train" else None)
         if name == "train":
@@ -68,7 +70,7 @@ def main(argv=None):
             os.execv(executable, [executable, "recommend", "help-llm", "--catalog", str(SOURCE / "candidates.json"), *rest])
         if rest:
             root.error("unrecognized arguments: " + " ".join(rest))
-        if args.command in {"fetch", "train", "ask", "rank", "evaluate"}:
+        if args.command in {"fetch", "train", "ask", "rank", "evaluate", "baseline"}:
             runtime_python()
             from . import runtime
         if args.command == "prepare":
@@ -96,6 +98,8 @@ def main(argv=None):
                                    limit=getattr(args, "limit", 5), max_new_tokens=getattr(args, "max_new_tokens", 96))
         elif args.command == "evaluate":
             result = runtime.evaluate(args.run, args.split, args.sizer)
+        elif args.command == "baseline":
+            result = runtime.baseline(args.dataset, args.candidate, args.context, args.split, args.sizer)
         print(json.dumps(result, indent=2, ensure_ascii=False, allow_nan=False))
         return 0
     except FileNotFoundError:

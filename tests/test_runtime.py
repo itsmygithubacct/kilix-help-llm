@@ -5,12 +5,26 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from help_llm.runtime import attach, encoded, generated, loss_for, optimize, query
+from help_llm.runtime import attach, encoded, chat_encoded, generated, loss_for, optimize, query
 
 AVAILABLE = all(importlib.util.find_spec(name) for name in ("torch", "transformers", "peft"))
 
 
 class QueryIdentityTests(unittest.TestCase):
+    def test_chat_template_masks_prefix_and_retains_turn_terminator(self):
+        class Tokenizer:
+            def apply_chat_template(self, messages, **options):
+                self.options = options
+                return [10, 11, 12] if options["add_generation_prompt"] else [10, 11, 12, 20, 99]
+        tokenizer = Tokenizer()
+        row = chat_encoded(tokenizer, "Question?", "Answer", 8)
+        self.assertEqual(row["labels"], [-100, -100, -100, 20, 99])
+        self.assertFalse(tokenizer.options["enable_thinking"])
+        self.assertFalse(tokenizer.options["return_dict"])
+        self.assertEqual(chat_encoded(tokenizer, "Question?", context=8)["input_ids"], row["input_ids"][:3])
+        with self.assertRaisesRegex(ValueError, "exceeds"):
+            chat_encoded(tokenizer, "Question?", "Answer", 4)
+
     def test_answer_exposes_exact_corpus_identity_without_claiming_qualification(self):
         report = {"dataset_sha256": "d" * 64, "context": 384}
         data = {"revision": "a" * 40}
