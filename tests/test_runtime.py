@@ -5,12 +5,17 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from help_llm.runtime import attach, encoded, chat_encoded, generated, loss_for, optimize, query
+from help_llm.runtime import attach, encoded, chat_encoded, generated, loss_for, optimize, query, group_backward, require_legacy_evaluation
 
 AVAILABLE = all(importlib.util.find_spec(name) for name in ("torch", "transformers", "peft"))
 
 
 class QueryIdentityTests(unittest.TestCase):
+    def test_legacy_metrics_refuse_new_label_semantics(self):
+        require_legacy_evaluation({"schema": "kilix.help-llm.dataset/v1"})
+        with self.assertRaisesRegex(ValueError, "v2 evaluation is pending"):
+            require_legacy_evaluation({"schema": "kilix.help-llm.dataset/v2"})
+
     def test_chat_template_masks_prefix_and_retains_turn_terminator(self):
         class Tokenizer:
             def apply_chat_template(self, messages, **options):
@@ -83,6 +88,27 @@ class TrainingTests(unittest.TestCase):
         model.eval()
         for row in rows:
             self.assertLess(float(loss_for(model, head, row).detach()), .2)
+
+    def test_listwise_replay_matches_full_graph_gradient_and_learns_none(self):
+        import torch
+        from transformers import Qwen3Model
+        model, head = attach(Qwen3Model(self.config), 2, "rank")
+        torch.nn.init.normal_(head.weight, std=.02)
+        row = {"candidates": [{"input_ids": [1, 2, 3]}, {"input_ids": [4, 5, 6]},
+                              {"input_ids": [7, 8, 9]}], "positive_indices": [0, 2]}
+        params = [p for p in model.parameters() if p.requires_grad] + list(head.parameters())
+        expected_loss = loss_for(model, head, row)
+        expected_loss.backward()
+        gradients = [p.grad.clone() for p in params]
+        for p in params:
+            p.grad = None
+        replay_loss = group_backward(model, head, row)
+        self.assertAlmostEqual(float(replay_loss), float(expected_loss.detach()), places=6)
+        for param, expected in zip(params, gradients):
+            self.assertTrue(torch.allclose(param.grad, expected, atol=2e-6))
+        row["positive_indices"] = []
+        losses = optimize(model, head, [row], 24, .01)
+        self.assertLess(losses[-1], losses[0] / 2)
 
     def test_prompt_is_masked_and_overflow_never_silently_truncates(self):
         class Tokenizer:

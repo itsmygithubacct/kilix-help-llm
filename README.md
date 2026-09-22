@@ -10,6 +10,10 @@ adapters for cited answers and relevance ranking. The optional runtime can
 reload those adapters, answer questions, rank excerpts and record evaluation
 results. Resource selection is provisional; no candidate is quality-qualified.
 The model catalog contains seven families with exact checkpoint identities.
+The current corpus-development focus is operating Kilix: creating and finding
+tabs/panes, targeting, reading screens and logs, and sending scoped input.
+The v2 importer and ranking recipe are implemented; v2 evaluation and matched
+candidate comparisons remain pending. Existing v1 reports remain readable.
 
 ## Prepare a document dataset
 
@@ -38,9 +42,18 @@ Semantic near-duplicates still need human review. A labels file is a JSON list:
 The answer must be a verbatim excerpt of exactly one paragraph in that document.
 Use the actual wording of your source: the example above is a format example.
 The importer adds source IDs, line numbers, hashes and splits automatically.
-Raw documents alone are not reviewed question/answer labels. Current datasets
-use extractive labels; broader answers and unanswerable examples need a later
-labeling/evaluation protocol.
+Raw documents alone are not reviewed question/answer labels. The v2 label format
+also accepts a `group` for paraphrases, `relevant_sources` for reviewed alternative
+passages, and up to eight explicit `negatives`. Positive and negative IDs must
+exist within the label's split and must not overlap. Keep same-fact variants in
+one group. Near-duplicate meanings still require review.
+
+For an unanswerable example, use `answer: null`, `unanswerable: true`, a
+`context_source` ID and a nonempty `review_note`. Optional `rubric` clauses
+(`must_include` and `must_not_include`) are lists of phrase-alternative lists;
+they are stored for the next evaluation protocol, not treated as proof of
+correctness. These richer labels require the pending v2 evaluator: `evaluate`
+and `baseline` currently refuse v2 datasets rather than report legacy metrics.
 
 ```sh
 ./kilix-help-llm prepare --repo /path/to/kilix --revision FULL_COMMIT_SHA \
@@ -84,7 +97,7 @@ recheck those hashes; they never acquire missing models automatically. Runtime
 commands find the private environment automatically. No hosted training is used.
 
 `plan`, `fetch`, `train` and inference consult live shared sizing. The initial
-recipe uses CPU FP32, batch one, independent examples, gradient checkpointing,
+recipe uses CPU FP32, batch one, gradient checkpointing,
 all-linear LoRA, AdamW, context 384 and rank four. `--context` accepts 128-512;
 `--lora-rank` accepts 1-64. Training is bounded by `--steps` (default 32, maximum
 10000). Oversized examples fail instead of silently truncating their evidence
@@ -92,9 +105,19 @@ or answers. `--candidate` requests a particular resource-eligible checkpoint.
 Only the dense-attention families are enabled in this runtime; hybrid Qwen3.5
 families remain sizing candidates until their training path is verified.
 
-Answer training masks prompt tokens and learns excerpt-grounded completions
-with source citations. Ranking trains a separate base-model adapter and a
-two-output relevance head on positive paragraphs and BM25 hard negatives.
+Answer training uses the checkpoint's native chat template with thinking
+disabled, masks the entire generation prefix and retains assistant end tokens.
+It learns cited answers, explicit unknowns and refusals for reviewed negative
+evidence. Existing runs retain their original prompt format. The `baseline`
+command runs the unchanged model with retrieved evidence on a v1 dataset.
+
+Ranking trains a separate base-model adapter and a two-output head. New heads
+start at zero and receive normalized features. Reviewed v2 passage groups use a
+listwise objective that accepts any listed positive or a fixed none-of-these
+score. Gradient replay keeps only one candidate's training graph in memory;
+nonzero dropout is rejected. Labels without explicit negatives retain the
+binary fallback. New scores are logit differences; old runs keep their original
+readout. These tests establish training mechanics, not retrieval improvement.
 The ranker reranks the top five BM25 results by default (`--limit` accepts 1-20).
 Its scores are **uncalibrated**, not acceptance probabilities. The generation
 command currently uses the BM25 top result; it does not load both models at once.
@@ -115,7 +138,7 @@ Each run records its dataset/checkpoint identity, training recipe, runtime
 versions, code hash, losses, elapsed time, process peak RSS and artifact hashes.
 Adapters and ranking heads use safetensors. Run names cannot overwrite earlier
 results; failed attempts retain their plan and a failure marker. Optimizer resume,
-confidence calibration, a larger held-out benchmark and GGUF export remain work.
+confidence calibration, v2 evaluation, development checkpoint selection and GGUF export remain work.
 
 Run `make check` for the stdlib checks and `make check-runtime` for actual tiny
 local-model backprop, frozen-weight preservation and adapter reload tests. The

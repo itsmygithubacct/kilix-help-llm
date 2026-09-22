@@ -105,7 +105,14 @@ def attach(model, rank, task):
     model.enable_input_require_grads()
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
     head = torch.nn.Linear(model.config.hidden_size, 2) if task == "rank" else None
+    if head is not None:
+        head.normalize_features = True
+        torch.nn.init.zeros_(head.weight)
+        torch.nn.init.zeros_(head.bias)
     return model, head
+
+
+ABSTENTION = "I do not know from the supplied excerpt."
 
 
 def encoded(tokenizer, prompt, answer=None, context=384):
@@ -147,13 +154,23 @@ def examples(data, tokenizer, task, context, split):
             continue
         chunk = chunks[label["source"]]
         if task == "answer":
-            rows.append(chat_encoded(tokenizer, answer_prompt(label["question"], chunk),
-                                f" {label['answer']} [{chunk['id']}]", context))
+            target = ABSTENTION if label.get("unanswerable") else f"{label['answer']} [{chunk['id']}]"
+            rows.append(chat_encoded(tokenizer, answer_prompt(label["question"], chunk), target, context))
+            if not label.get("unanswerable") and label.get("negatives"):
+                negative = chunks[label["negatives"][0]]
+                rows.append(chat_encoded(tokenizer, answer_prompt(label["question"], negative), ABSTENTION, context))
+        elif "negatives" in label and label["negatives"]:
+            relevant = label.get("relevant_sources", [] if label.get("unanswerable") else [chunk["id"]])
+            keys = list(dict.fromkeys([chunk["id"], *relevant, *label["negatives"]]))
+            rows.append({"candidates": [encoded(tokenizer, rank_prompt(label["question"], chunks[k]),
+                                               context=context) for k in keys],
+                         "positive_indices": [i for i, k in enumerate(keys) if k in relevant]})
         else:
+            if label.get("unanswerable"):
+                raise ValueError("unanswerable ranking labels require reviewed negatives")
             rows.append({**encoded(tokenizer, rank_prompt(label["question"], chunk), context=context), "target": 1})
             negatives = [c for c in retrieve(data, label["question"], len(chunks), split)
                          if c["document"] != label["document"]][:1]
-            # A split with one held-out family still has irrelevant paragraphs.
             if not negatives:
                 negatives = [c for c in retrieve(data, label["question"], len(chunks), split)
                              if c["id"] != label["source"] and label["answer"] not in c["text"]][:1]
@@ -163,15 +180,53 @@ def examples(data, tokenizer, task, context, split):
     return rows
 
 
+def rank_logits(model, head, row):
+    import torch
+    ids = torch.tensor([row["input_ids"]], dtype=torch.long)
+    features = model(input_ids=ids, attention_mask=torch.ones_like(ids), use_cache=False).last_hidden_state[:, -1].float()
+    if getattr(head, "normalize_features", False):
+        features = torch.nn.functional.layer_norm(features, (features.shape[-1],))
+    return head(features)
+
+
+def group_loss(scores, positive_indices):
+    """Marginal likelihood of any reviewed positive, or the fixed none score."""
+    import torch
+    values = torch.cat((scores, scores.new_zeros(1)))
+    positive_indices = positive_indices or [len(scores)]
+    return torch.logsumexp(values, 0) - torch.logsumexp(values[positive_indices], 0)
+
+
+def group_backward(model, head, row):
+    """Exact listwise gradient by replay, keeping only one candidate graph alive."""
+    import torch
+    if any(isinstance(m, torch.nn.Dropout) and m.p for m in model.modules()):
+        raise ValueError("gradient replay requires deterministic forwards (dropout disabled)")
+    if getattr(model.config, "attention_dropout", 0):
+        raise ValueError("gradient replay requires attention dropout disabled")
+    with torch.no_grad():
+        scores = torch.stack([(lambda x: x[0, 1] - x[0, 0])(rank_logits(model, head, c))
+                              for c in row["candidates"]])
+    scores.requires_grad_()
+    loss = group_loss(scores, row["positive_indices"])
+    weights, = torch.autograd.grad(loss, scores)
+    for candidate, weight in zip(row["candidates"], weights):
+        logits = rank_logits(model, head, candidate)
+        ((logits[0, 1] - logits[0, 0]) * weight.detach()).backward()
+    return loss.detach()
+
+
 def loss_for(model, head, row):
     import torch
+    if "candidates" in row:
+        scores = torch.stack([(lambda x: x[0, 1] - x[0, 0])(rank_logits(model, head, c))
+                              for c in row["candidates"]])
+        return group_loss(scores, row["positive_indices"])
     ids = torch.tensor([row["input_ids"]], dtype=torch.long)
     if head is None:
         return model(input_ids=ids, attention_mask=torch.ones_like(ids),
                      labels=torch.tensor([row["labels"]]), use_cache=False).loss
-    output = model(input_ids=ids, attention_mask=torch.ones_like(ids), use_cache=False)
-    logits = head(output.last_hidden_state[:, -1].float())
-    return torch.nn.functional.cross_entropy(logits, torch.tensor([row["target"]]))
+    return torch.nn.functional.cross_entropy(rank_logits(model, head, row), torch.tensor([row["target"]]))
 
 
 def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None):
@@ -189,10 +244,12 @@ def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None):
         if step % len(rows) == 0:
             rng.shuffle(order)
         optimizer.zero_grad(set_to_none=True)
-        loss = loss_for(model, head, rows[order[step % len(rows)]])
+        row = rows[order[step % len(rows)]]
+        loss = group_backward(model, head, row) if "candidates" in row else loss_for(model, head, row)
         if not torch.isfinite(loss):
             raise ValueError("non-finite training loss")
-        loss.backward()
+        if "candidates" not in row:
+            loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0, error_if_nonfinite=True)
         optimizer.step()
         losses.append(float(loss.detach()))
@@ -249,6 +306,8 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
                               ("torch", "transformers", "peft", "safetensors", "accelerate")},
                   "code_sha256": code_sha256, "trainable_parameters": trainable,
                   "answer_format": "chat-nonthinking-v2",
+                  "rank_recipe": ("normalized-listwise-replay-v2" if task == "rank" and all("candidates" in r for r in rows)
+                                  else "normalized-binary-v2" if task == "rank" else None),
                   "artifacts": artifacts, "quality": "unmeasured", "qualification_eligible": False}
         write_json(directory / "run.json", report)
         return {"run": name, "task": task, "steps": steps, "dev_loss": dev_loss,
@@ -286,6 +345,7 @@ def load_run(name, task, sizer=None):
         import torch
         from safetensors.torch import load_file
         head = torch.nn.Linear(model.config.hidden_size, 2)
+        head.normalize_features = report.get("rank_recipe") in {"normalized-listwise-replay-v2", "normalized-binary-v2"}
         head.load_state_dict(load_file(str(directory / "head.safetensors")))
         head.eval()
     return report, bundle["data"], model, tokenizer, head
@@ -297,9 +357,9 @@ def ranked(data, model, tokenizer, head, question, context, limit=5):
     with torch.no_grad():
         for chunk in pool:
             row = encoded(tokenizer, rank_prompt(question, chunk), context=context)
-            ids = torch.tensor([row["input_ids"]])
-            output = model(input_ids=ids, attention_mask=torch.ones_like(ids), use_cache=False)
-            chunk["relevance_score"] = float(head(output.last_hidden_state[:, -1].float()).softmax(-1)[0, 1])
+            logits = rank_logits(model, head, row)
+            chunk["relevance_score"] = (float(logits[0, 1] - logits[0, 0]) if getattr(head, "normalize_features", False)
+                                        else float(logits.softmax(-1)[0, 1]))
     return sorted(pool, key=lambda c: (-c["relevance_score"], c["id"]))
 
 
@@ -343,9 +403,17 @@ def query(name, task, question, sizer=None, limit=5, max_new_tokens=96):
                                    report.get("answer_format", "plain-v1"))}
 
 
+def require_legacy_evaluation(data):
+    if data.get("schema") == "kilix.help-llm.dataset/v2":
+        raise ValueError("v2 evaluation is pending support for multiple relevant sources and unanswerable labels; "
+                         "legacy metrics must not be used for this dataset")
+
+
 def evaluate(name, split, sizer=None):
     directory = state_root() / "runs" / identifier(name)
-    task = read_json(directory / "run.json")["task"]
+    identity = read_json(directory / "run.json")
+    require_legacy_evaluation(load_dataset(identity["dataset"])["data"])
+    task = identity["task"]
     report, data, model, tokenizer, head = load_run(name, task, sizer)
     labels = [r for r in data["examples"] if r["split"] == split]
     rows = []
@@ -383,8 +451,9 @@ def evaluate(name, split, sizer=None):
 
 
 def baseline(dataset, candidate, context, split, sizer=None):
-    configure()
     bundle = load_dataset(dataset)
+    require_legacy_evaluation(bundle["data"])
+    configure()
     plan = recommend(bundle, context, 4, sizer, candidate, "answer")
     model, tokenizer = load_base(plan["candidate"]["generation_checkpoint"], "answer")
     model.eval()

@@ -96,6 +96,25 @@ class CorpusTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "paragraphs cross"):
             self.prepare()
 
+    def test_reviewed_negatives_groups_and_unknown_labels(self):
+        self.labels[0].update(negatives=["red:2"], relevant_sources=["red:1"], group="red-fact")
+        self.labels[1].update(answer=None, unanswerable=True, context_source="blue:1",
+                              negatives=["blue:2"], review_note="Live state is absent.")
+        result = self.prepare()["data"]["examples"]
+        self.assertEqual(result[0]["negatives"], ["red:2"])
+        self.assertEqual(result[1]["relevant_sources"], [])
+        self.assertTrue(result[1]["unanswerable"])
+        self.labels[0]["negatives"] = ["blue:2"]
+        with self.assertRaisesRegex(ValueError, "crosses splits"):
+            self.prepare("cross-negative")
+        self.labels[0]["negatives"] = ["red:1"]
+        with self.assertRaisesRegex(ValueError, "positive"):
+            self.prepare("positive-negative")
+        self.labels[0]["negatives"] = []
+        self.labels[1]["group"] = "red-fact"
+        with self.assertRaisesRegex(ValueError, "family crosses"):
+            self.prepare("cross-group")
+
     def test_dataset_name_cannot_escape_private_root(self):
         with self.assertRaises(ValueError):
             self.prepare("../../escape")

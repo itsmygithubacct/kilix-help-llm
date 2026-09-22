@@ -131,29 +131,64 @@ def prepare(repo, revision, manifest, labels, name):
                            "path": str(path), "line": body[:match.start()].count("\n") + 1, "text": text})
     if {d["split"] for d in documents} != SPLITS:
         raise ValueError("all four document splits must be represented")
-    rows, questions, ids = [], set(), set()
+    rows, questions, ids, groups = [], set(), set(), {}
     if not isinstance(labels, list) or not 4 <= len(labels) <= 10000:
         raise ValueError("labels must contain 4-10000 reviewed question/answer pairs")
     for label in labels:
         row_id = identifier(label["id"])
         question, answer = label["question"], label["answer"]
-        if not isinstance(question, str) or not isinstance(answer, str) or not question.strip() or not answer.strip():
+        unanswerable = answer is None and label.get("unanswerable") is True
+        if not isinstance(question, str) or not question.strip() or (not unanswerable and (not isinstance(answer, str) or not answer.strip())):
             raise ValueError("question and answer must be nonempty strings")
-        if len(question) > 2000 or len(answer) > 3000 or normalized(question) in questions or row_id in ids:
+        if len(question) > 2000 or len(answer or "") > 3000 or normalized(question) in questions or row_id in ids:
             raise ValueError("duplicate or oversized label")
-        matches = [c for c in chunks if c["document"] == label["document"] and answer in c["text"]]
+        matches = [c for c in chunks if c["document"] == label["document"] and
+                   (c["id"] == label.get("context_source") if unanswerable else answer in c["text"])]
         if len(matches) != 1:
             raise ValueError("answer must be a verbatim excerpt of exactly one source paragraph")
         chunk = matches[0]
+        group = identifier(label.get("group", row_id))
+        if group in groups and groups[group] != chunk["split"]:
+            raise ValueError("question family crosses splits")
+        groups[group] = chunk["split"]
+        by_id = {c["id"]: c for c in chunks}
+        relevant = label.get("relevant_sources", [] if unanswerable else [chunk["id"]])
+        if (not isinstance(relevant, list) or any(not isinstance(v, str) for v in relevant)
+                or len(set(relevant)) != len(relevant) or len(relevant) > 16
+                or (bool(relevant) == unanswerable) or (not unanswerable and chunk["id"] not in relevant)):
+            raise ValueError("invalid relevant sources")
+        if any(k not in by_id or by_id[k]["split"] != chunk["split"] for k in relevant):
+            raise ValueError("relevant source is missing or crosses splits")
+        negatives = label.get("negatives", [])
+        if not isinstance(negatives, list) or any(not isinstance(v, str) for v in negatives) or len(set(negatives)) != len(negatives) or len(negatives) > 8:
+            raise ValueError("negatives must be up to eight distinct source IDs")
+        for key in negatives:
+            if key not in by_id or by_id[key]["split"] != chunk["split"] or key in relevant or key == chunk["id"]:
+                raise ValueError("negative source is missing, positive, or crosses splits")
+            if answer and answer in by_id[key]["text"]:
+                raise ValueError("negative contains the reference answer")
+        rubric = label.get("rubric", {})
+        if not isinstance(rubric, dict):
+            raise ValueError("rubric must be an object")
+        for key in ("must_include", "must_not_include"):
+            clauses = rubric.get(key, [])
+            if not isinstance(clauses, list) or len(clauses) > 20 or any(
+                    not isinstance(c, list) or not c or any(not isinstance(v, str) or not v.strip() for v in c) for c in clauses):
+                raise ValueError("rubric clauses must be nonempty lists of phrase alternatives")
+        if unanswerable and not label.get("review_note"):
+            raise ValueError("unanswerable examples require an explicit review note")
         rows.append({"id": row_id, "question": question, "answer": answer,
-                     "source": chunk["id"], "document": chunk["document"], "split": chunk["split"]})
+                     "source": chunk["id"], "document": chunk["document"], "split": chunk["split"],
+                     "group": group, "unanswerable": unanswerable, "negatives": negatives,
+                     "relevant_sources": relevant,
+                     "rubric": rubric, "review_note": label.get("review_note", "")})
         questions.add(normalized(question))
         ids.add(row_id)
     if {r["split"] for r in rows} != SPLITS:
         raise ValueError("reviewed labels must cover all four splits")
-    payload = {"schema": "kilix.help-llm.dataset/v1", "revision": revision,
+    payload = {"schema": "kilix.help-llm.dataset/v2", "revision": revision,
                "manifest": manifest, "documents": documents, "chunks": chunks, "examples": rows,
-               "document_bytes": total, "label_kind": "reviewed-extractive"}
+               "document_bytes": total, "label_kind": "reviewed-extractive-and-unanswerable"}
     bundle = {"sha256": digest(payload), "data": payload}
     directory = private_dir(state_root() / "datasets")
     write_json(directory / (name + ".json"), bundle)
