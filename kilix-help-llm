@@ -1,34 +1,8 @@
 #!/usr/bin/env python3
-"""Size the bundled candidate catalog through the shared Kilix provider."""
-import argparse
-import os
-from pathlib import Path
-import shutil
+"""Prepare documents, size candidates and run local help-model experiments."""
 import sys
-
 sys.dont_write_bytecode = True
-
-
-def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__)
-    commands = parser.add_subparsers(dest="command", required=True)
-    size = commands.add_parser("size", add_help=False, help="estimate training and inference resources")
-    size.add_argument("--sizer", help="explicit plebian-model-sizer executable")
-    args, remaining = parser.parse_known_args(argv)
-    root = Path(__file__).resolve().parent
-    executable = args.sizer or os.environ.get("PLEBIAN_MODEL_SIZER") or shutil.which("plebian-model-sizer")
-    if executable is None:
-        source = root.parents[1] / "kilix-system-monitor/components/plebian-model-sizer/plebian-model-sizer"
-        if source.is_file() and os.access(source, os.X_OK):
-            executable = str(source)
-    if executable is None:
-        print("kilix-help-llm: install plebian-model-sizer or provide --sizer PATH", file=sys.stderr)
-        return 69
-    try:
-        os.execv(executable, [executable, "recommend", "help-llm", "--catalog", str(root / "candidates.json"), *remaining])
-    except OSError:
-        print("kilix-help-llm: unable to execute the configured model sizer", file=sys.stderr)
-        return 69
+from help_llm.cli import main
 
 
 if __name__ == "__main__":

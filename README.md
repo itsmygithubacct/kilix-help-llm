@@ -4,11 +4,121 @@ Document-trained help models for Kilix: answer questions with source references,
 and select or rank relevant help topics. The intended inference host for prose
 answers is `kilix-llm`; model selection belongs to `plebian-model-sizer`.
 
-**Current state: candidate catalog and development sizing command.** This
-repository contains seven candidate families with exact upstream checkpoint
-identities and architecture metadata. `kilix-help-llm size` delegates training
-and inference estimates to `plebian-model-sizer`. Training, inference serving,
-and measured task evaluation remain to be implemented.
+**Current state: local CPU training prototype.** Prepare revision-bound document
+datasets, retrieve source excerpts, size candidates, and train separate LoRA
+adapters for cited answers and relevance ranking. The optional runtime can
+reload those adapters, answer questions, rank excerpts and record evaluation
+results. Resource selection is provisional; no candidate is quality-qualified.
+The model catalog contains seven families with exact checkpoint identities.
+
+## Prepare a document dataset
+
+Python 3.11+ runs preparation, inspection, retrieval and sizing without model
+dependencies. Import only an explicit allowlist of committed UTF-8 Markdown,
+text or reStructuredText files. A full Git commit binds the source bytes;
+uncommitted working-tree edits are not imported.
+
+Keep the manifest and reviewed labels outside this repository. A manifest is
+a JSON list of objects like:
+
+```json
+{"id": "panes", "path": "docs/help/panes.md", "split": "train"}
+```
+
+Assign whole document families to `train`, `dev`, `calibration` and `test`
+before writing labels. All four splits need documents and labels. Keep related
+documents and paraphrases in the same split; exact duplicate documents,
+paragraphs across splits, and normalized duplicate questions are rejected.
+Semantic near-duplicates still need human review. A labels file is a JSON list:
+
+```json
+{"id": "panes-1", "document": "panes", "question": "How do I list panes?", "answer": "Run `kilix ls --panes` to list panes."}
+```
+
+The answer must be a verbatim excerpt of exactly one paragraph in that document.
+Use the actual wording of your source: the example above is a format example.
+The importer adds source IDs, line numbers, hashes and splits automatically.
+Raw documents alone are not reviewed question/answer labels. Current datasets
+use extractive labels; broader answers and unanswerable examples need a later
+labeling/evaluation protocol.
+
+```sh
+./kilix-help-llm prepare --repo /path/to/kilix --revision FULL_COMMIT_SHA \
+  --manifest /path/to/manifest.json --labels /path/to/labels.json --name kilix-022-r1
+./kilix-help-llm inspect --dataset kilix-022-r1
+./kilix-help-llm search --dataset kilix-022-r1 'How do I list panes?'
+./kilix-help-llm plan --dataset kilix-022-r1
+```
+
+Names use lowercase letters, digits, underscores and hyphens. Dataset files are
+immutable: choose a new name after correcting a document or label. Import
+rejects symlink blobs, path traversal, oversized inputs and unsupported labels.
+The retrieval baseline is deterministic BM25 and requires no embedding download.
+
+## Install the optional runtime and train
+
+The CPU environment uses Python 3.12 and a committed dependency lock. With
+`uv` installed, run from this checkout:
+
+```sh
+HELP_HOME="${GPU_TERMINAL_HOME:-$HOME/.local/gpu_terminal}/kilix-help-llm"
+umask 077
+UV_CACHE_DIR="$HELP_HOME/cache/uv" \
+UV_PYTHON_INSTALL_DIR="$HELP_HOME/runtimes/python" \
+UV_PROJECT_ENVIRONMENT="$HELP_HOME/runtimes/cpu" \
+  uv sync --project runtime --locked --python 3.12.8
+
+./kilix-help-llm fetch --dataset kilix-022-r1
+./kilix-help-llm train --dataset kilix-022-r1 --task answer --name answer-r1 --steps 32
+./kilix-help-llm train --dataset kilix-022-r1 --task rank --name rank-r1 --steps 32
+./kilix-help-llm ask --run answer-r1 'How do I list panes?'
+./kilix-help-llm rank --run rank-r1 'How do I list panes?'
+./kilix-help-llm evaluate --run answer-r1 --split dev
+./kilix-help-llm evaluate --run rank-r1 --split dev
+```
+
+`fetch` explicitly downloads the catalog-pinned generation and base checkpoints
+and tokenizer files. It verifies config/weight hashes against the catalog and
+records all downloaded file hashes. Training and inference are local-only and
+recheck those hashes; they never acquire missing models automatically. Runtime
+commands find the private environment automatically. No hosted training is used.
+
+`plan`, `fetch`, `train` and inference consult live shared sizing. The initial
+recipe uses CPU FP32, batch one, independent examples, gradient checkpointing,
+all-linear LoRA, AdamW, context 384 and rank four. `--context` accepts 128-512;
+`--lora-rank` accepts 1-64. Training is bounded by `--steps` (default 32, maximum
+10000). Oversized examples fail instead of silently truncating their evidence
+or answers. `--candidate` requests a particular resource-eligible checkpoint.
+Only the dense-attention families are enabled in this runtime; hybrid Qwen3.5
+families remain sizing candidates until their training path is verified.
+
+Answer training masks prompt tokens and learns excerpt-grounded completions
+with source citations. Ranking trains a separate base-model adapter and a
+two-output relevance head on positive paragraphs and BM25 hard negatives.
+The ranker reranks the top five BM25 results by default (`--limit` accepts 1-20).
+Its scores are **uncalibrated**, not acceptance probabilities. The generation
+command currently uses the BM25 top result; it does not load both models at once.
+This decision path is inspired by small-model decision training, but contains
+no copied reference implementation.
+
+Training sees only the training split and reports development loss. Calibration
+and test sets are used only when explicitly named in `evaluate`. Reports compare
+retrieval recall with learned ranking top-one accuracy/MRR, or report answer
+citation validity and extractive reference matching. Those narrow checks do not
+prove semantic correctness or sufficient quality. Answers with missing or
+unknown citation IDs are returned as unvalidated drafts with `abstained: true`;
+a valid ID alone does not establish factual support. No output executes commands.
+
+Each run records its dataset/checkpoint identity, training recipe, runtime
+versions, code hash, losses, elapsed time, process peak RSS and artifact hashes.
+Adapters and ranking heads use safetensors. Run names cannot overwrite earlier
+results; failed attempts retain their plan and a failure marker. Optimizer resume,
+confidence calibration, a larger held-out benchmark and GGUF export remain work.
+
+Run `make check` for the stdlib checks and `make check-runtime` for actual tiny
+local-model backprop, frozen-weight preservation and adapter reload tests. The
+tests do not download model weights. Tiny-model tests establish mechanics, not
+the quality of a catalog candidate.
 
 ## Candidate models
 
@@ -48,13 +158,14 @@ the sibling `kilix-system-monitor` checkout. Use `--sizer /path/to/executable`
 or `PLEBIAN_MODEL_SIZER` to select a provider explicitly. Python 3.11+ is needed.
 `make check` verifies the catalog and delegation boundary.
 
-Defaults assess both tasks, sequentially, with separate training and inference
+The raw `size` defaults assess both tasks, sequentially, with separate training and inference
 budgets, rank-16 all-linear LoRA, checkpointing, and 128 scoring-head outputs.
 Q4 estimates apply only to answer inference; ranking uses an unquantized model
 with a separate scoring head. `--co-resident` sums inference memory for both
 tasks. `--document-bytes N` adds a preprocessing allowance; include the corpus
-size when planning a training run. These are planning recipes, not implemented
-trainers or tested runtime exports.
+size when planning a training run. The prototype's `plan` and runtime commands
+set their exact recipe explicitly: FP32, two head outputs and the requested
+context and LoRA rank. Raw `size` defaults are not that runtime's admission plan.
 
 The provider checks current RAM, cgroup limits, observed CUDA free memory, and
 the user-data filesystem. JSON includes checkpoint identities, assumptions,
@@ -67,10 +178,10 @@ no user state. Missing provider executables exit 69.
 
 ## Integration boundaries
 
-- Prose answers need a generative adapter and source references resolved from
-  the supplied document collection.
-- Topic selection/ranking needs a separately trained and calibrated scoring
-  path. A custom decision head is not an ordinary text-generation GGUF adapter.
+- Prose answers use a generative adapter and references resolved from the frozen
+  document collection. Grounding and command correctness need further evaluation.
+- Topic ranking uses a separate trained scoring path; confidence calibration
+  remains pending. A custom head is not an ordinary text-generation GGUF adapter.
 - Automatic selection must use `plebian-model-sizer` with profiles for the
   exact artifacts, task, backend, context, and workload. Training and inference
   require separate profiles; co-resident models require a combined profile.

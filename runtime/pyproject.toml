@@ -1,0 +1,22 @@
+[project]
+name = "kilix-help-llm-runtime"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "torch==2.8.0",
+  "transformers==5.17.0",
+  "peft==0.21.0",
+  "accelerate==1.15.0",
+  "safetensors==0.8.0",
+]
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
