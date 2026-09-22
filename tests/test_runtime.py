@@ -3,10 +3,25 @@ import importlib.util
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
-from help_llm.runtime import attach, encoded, generated, loss_for, optimize
+from help_llm.runtime import attach, encoded, generated, loss_for, optimize, query
 
 AVAILABLE = all(importlib.util.find_spec(name) for name in ("torch", "transformers", "peft"))
+
+
+class QueryIdentityTests(unittest.TestCase):
+    def test_answer_exposes_exact_corpus_identity_without_claiming_qualification(self):
+        report = {"dataset_sha256": "d" * 64, "context": 384}
+        data = {"revision": "a" * 40}
+        with patch("help_llm.runtime.load_run", return_value=(report, data, None, None, None)), \
+             patch("help_llm.runtime.retrieve", return_value=[{}]), \
+             patch("help_llm.runtime.generated", return_value={"answer": "Text [example:1]"}):
+            result = query("fixture", "answer", "Question?")
+        self.assertEqual(result["source_revision"], data["revision"])
+        self.assertEqual(result["dataset_sha256"], report["dataset_sha256"])
+        self.assertFalse(result["qualification_eligible"])
+        self.assertEqual(result["quality"], "unqualified")
 
 
 @unittest.skipUnless(AVAILABLE, "run make check-runtime with the optional CPU environment")

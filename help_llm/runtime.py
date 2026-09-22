@@ -310,16 +310,18 @@ def query(name, task, question, sizer=None, limit=5, max_new_tokens=96):
     if not question.strip() or len(question) > 2000 or not 1 <= limit <= 20 or not 1 <= max_new_tokens <= 256:
         raise ValueError("invalid query limits")
     report, data, model, tokenizer, head = load_run(name, task, sizer)
+    identity = {"dataset_sha256": report["dataset_sha256"], "source_revision": data["revision"],
+                "quality": "unqualified", "qualification_eligible": False}
     if task == "rank":
         results = ranked(data, model, tokenizer, head, question, report["context"], limit)
         topics = {}
         for row in results:
             topics.setdefault(row["document"], {"document": row["document"], "source": row["id"],
                                                 "relevance_score": row["relevance_score"]})
-        return {"results": results, "topics": list(topics.values()),
+        return {**identity, "results": results, "topics": list(topics.values()),
                 "calibrated": False, "qualification_eligible": False}
     chunk = retrieve(data, question, 1)[0]
-    return generated(model, tokenizer, question, chunk, report["context"], max_new_tokens)
+    return {**identity, **generated(model, tokenizer, question, chunk, report["context"], max_new_tokens)}
 
 
 def evaluate(name, split, sizer=None):

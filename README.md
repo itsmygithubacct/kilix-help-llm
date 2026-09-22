@@ -98,6 +98,8 @@ two-output relevance head on positive paragraphs and BM25 hard negatives.
 The ranker reranks the top five BM25 results by default (`--limit` accepts 1-20).
 Its scores are **uncalibrated**, not acceptance probabilities. The generation
 command currently uses the BM25 top result; it does not load both models at once.
+Query results include the frozen document revision and dataset digest so source
+paths and line numbers can be resolved against the correct document version.
 This decision path is inspired by small-model decision training, but contains
 no copied reference implementation.
 
