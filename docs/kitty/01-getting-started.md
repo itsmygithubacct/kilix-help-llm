@@ -152,7 +152,7 @@ Kilix adds a few things that are not part of upstream kitty:
 - The option `software_mouse_cursor` (default `block`, other values `pointer` and `none`) makes Kilix draw the mouse pointer inside the terminal grid and hide the system pointer over the grid. Set it to `none` to keep the normal system pointer.
 - Kilix defines the actions `kilix_show_start_menu`, `kilix_windows_key`, `kilix_toggle_synchronized_input`, `kilix_close_persistent_window` and `kilix_show_memory_widget`. They have no default Linux keys in kitty's own configuration, so bind them with `map` if you want them on a key.
 
-Whether Kilix points `KITTY_CONFIG_DIRECTORY` at a Kilix-specific directory has not been confirmed, so do not assume the configuration directory differs from the standard search order described above.
+In Kilix, the `kilix` launcher sets `KITTY_CONFIG_DIRECTORY` to Kilix's own configuration directory: the directory named by `KILIX_CONFIG_DIRECTORY` if that is set, otherwise Kilix's per-user configuration directory. Rule 1 above therefore applies, and `~/.config/kitty` is not read; a separately installed kitty keeps using it. The Kilix README describes that directory's files.
 
 ## See also
 
