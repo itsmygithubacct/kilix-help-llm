@@ -5,12 +5,22 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from help_llm.runtime import attach, encoded, chat_encoded, generated, loss_for, optimize, query, group_backward, require_legacy_evaluation, selection_labels
+from help_llm.runtime import attach, encoded, chat_encoded, examples, generated, loss_for, optimize, query, group_backward, require_legacy_evaluation, selection_labels
 
 AVAILABLE = all(importlib.util.find_spec(name) for name in ("torch", "transformers", "peft"))
 
 
 class QueryIdentityTests(unittest.TestCase):
+    def test_answer_negative_stride_keeps_every_positive_and_unknown(self):
+        chunks = [{"id": "a:1", "text": "Run A."}, {"id": "a:2", "text": "Run B."}]
+        labels = [{"split": "train", "source": "a:1", "question": str(i), "answer": "Run A.",
+                   "negatives": ["a:2"], "unanswerable": False} for i in range(8)]
+        labels.append({"split": "train", "source": "a:1", "question": "unknown", "answer": None,
+                       "negatives": ["a:2"], "unanswerable": True})
+        with patch("help_llm.runtime.chat_encoded", side_effect=lambda *a: {"input_ids": [1], "labels": [1]}):
+            rows = examples({"chunks": chunks, "examples": labels}, None, "answer", 384, "train", 4)
+        self.assertEqual(len(rows), 11)  # Eight known, two negatives, one unknown.
+
     def test_development_selection_covers_fact_and_unknown_groups_per_document(self):
         labels = [{"split": "dev", "document": doc, "group": f"{doc}-{fact}",
                    "unanswerable": fact == 9} for doc in ("a", "b", "c") for fact in range(10)]
@@ -111,6 +121,17 @@ class TrainingTests(unittest.TestCase):
             restored = sum(float(loss_for(model, head, r)) for r in rows) / 2
         self.assertAlmostEqual(restored, selection["selected_dev_loss"], places=5)
         self.assertLessEqual(len(losses), 12)
+
+    def test_quality_proxy_takes_precedence_over_teacher_forced_loss(self):
+        from transformers import Qwen3Model
+        model, head = attach(Qwen3Model(self.config), 2, "rank")
+        rows = [{"input_ids": [1, 2, 3], "target": 1}, {"input_ids": [4, 5, 6], "target": 0}]
+        scores = iter((2, 1, 3))
+        selection = {"history": []}
+        optimize(model, head, rows, 6, .01, dev_rows=rows, eval_every=2,
+                 patience=3, selection=selection, quality=lambda _: next(scores))
+        self.assertEqual(selection["selected_quality_proxy_count"], 3)
+        self.assertEqual(selection["selected_step"], 6)
 
     def test_listwise_replay_matches_full_graph_gradient_and_learns_none(self):
         import torch

@@ -109,7 +109,9 @@ families remain sizing candidates until their training path is verified.
 Answer training uses the checkpoint's native chat template with thinking
 disabled, masks the entire generation prefix and retains assistant end tokens.
 It learns cited answers, explicit unknowns and refusals for reviewed negative
-evidence. Existing runs retain their original prompt format. The `baseline`
+evidence. V2 answer training includes one reviewed negative for every
+`--negative-stride` answerable questions (default four), keeping all positive
+and explicitly unanswerable examples. Existing runs retain their original prompt format. The `baseline`
 command runs the unchanged model with retrieved evidence on a v1 dataset.
 
 Ranking trains a separate base-model adapter and a two-output head. New heads
@@ -131,9 +133,11 @@ Training sees only the training split. For v2 data, the trainer checks a fixed
 small development sample every `--eval-every` steps, stops after `--patience`
 non-improving checks, restores the best adapter/head and reports the full
 development loss. The sample takes the first three fact groups and first unknown
-group per held-out document; selection uses teacher-forced loss, not final
-answer quality. Calibration and test sets are accessed only when explicitly
-named for evaluation.
+group per held-out document. Ranking selects by teacher-forced group loss;
+answer training selects by a source/phrase/unknown generation proxy, breaking
+ties with teacher-forced loss. The proxy cannot prove factual correctness.
+Calibration and test sets are accessed only when explicitly named for
+evaluation.
 
 V2 reports compare BM25 top five with ranking of the same pool, and whole-
 paragraph extraction with unchanged and adapted generation on the same top

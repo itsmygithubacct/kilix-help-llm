@@ -148,9 +148,10 @@ def chat_encoded(tokenizer, prompt, answer=None, context=384):
     return {"input_ids": ids, "labels": [-100] * len(prefix) + ids[len(prefix):]}
 
 
-def examples(data, tokenizer, task, context, split):
+def examples(data, tokenizer, task, context, split, answer_negative_stride=1):
     chunks = {c["id"]: c for c in data["chunks"]}
     rows = []
+    answered = 0
     for label in data["examples"]:
         if label["split"] != split:
             continue
@@ -158,9 +159,11 @@ def examples(data, tokenizer, task, context, split):
         if task == "answer":
             target = ABSTENTION if label.get("unanswerable") else f"{label['answer']} [{chunk['id']}]"
             rows.append(chat_encoded(tokenizer, answer_prompt(label["question"], chunk), target, context))
-            if not label.get("unanswerable") and label.get("negatives"):
+            if not label.get("unanswerable") and label.get("negatives") and answer_negative_stride > 0 and answered % answer_negative_stride == 0:
                 negative = chunks[label["negatives"][0]]
                 rows.append(chat_encoded(tokenizer, answer_prompt(label["question"], negative), ABSTENTION, context))
+            if not label.get("unanswerable"):
+                answered += 1
         elif "negatives" in label and label["negatives"]:
             relevant = label.get("relevant_sources", [] if label.get("unanswerable") else [chunk["id"]])
             keys = list(dict.fromkeys([chunk["id"], *relevant, *label["negatives"]]))
@@ -249,8 +252,22 @@ def selection_labels(data):
     return chosen
 
 
+def answer_selection_quality(model, tokenizer, data, labels, context):
+    """Development proxy on BM25 evidence, with known facts and unknowns distinct."""
+    score = 0
+    for label in labels:
+        chunk = retrieve(data, label["question"], 1)[0]
+        output = generated(model, tokenizer, label["question"], chunk, context, 96, "chat-nonthinking-v2")
+        proxies = answer_row(output, label)
+        if label["unanswerable"]:
+            score += proxies["explicit_refusal"]
+        else:
+            score += bool(proxies["known_source_cited"] and proxies["rubric_phrase_proxy"])
+    return int(score)
+
+
 def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None,
-             dev_rows=None, eval_every=16, patience=3, selection=None):
+             dev_rows=None, eval_every=16, patience=3, selection=None, quality=None):
     import torch
     rng = random.Random(seed)
     params = [p for p in model.parameters() if p.requires_grad]
@@ -261,7 +278,7 @@ def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None,
     if head is not None:
         head.train()
     order, losses = list(range(len(rows))), []
-    best_weights, best_loss, stale = None, float("inf"), 0
+    best_weights, best_loss, best_score, stale = None, float("inf"), float("-inf"), 0
     if dev_rows is not None and (not dev_rows or eval_every < 1 or patience < 1):
         raise ValueError("checkpoint selection needs dev rows, positive interval and patience")
     for step in range(steps):
@@ -287,12 +304,17 @@ def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None,
                 dev_loss = sum(float(loss_for(model, head, item)) for item in dev_rows) / len(dev_rows)
             if not math.isfinite(dev_loss):
                 raise ValueError("non-finite development loss")
-            improved = dev_loss < best_loss - 1e-4
-            selection["history"].append({"step": step + 1, "loss": dev_loss, "improved": improved})
+            score = quality(model) if quality is not None else None
+            improved = ((score is not None and (score > best_score or
+                        (score == best_score and dev_loss < best_loss - 1e-4))) or
+                        (score is None and dev_loss < best_loss - 1e-4))
+            selection["history"].append({"step": step + 1, "loss": dev_loss,
+                                         "quality_proxy_count": score, "improved": improved})
             if improved:
-                best_loss, stale = dev_loss, 0
+                best_loss, best_score, stale = dev_loss, score if score is not None else best_score, 0
                 best_weights = [p.detach().clone() for p in params]
-                selection.update(selected_step=step + 1, selected_dev_loss=dev_loss)
+                selection.update(selected_step=step + 1, selected_dev_loss=dev_loss,
+                                 selected_quality_proxy_count=score)
             else:
                 stale += 1
             if progress is not None:
@@ -310,9 +332,10 @@ def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None,
 
 
 def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, candidate=None,
-          eval_every=16, patience=3):
-    if not 1 <= steps <= 10000 or not 0 < learning_rate <= .01 or not 1 <= eval_every <= 10000 or not 1 <= patience <= 100:
-        raise ValueError("steps must be 1-10000 and learning rate must be in (0, .01]")
+          eval_every=16, patience=3, negative_stride=4):
+    if (not 1 <= steps <= 10000 or not 0 < learning_rate <= .01 or
+            not 1 <= eval_every <= 10000 or not 1 <= patience <= 100 or not 1 <= negative_stride <= 100):
+        raise ValueError("invalid training steps, learning rate, evaluation interval, patience or negative stride")
     torch = configure()
     bundle = load_dataset(dataset)
     plan = recommend(bundle, context, rank, sizer, candidate, task)
@@ -334,14 +357,21 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
                      for p in c["profiles"] if p["phase"] == "train" and p["task"] == task)
         if trainable > sized["trainable_parameters"]:
             raise ValueError("actual adapter/head parameter count exceeds the shared sizing recipe")
-        rows = examples(bundle["data"], tokenizer, task, context, "train")
+        rows = examples(bundle["data"], tokenizer, task, context, "train",
+                        answer_negative_stride=negative_stride if task == "answer" and bundle["data"].get("schema") == "kilix.help-llm.dataset/v2" else 1)
         dev = examples(bundle["data"], tokenizer, task, context, "dev")
         selection = None
         selected_dev = None
+        quality = None
         if bundle["data"].get("schema") == "kilix.help-llm.dataset/v2":
             chosen = selection_labels(bundle["data"])
-            selected_dev = examples({**bundle["data"], "examples": chosen}, tokenizer, task, context, "dev")
-            selection = {"criterion": "mean teacher-forced dev loss", "groups": [r["group"] for r in chosen],
+            selected_dev = examples({**bundle["data"], "examples": chosen}, tokenizer, task, context, "dev",
+                                    answer_negative_stride=0 if task == "answer" else 1)
+            if task == "answer":
+                quality = lambda active_model: answer_selection_quality(active_model, tokenizer, bundle["data"], chosen, context)
+            selection = {"criterion": ("correct-source-and-phrase-or-unknown proxy count, then dev loss" if quality else
+                                       "mean teacher-forced dev loss"),
+                         "groups": [r["group"] for r in chosen],
                          "eval_every": eval_every, "patience": patience, "history": []}
         def progress(step, loss, dev_loss=None):
             if step % 4 == 0 or step == steps or dev_loss is not None:
@@ -349,7 +379,7 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
                                   "selection_dev_loss": dev_loss}), file=sys.stderr, flush=True)
         losses = optimize(model, head, rows, steps, learning_rate, progress=progress,
                           dev_rows=selected_dev, eval_every=eval_every, patience=patience,
-                          selection=selection)
+                          selection=selection, quality=quality)
         model.eval()
         with torch.no_grad():
             dev_loss = sum(float(loss_for(model, head, row)) for row in dev) / len(dev)
@@ -363,6 +393,7 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
                   "steps": steps, "actual_steps": len(losses), "learning_rate": learning_rate, "seed": 17, "losses": losses,
                   "dev_loss": dev_loss, "training_examples": len(rows), "dev_examples": len(dev),
                   "selection": selection,
+                  "answer_negative_stride": negative_stride if task == "answer" and selection else None,
                   "elapsed_seconds": time.monotonic() - started,
                   "process_peak_rss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024,
                   "runtime": {k: importlib.metadata.version(k) for k in
