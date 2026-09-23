@@ -499,10 +499,34 @@ def generated(model, tokenizer, question, chunk, context, max_new_tokens, answer
             "factual_support": "not-automatically-verified"}
 
 
-def query(name, task, question, sizer=None, limit=5, max_new_tokens=96):
+def query(name, task, question, sizer=None, limit=5, max_new_tokens=96, rank_name=None):
     if not question.strip() or len(question) > 2000 or not 1 <= limit <= 20 or not 1 <= max_new_tokens <= 256:
         raise ValueError("invalid query limits")
+    selected, ranking = None, None
+    if rank_name is not None:
+        if task != "answer":
+            raise ValueError("a ranking run can only be combined with an answer query")
+        answer_identity = read_json(state_root() / "runs" / identifier(name) / "run.json")
+        rank_identity = read_json(state_root() / "runs" / identifier(rank_name) / "run.json")
+        if (answer_identity["task"] != "answer" or rank_identity["task"] != "rank" or
+                any(answer_identity[key] != rank_identity[key] for key in ("dataset", "dataset_sha256", "context"))):
+            raise ValueError("combined runs require identical dataset, digest and context")
+        rank_report, rank_data, rank_model, rank_tokenizer, rank_head = load_run(rank_name, "rank", sizer)
+        if digest(rank_report) != digest(rank_identity):
+            raise ValueError("ranking run changed during admission")
+        pool = ranked(rank_data, rank_model, rank_tokenizer, rank_head, question, rank_report["context"], limit)
+        selected = pool[0]
+        ranking = {"run": rank_name, "run_sha256": digest(rank_report), "calibrated": False,
+                   "order": [row["id"] for row in pool], "scores": [row["relevance_score"] for row in pool],
+                   "residency": "sequential"}
+        # Each load_run performs fresh sizing. Do not retain rank tensors while
+        # admitting/loading the answer model under a sequential resource plan.
+        del rank_model, rank_tokenizer, rank_head
+        import gc
+        gc.collect()
     report, data, model, tokenizer, head = load_run(name, task, sizer)
+    if ranking is not None and digest(report) != digest(answer_identity):
+        raise ValueError("answer run changed during admission")
     identity = {"dataset_sha256": report["dataset_sha256"], "source_revision": data["revision"],
                 "quality": "unqualified", "qualification_eligible": False}
     if task == "rank":
@@ -513,9 +537,12 @@ def query(name, task, question, sizer=None, limit=5, max_new_tokens=96):
                                                 "relevance_score": row["relevance_score"]})
         return {**identity, "results": results, "topics": list(topics.values()),
                 "calibrated": False, "qualification_eligible": False}
-    chunk = retrieve(data, question, 1)[0]
-    return {**identity, **generated(model, tokenizer, question, chunk, report["context"], max_new_tokens,
-                                   report.get("answer_format", "plain-v1"))}
+    chunk = selected if selected is not None else retrieve(data, question, 1)[0]
+    result = {**identity, **generated(model, tokenizer, question, chunk, report["context"], max_new_tokens,
+                                    report.get("answer_format", "plain-v1"))}
+    if ranking is not None:
+        result.update(ranking=ranking, answer_run=name, answer_run_sha256=digest(report))
+    return result
 
 
 def require_legacy_evaluation(data):

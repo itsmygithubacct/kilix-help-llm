@@ -64,6 +64,7 @@ def parser():
             command.add_argument("question")
         if name == "ask":
             command.add_argument("--max-new-tokens", type=int, default=96)
+            command.add_argument("--rank-run", help="rerank evidence with a matching run before loading the answer model")
         if name == "rank":
             command.add_argument("--limit", type=int, default=5)
     return root
@@ -144,7 +145,8 @@ def main(argv=None):
                                    args.eval_every, args.patience, args.negative_stride, args.seed, args.unknown_repeats)
         elif args.command in {"ask", "rank"}:
             result = runtime.query(args.run, "answer" if args.command == "ask" else "rank", args.question, args.sizer,
-                                   limit=getattr(args, "limit", 5), max_new_tokens=getattr(args, "max_new_tokens", 96))
+                                   limit=getattr(args, "limit", 5), max_new_tokens=getattr(args, "max_new_tokens", 96),
+                                   rank_name=getattr(args, "rank_run", None))
         elif args.command == "evaluate":
             result = runtime.evaluate(args.run, args.split, args.sizer)
         elif args.command == "baseline":

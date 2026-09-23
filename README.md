@@ -86,6 +86,7 @@ UV_PROJECT_ENVIRONMENT="$HELP_HOME/runtimes/cpu" \
 ./kilix-help-llm train --dataset kilix-022-r1 --task answer --name answer-r1 --steps 32
 ./kilix-help-llm train --dataset kilix-022-r1 --task rank --name rank-r1 --steps 32
 ./kilix-help-llm ask --run answer-r1 'How do I list panes?'
+./kilix-help-llm ask --run answer-r1 --rank-run rank-r1 'How do I list panes?'
 ./kilix-help-llm rank --run rank-r1 'How do I list panes?'
 ./kilix-help-llm evaluate --run answer-r1 --split dev
 ./kilix-help-llm evaluate --run rank-r1 --split dev
@@ -128,8 +129,13 @@ nonzero dropout is rejected. Labels without explicit negatives retain the
 binary fallback. New scores are logit differences; old runs keep their original
 readout. These tests establish training mechanics, not retrieval improvement.
 The ranker reranks the top five BM25 results by default (`--limit` accepts 1-20).
-Its scores are **uncalibrated**, not acceptance probabilities. The generation
-command currently uses the BM25 top result; it does not load both models at once.
+Its scores are **uncalibrated**, not acceptance probabilities. Generation uses
+the BM25 top result by default. `ask --rank-run NAME` instead selects the
+ranker's top passage, releases the ranking model, then admits and loads the
+answer model through fresh shared sizing. Both runs must bind the same dataset,
+digest and context. The output records their identities and ranking order;
+the two models are loaded sequentially. This experimental path is unqualified
+and does not treat the uncalibrated rank score as an abstention threshold.
 Query results include the frozen document revision and dataset digest so source
 paths and line numbers can be resolved against the correct document version.
 This decision path is inspired by small-model decision training, but contains

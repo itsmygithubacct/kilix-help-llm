@@ -11,6 +11,69 @@ AVAILABLE = all(importlib.util.find_spec(name) for name in ("torch", "transforme
 
 
 class QueryIdentityTests(unittest.TestCase):
+    def test_combined_query_releases_ranker_and_uses_its_selected_evidence(self):
+        import weakref
+        class Resource:
+            pass
+        shared = {"dataset": "fixture", "dataset_sha256": "d", "context": 384}
+        answer_report, rank_report = {**shared, "task": "answer"}, {**shared, "task": "rank"}
+        data = {"revision": "r"}
+        chunk = {"id": "a:2", "text": "Run B.", "path": "a.md", "line": 2, "relevance_score": .5}
+        references, events = [], []
+        def load(name, task, sizer):
+            events.append(task)
+            if task == "rank":
+                model, tokenizer, head = Resource(), Resource(), Resource()
+                references.extend(weakref.ref(x) for x in (model, tokenizer, head))
+                return rank_report, data, model, tokenizer, head
+            self.assertTrue(all(ref() is None for ref in references))
+            return answer_report, data, Resource(), Resource(), None
+        def rank(*args):
+            self.assertEqual(events, ["rank"])
+            return [chunk]
+        def generate(model, tokenizer, question, evidence, *args):
+            self.assertEqual(evidence, chunk)
+            return {"answer": "Run B. [a:2]", "source": evidence}
+        with patch("help_llm.runtime.read_json", side_effect=[answer_report, rank_report]), \
+                patch("help_llm.runtime.load_run", new=load), patch("help_llm.runtime.ranked", new=rank), \
+                patch("help_llm.runtime.generated", new=generate), \
+                patch("help_llm.runtime.retrieve", side_effect=AssertionError("must use ranked evidence")):
+            result = query("answer", "answer", "How?", rank_name="rank")
+        self.assertEqual(events, ["rank", "answer"])
+        self.assertEqual(result["ranking"]["order"], ["a:2"])
+        self.assertFalse(result["ranking"]["calibrated"])
+        self.assertFalse(result["qualification_eligible"])
+
+    def test_combined_query_rejects_mismatched_runs_before_loading(self):
+        common = {"dataset": "fixture", "dataset_sha256": "d", "context": 384}
+        answer = {**common, "task": "answer"}
+        for key, value in (("dataset", "other"), ("dataset_sha256", "e"), ("context", 512), ("task", "answer")):
+            rank = {**common, "task": "rank", key: value}
+            with patch("help_llm.runtime.read_json", side_effect=[answer, rank]), \
+                    patch("help_llm.runtime.load_run") as load:
+                with self.assertRaisesRegex(ValueError, "identical"):
+                    query("answer", "answer", "How?", rank_name="rank")
+                load.assert_not_called()
+
+    def test_combined_query_rejects_manifest_changes_during_admission(self):
+        common = {"dataset": "fixture", "dataset_sha256": "d", "context": 384}
+        answer, rank = {**common, "task": "answer"}, {**common, "task": "rank"}
+        chunk = {"id": "a:1", "relevance_score": .5}
+        for changed_task in ("rank", "answer"):
+            def load(name, task, sizer):
+                report = dict(rank if task == "rank" else answer)
+                if task == changed_task:
+                    report["dataset_sha256"] = "changed"
+                return report, {}, None, None, None
+            with self.subTest(task=changed_task), \
+                    patch("help_llm.runtime.read_json", side_effect=[answer, rank]), \
+                    patch("help_llm.runtime.load_run", new=load), \
+                    patch("help_llm.runtime.ranked", return_value=[chunk]), \
+                    patch("help_llm.runtime.generated") as generate:
+                with self.assertRaisesRegex(ValueError, "changed during admission"):
+                    query("answer", "answer", "How?", rank_name="rank")
+                generate.assert_not_called()
+
     def test_unknown_exposure_changes_only_explicit_training_unknowns(self):
         labels = [{"split": split, "source": "a:1", "question": question,
                    "answer": None if unknown else "Run A.", "unanswerable": unknown,
