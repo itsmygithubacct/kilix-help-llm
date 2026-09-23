@@ -5,12 +5,38 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from help_llm.runtime import attach, encoded, chat_encoded, examples, generated, loss_for, optimize, query, group_backward, require_legacy_evaluation, selection_labels
+from help_llm.runtime import attach, encoded, chat_encoded, examples, file_digest, generated, load_run, loss_for, optimize, query, group_backward, require_legacy_evaluation, selection_labels
 
 AVAILABLE = all(importlib.util.find_spec(name) for name in ("torch", "transformers", "peft"))
 
 
 class QueryIdentityTests(unittest.TestCase):
+    def test_run_rejects_incomplete_or_corrupt_artifacts_before_sizing(self):
+        import json
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            directory = root / 'runs/fixture'
+            (directory / 'adapter').mkdir(parents=True)
+            names = ('plan.json', 'adapter/adapter_config.json',
+                     'adapter/adapter_model.safetensors', 'head.safetensors')
+            for name in names:
+                (directory / name).write_text('fixture')
+            artifacts = {name: file_digest(directory / name) for name in names}
+            cases = [({}, 'incomplete'),
+                     ({k: v for k, v in artifacts.items() if k != 'head.safetensors'}, 'incomplete'),
+                     ({**artifacts, 'head.safetensors': '0' * 64}, 'integrity'),
+                     ({**artifacts, '../outside': '0' * 64}, 'integrity')]
+            for entries, error in cases:
+                (directory / 'run.json').write_text(json.dumps({'task': 'rank', 'dataset': 'fixture',
+                    'dataset_sha256': 'd', 'artifacts': entries}))
+                with patch('help_llm.runtime.configure'), patch('help_llm.runtime.state_root', return_value=root), \
+                        patch('help_llm.runtime.load_dataset', return_value={'sha256': 'd'}), \
+                        patch('help_llm.runtime.recommend') as sizing, patch('help_llm.runtime.load_base') as base:
+                    with self.assertRaisesRegex(ValueError, error):
+                        load_run('fixture', 'rank')
+                    sizing.assert_not_called()
+                    base.assert_not_called()
+
     def test_combined_query_releases_ranker_and_uses_its_selected_evidence(self):
         import weakref
         class Resource:

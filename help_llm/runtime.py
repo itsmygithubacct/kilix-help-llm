@@ -439,9 +439,16 @@ def load_run(name, task, sizer=None):
     bundle = load_dataset(report["dataset"])
     if report["dataset_sha256"] != bundle["sha256"]:
         raise ValueError("run and dataset do not match")
+    required = {"plan.json", "adapter/adapter_config.json", "adapter/adapter_model.safetensors"}
+    if task == "rank":
+        required.add("head.safetensors")
+    if not isinstance(report.get("artifacts"), dict) or not required <= report["artifacts"].keys():
+        raise ValueError("run artifact manifest is incomplete")
     for name, expected in report["artifacts"].items():
         path = directory / name
-        if not path.resolve().is_relative_to(directory.resolve()) or file_digest(path) != expected:
+        if (Path(name).is_absolute() or ".." in Path(name).parts or
+                not path.resolve().is_relative_to(directory.resolve()) or path.is_symlink() or
+                file_digest(path) != expected):
             raise ValueError("run artifact integrity check failed")
     plan = read_json(directory / "plan.json")
     current = recommend(bundle, report["context"], report["lora_rank"], sizer, plan["candidate"]["id"], task)
