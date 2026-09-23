@@ -5,12 +5,19 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from help_llm.runtime import attach, encoded, chat_encoded, generated, loss_for, optimize, query, group_backward, require_legacy_evaluation
+from help_llm.runtime import attach, encoded, chat_encoded, generated, loss_for, optimize, query, group_backward, require_legacy_evaluation, selection_labels
 
 AVAILABLE = all(importlib.util.find_spec(name) for name in ("torch", "transformers", "peft"))
 
 
 class QueryIdentityTests(unittest.TestCase):
+    def test_development_selection_covers_fact_and_unknown_groups_per_document(self):
+        labels = [{"split": "dev", "document": doc, "group": f"{doc}-{fact}",
+                   "unanswerable": fact == 9} for doc in ("a", "b", "c") for fact in range(10)]
+        selected = selection_labels({"examples": labels})
+        self.assertEqual(len(selected), 12)
+        self.assertEqual(sum(row["unanswerable"] for row in selected), 3)
+
     def test_legacy_metrics_refuse_new_label_semantics(self):
         require_legacy_evaluation({"schema": "kilix.help-llm.dataset/v1"})
         with self.assertRaisesRegex(ValueError, "v2 evaluation is pending"):
@@ -88,6 +95,22 @@ class TrainingTests(unittest.TestCase):
         model.eval()
         for row in rows:
             self.assertLess(float(loss_for(model, head, row).detach()), .2)
+
+    def test_selection_restores_the_best_measured_step(self):
+        from transformers import Qwen3Model
+        model, head = attach(Qwen3Model(self.config), 2, "rank")
+        rows = [{"input_ids": [1, 2, 3], "target": 1}, {"input_ids": [4, 5, 6], "target": 0}]
+        selection = {"history": []}
+        losses = optimize(model, head, rows, 12, .01, dev_rows=rows, eval_every=4,
+                          patience=2, selection=selection)
+        measured = [r["loss"] for r in selection["history"]]
+        self.assertEqual(selection["selected_dev_loss"], min(measured))
+        model.eval()
+        import torch
+        with torch.no_grad():
+            restored = sum(float(loss_for(model, head, r)) for r in rows) / 2
+        self.assertAlmostEqual(restored, selection["selected_dev_loss"], places=5)
+        self.assertLessEqual(len(losses), 12)
 
     def test_listwise_replay_matches_full_graph_gradient_and_learns_none(self):
         import torch

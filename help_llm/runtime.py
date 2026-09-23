@@ -1,6 +1,7 @@
 """Optional CPU LoRA runtime. Imports stay outside the stdlib-only CLI path."""
 import importlib.metadata
 import json
+import math
 import os
 from pathlib import Path
 import random
@@ -12,6 +13,7 @@ import time
 from .data import (SOURCE, answer_prompt, digest, identifier, load_dataset,
                    private_dir, rank_prompt, read_json, retrieve, state_root, write_json)
 from .sizing import recommend
+from .evaluation import answer_row, explicit_refusal, retrieval_row, summarize
 
 
 def configure():
@@ -229,7 +231,26 @@ def loss_for(model, head, row):
     return torch.nn.functional.cross_entropy(rank_logits(model, head, row), torch.tensor([row["target"]]))
 
 
-def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None):
+def selection_labels(data):
+    """Predeclared small dev set: three facts and one unknown per document."""
+    chosen, counts, unknown = [], {}, set()
+    for label in data["examples"]:
+        if label["split"] != "dev":
+            continue
+        document = label["document"]
+        if label.get("unanswerable"):
+            if document not in unknown:
+                chosen.append(label)
+                unknown.add(document)
+        elif label["group"] not in counts.setdefault(document, []):
+            if len(counts[document]) < 3:
+                counts[document].append(label["group"])
+                chosen.append(label)
+    return chosen
+
+
+def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None,
+             dev_rows=None, eval_every=16, patience=3, selection=None):
     import torch
     rng = random.Random(seed)
     params = [p for p in model.parameters() if p.requires_grad]
@@ -240,6 +261,9 @@ def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None):
     if head is not None:
         head.train()
     order, losses = list(range(len(rows))), []
+    best_weights, best_loss, stale = None, float("inf"), 0
+    if dev_rows is not None and (not dev_rows or eval_every < 1 or patience < 1):
+        raise ValueError("checkpoint selection needs dev rows, positive interval and patience")
     for step in range(steps):
         if step % len(rows) == 0:
             rng.shuffle(order)
@@ -255,11 +279,39 @@ def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None):
         losses.append(float(loss.detach()))
         if progress is not None:
             progress(step + 1, losses[-1])
+        if dev_rows is not None and ((step + 1) % eval_every == 0 or step + 1 == steps):
+            model.eval()
+            if head is not None:
+                head.eval()
+            with torch.no_grad():
+                dev_loss = sum(float(loss_for(model, head, item)) for item in dev_rows) / len(dev_rows)
+            if not math.isfinite(dev_loss):
+                raise ValueError("non-finite development loss")
+            improved = dev_loss < best_loss - 1e-4
+            selection["history"].append({"step": step + 1, "loss": dev_loss, "improved": improved})
+            if improved:
+                best_loss, stale = dev_loss, 0
+                best_weights = [p.detach().clone() for p in params]
+                selection.update(selected_step=step + 1, selected_dev_loss=dev_loss)
+            else:
+                stale += 1
+            if progress is not None:
+                progress(step + 1, losses[-1], dev_loss)
+            model.train()
+            if head is not None:
+                head.train()
+            if stale >= patience:
+                break
+    if best_weights is not None:
+        with torch.no_grad():
+            for parameter, value in zip(params, best_weights):
+                parameter.copy_(value)
     return losses
 
 
-def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, candidate=None):
-    if not 1 <= steps <= 10000 or not 0 < learning_rate <= .01:
+def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, candidate=None,
+          eval_every=16, patience=3):
+    if not 1 <= steps <= 10000 or not 0 < learning_rate <= .01 or not 1 <= eval_every <= 10000 or not 1 <= patience <= 100:
         raise ValueError("steps must be 1-10000 and learning rate must be in (0, .01]")
     torch = configure()
     bundle = load_dataset(dataset)
@@ -284,10 +336,20 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
             raise ValueError("actual adapter/head parameter count exceeds the shared sizing recipe")
         rows = examples(bundle["data"], tokenizer, task, context, "train")
         dev = examples(bundle["data"], tokenizer, task, context, "dev")
-        def progress(step, loss):
-            if step % 4 == 0 or step == steps:
-                print(json.dumps({"step": step, "steps": steps, "loss": loss}), file=sys.stderr, flush=True)
-        losses = optimize(model, head, rows, steps, learning_rate, progress=progress)
+        selection = None
+        selected_dev = None
+        if bundle["data"].get("schema") == "kilix.help-llm.dataset/v2":
+            chosen = selection_labels(bundle["data"])
+            selected_dev = examples({**bundle["data"], "examples": chosen}, tokenizer, task, context, "dev")
+            selection = {"criterion": "mean teacher-forced dev loss", "groups": [r["group"] for r in chosen],
+                         "eval_every": eval_every, "patience": patience, "history": []}
+        def progress(step, loss, dev_loss=None):
+            if step % 4 == 0 or step == steps or dev_loss is not None:
+                print(json.dumps({"step": step, "steps": steps, "loss": loss,
+                                  "selection_dev_loss": dev_loss}), file=sys.stderr, flush=True)
+        losses = optimize(model, head, rows, steps, learning_rate, progress=progress,
+                          dev_rows=selected_dev, eval_every=eval_every, patience=patience,
+                          selection=selection)
         model.eval()
         with torch.no_grad():
             dev_loss = sum(float(loss_for(model, head, row)) for row in dev) / len(dev)
@@ -298,8 +360,9 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
         artifacts = {str(p.relative_to(directory)): file_digest(p) for p in directory.rglob("*") if p.is_file()}
         report = {"schema": "kilix.help-llm.run/v1", "dataset": dataset, "dataset_sha256": bundle["sha256"],
                   "checkpoint": checkpoint, "task": task, "context": context, "lora_rank": rank,
-                  "steps": steps, "learning_rate": learning_rate, "seed": 17, "losses": losses,
+                  "steps": steps, "actual_steps": len(losses), "learning_rate": learning_rate, "seed": 17, "losses": losses,
                   "dev_loss": dev_loss, "training_examples": len(rows), "dev_examples": len(dev),
+                  "selection": selection,
                   "elapsed_seconds": time.monotonic() - started,
                   "process_peak_rss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024,
                   "runtime": {k: importlib.metadata.version(k) for k in
@@ -310,7 +373,8 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
                                   else "normalized-binary-v2" if task == "rank" else None),
                   "artifacts": artifacts, "quality": "unmeasured", "qualification_eligible": False}
         write_json(directory / "run.json", report)
-        return {"run": name, "task": task, "steps": steps, "dev_loss": dev_loss,
+        return {"run": name, "task": task, "steps": len(losses), "selected_step": selection.get("selected_step") if selection else None,
+                "dev_loss": dev_loss,
                 "elapsed_seconds": report["elapsed_seconds"], "quality": "unmeasured"}
     except Exception as error:
         write_json(directory / "failure.json", {"error_type": type(error).__name__, "complete": False})
@@ -378,8 +442,10 @@ def generated(model, tokenizer, question, chunk, context, max_new_tokens, answer
     answer = tokenizer.decode(output[0, ids.shape[1]:], skip_special_tokens=True).strip()
     citations = re.findall(r"\[([^\[\]\n]+)\]", answer)
     valid = bool(citations) and all(c == chunk["id"] for c in citations)
-    return {"answer": answer if valid else None, "draft": answer if not valid else None,
-            "citation_valid": valid, "abstained": not valid,
+    refusal = explicit_refusal(answer)
+    accepted = valid or refusal
+    return {"answer": answer if accepted else None, "draft": answer if not accepted else None,
+            "citation_valid": valid, "explicit_refusal": refusal, "abstained": refusal or not valid,
             "source": {k: chunk[k] for k in ("id", "path", "line", "text")},
             "factual_support": "not-automatically-verified"}
 
@@ -409,9 +475,91 @@ def require_legacy_evaluation(data):
                          "legacy metrics must not be used for this dataset")
 
 
+def _evaluation_progress(index, total):
+    if index % 5 == 0 or index == total:
+        print(json.dumps({"evaluated": index, "total": total}), file=sys.stderr, flush=True)
+
+
+def evaluate_v2(dataset, split, task, context, model=None, tokenizer=None, head=None,
+                run=None, candidate=None, answer_format="chat-nonthinking-v2", progress=None):
+    """Use one BM25 pool for each comparison; score only reviewed source IDs."""
+    if split not in {"dev", "calibration", "test"}:
+        raise ValueError("v2 evaluation is reserved for held-out splits")
+    bundle = load_dataset(dataset)
+    data = bundle["data"]
+    if data.get("schema") != "kilix.help-llm.dataset/v2":
+        raise ValueError("this evaluator requires reviewed dataset v2")
+    labels = [r for r in data["examples"] if r["split"] == split]
+    rows = []
+    for index, label in enumerate(labels, 1):
+        pool = retrieve(data, label["question"], 5)
+        row = {"id": label["id"], "group": label["group"], "question": label["question"],
+               "unanswerable": label["unanswerable"], "reference_source": label["source"],
+               "reviewed_relevant_sources": label["relevant_sources"],
+               "reference_answer": label["answer"], "rubric": label["rubric"],
+               "bm25": retrieval_row(pool, label), "pool": [c["id"] for c in pool]}
+        if task == "rank":
+            if model is None or tokenizer is None or head is None:
+                raise ValueError("ranking evaluation needs the trained model and head")
+            scored = ranked(data, model, tokenizer, head, label["question"], context)
+            row["ranked"] = retrieval_row(scored, label)
+            row["ranked"].update(order=[c["id"] for c in scored],
+                                 scores=[c["relevance_score"] for c in scored],
+                                 none_predicted=scored[0]["relevance_score"] <= 0,
+                                 none_correct_proxy=(scored[0]["relevance_score"] <= 0) == label["unanswerable"])
+        else:
+            chunk = pool[0]
+            # Whole-paragraph extraction is a deliberately verbose baseline.
+            extract = {"answer": chunk["text"] + f" [{chunk['id']}]", "draft": None,
+                       "citation_valid": True, "source": chunk, "explicit_refusal": False}
+            row["bm25_extract"] = {"output": extract, "proxies": answer_row(extract, label)}
+            if model is not None:
+                if tokenizer is None:
+                    raise ValueError("answer evaluation needs its tokenizer")
+                if run:
+                    adapted = generated(model, tokenizer, label["question"], chunk, context, 96, answer_format)
+                    with model.disable_adapter():
+                        base = generated(model, tokenizer, label["question"], chunk, context, 96, answer_format)
+                    row["adapted"] = {"output": adapted, "proxies": answer_row(adapted, label)}
+                else:
+                    base = generated(model, tokenizer, label["question"], chunk, context, 96, answer_format)
+                row["base"] = {"output": base, "proxies": answer_row(base, label)}
+        rows.append(row)
+        if progress:
+            progress(index, len(labels))
+    metrics = {"bm25": summarize([r["bm25"] for r in rows],
+                                  ("known_relevant_at_1", "known_relevant_at_5", "known_relevant_mrr"))}
+    if task == "rank":
+        metrics["ranked"] = summarize([r["ranked"] for r in rows],
+                                      ("known_relevant_at_1", "known_relevant_at_5", "known_relevant_mrr",
+                                       "none_correct_proxy"))
+    else:
+        for system in ("bm25_extract", "base", "adapted"):
+            found = [r[system]["proxies"] for r in rows if system in r]
+            if found:
+                metrics[system] = summarize(found, ("explicit_refusal", "refusal_correct_proxy",
+                                                    "citation_valid", "known_source_cited",
+                                                    "rubric_phrase_proxy", "reference_substring"))
+    return {"schema": "kilix.help-llm.evaluation/v2", "dataset": dataset,
+            "dataset_sha256": bundle["sha256"], "source_revision": data["revision"],
+            "split": split, "task": task, "run": run, "candidate": candidate,
+            "context": context, "count": len(rows), "metrics": metrics, "examples": rows,
+            "metric_scope": "reviewed source IDs and phrase proxies; incomplete relevance and no semantic truth guarantee",
+            "quality": "unqualified", "qualification_eligible": False}
+
+
 def evaluate(name, split, sizer=None):
     directory = state_root() / "runs" / identifier(name)
     identity = read_json(directory / "run.json")
+    if load_dataset(identity["dataset"])["data"].get("schema") == "kilix.help-llm.dataset/v2":
+        report, _, model, tokenizer, head = load_run(name, identity["task"], sizer)
+        result = evaluate_v2(report["dataset"], split, report["task"], report["context"], model, tokenizer, head,
+                             name, read_json(directory / "plan.json")["candidate"]["id"],
+                             report.get("answer_format", "plain-v1"), progress=_evaluation_progress)
+        output = private_dir(state_root() / "evaluations") / f"{name}-{split}-{time.time_ns()}.json"
+        write_json(output, result)
+        return {"saved_to": str(output), "count": result["count"], "metrics": result["metrics"],
+                "quality": "unqualified"}
     require_legacy_evaluation(load_dataset(identity["dataset"])["data"])
     task = identity["task"]
     report, data, model, tokenizer, head = load_run(name, task, sizer)
@@ -452,11 +600,16 @@ def evaluate(name, split, sizer=None):
 
 def baseline(dataset, candidate, context, split, sizer=None):
     bundle = load_dataset(dataset)
-    require_legacy_evaluation(bundle["data"])
     configure()
     plan = recommend(bundle, context, 4, sizer, candidate, "answer")
     model, tokenizer = load_base(plan["candidate"]["generation_checkpoint"], "answer")
     model.eval()
+    if bundle["data"].get("schema") == "kilix.help-llm.dataset/v2":
+        result = evaluate_v2(dataset, split, "answer", context, model, tokenizer,
+                             candidate=plan["candidate"]["id"], progress=_evaluation_progress)
+        output = private_dir(state_root() / "evaluations") / f"baseline-{dataset}-{candidate}-{split}-{time.time_ns()}.json"
+        write_json(output, result)
+        return {"saved_to": str(output), "count": result["count"], "metrics": result["metrics"]}
     rows = []
     for label in bundle["data"]["examples"]:
         if label["split"] != split:

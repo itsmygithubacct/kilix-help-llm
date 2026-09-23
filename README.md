@@ -12,8 +12,8 @@ results. Resource selection is provisional; no candidate is quality-qualified.
 The model catalog contains seven families with exact checkpoint identities.
 The current corpus-development focus is operating Kilix: creating and finding
 tabs/panes, targeting, reading screens and logs, and sending scoped input.
-The v2 importer and ranking recipe are implemented; v2 evaluation and matched
-candidate comparisons remain pending. Existing v1 reports remain readable.
+The v2 importer, ranking recipe and evaluation are implemented; matched
+candidate comparisons remain experimental. Existing v1 reports remain readable.
 
 ## Prepare a document dataset
 
@@ -51,9 +51,10 @@ one group. Near-duplicate meanings still require review.
 For an unanswerable example, use `answer: null`, `unanswerable: true`, a
 `context_source` ID and a nonempty `review_note`. Optional `rubric` clauses
 (`must_include` and `must_not_include`) are lists of phrase-alternative lists;
-they are stored for the next evaluation protocol, not treated as proof of
-correctness. These richer labels require the pending v2 evaluator: `evaluate`
-and `baseline` currently refuse v2 datasets rather than report legacy metrics.
+they are stored for v2 evaluation as phrase checks, not treated as proof of
+correctness. V2 `baseline` and `evaluate` retain per-example outputs and score
+reviewed source IDs, refusals and phrase checks separately. Manual review is
+required before treating a generated answer as correct or source-supported.
 
 ```sh
 ./kilix-help-llm prepare --repo /path/to/kilix --revision FULL_COMMIT_SHA \
@@ -126,19 +127,44 @@ paths and line numbers can be resolved against the correct document version.
 This decision path is inspired by small-model decision training, but contains
 no copied reference implementation.
 
-Training sees only the training split and reports development loss. Calibration
-and test sets are used only when explicitly named in `evaluate`. Reports compare
-retrieval recall with learned ranking top-one accuracy/MRR, or report answer
-citation validity and extractive reference matching. Those narrow checks do not
-prove semantic correctness or sufficient quality. Answers with missing or
-unknown citation IDs are returned as unvalidated drafts with `abstained: true`;
-a valid ID alone does not establish factual support. No output executes commands.
+Training sees only the training split. For v2 data, the trainer checks a fixed
+small development sample every `--eval-every` steps, stops after `--patience`
+non-improving checks, restores the best adapter/head and reports the full
+development loss. The sample takes the first three fact groups and first unknown
+group per held-out document; selection uses teacher-forced loss, not final
+answer quality. Calibration and test sets are accessed only when explicitly
+named for evaluation.
+
+V2 reports compare BM25 top five with ranking of the same pool, and whole-
+paragraph extraction with unchanged and adapted generation on the same top
+excerpt. Only known reviewed positives count toward source metrics; relevance
+judgments are incomplete across documents. Phrase and refusal checks are
+proxies, not factual verdicts. Explicit refusals are distinguished from
+uncited drafts; a valid ID alone does not establish support. No output executes
+commands. The scores are uncalibrated and every result remains unqualified.
 
 Each run records its dataset/checkpoint identity, training recipe, runtime
 versions, code hash, losses, elapsed time, process peak RSS and artifact hashes.
 Adapters and ranking heads use safetensors. Run names cannot overwrite earlier
 results; failed attempts retain their plan and a failure marker. Optimizer resume,
-confidence calibration, v2 evaluation, development checkpoint selection and GGUF export remain work.
+confidence calibration, manual factual review, matched candidate comparison and GGUF export remain work.
+
+For reviewed v2 output, use the private evaluation artifact paths returned by
+these commands:
+
+```sh
+./kilix-help-llm baseline --dataset kilix-operations-r2 --candidate qwen3-0.6b --split dev
+./kilix-help-llm evaluate --run NAME --split dev
+./kilix-help-llm review-template --evaluation /path/to/private-evaluation.json
+# Fill every correct and supported boolean in the generated private ratings file.
+./kilix-help-llm review-import --evaluation /path/to/private-evaluation.json --ratings /path/to/private-ratings.json
+```
+
+The review binds ratings to the exact evaluation and dataset digests. A reviewer
+can leave `command_correct` and `abstention_correct` null where inapplicable.
+Only `correct` and `supported` are required for every saved output. Ratings and
+raw answers remain under the private user-data root. No proxy or review
+command automatically promotes a candidate.
 
 Run `make check` for the stdlib checks and `make check-runtime` for actual tiny
 local-model backprop, frozen-weight preservation and adapter reload tests. The

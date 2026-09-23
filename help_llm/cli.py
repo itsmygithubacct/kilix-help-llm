@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import time
 
 from .data import SOURCE, SPLITS, load_dataset, prepare, read_json, retrieve, state_root
 from .sizing import provider, recommend
@@ -22,6 +23,11 @@ def parser():
     search = commands.add_parser("search", help="BM25 retrieval baseline; no model needed")
     search.add_argument("--dataset", required=True)
     search.add_argument("question")
+    for name in ("review-template", "review-import"):
+        command = commands.add_parser(name, help="prepare or import manual factual review of saved v2 outputs")
+        command.add_argument("--evaluation", required=True)
+        if name == "review-import":
+            command.add_argument("--ratings", required=True)
     for name in ("plan", "fetch", "train", "baseline"):
         command = commands.add_parser(name)
         command.add_argument("--dataset", required=True)
@@ -37,6 +43,8 @@ def parser():
             command.add_argument("--name", required=True)
             command.add_argument("--steps", type=int, default=32)
             command.add_argument("--learning-rate", type=float, default=.0002)
+            command.add_argument("--eval-every", type=int, default=16)
+            command.add_argument("--patience", type=int, default=3)
     for name in ("ask", "rank", "evaluate"):
         command = commands.add_parser(name)
         command.add_argument("--run", required=True)
@@ -86,13 +94,33 @@ def main(argv=None):
             if not args.question.strip() or len(args.question) > 2000:
                 raise ValueError("question must contain 1-2000 characters")
             result = retrieve(load_dataset(args.dataset)["data"], args.question)
+        elif args.command in {"review-template", "review-import"}:
+            from .data import private_dir, write_json
+            from .evaluation import review_template, reviewed_metrics
+            root_dir = state_root() / "evaluations"
+            evaluation = Path(args.evaluation).absolute()
+            if evaluation.is_symlink() or evaluation.parent.resolve() != root_dir.resolve():
+                raise ValueError("evaluation must be a private saved evaluation file")
+            saved = read_json(evaluation)
+            if saved.get("schema") != "kilix.help-llm.evaluation/v2" or saved.get("task") != "answer":
+                raise ValueError("manual answer review requires a v2 answer evaluation")
+            if args.command == "review-template":
+                result = review_template(saved)
+                output = private_dir(root_dir) / f"review-template-{time.time_ns()}.json"
+            else:
+                result = reviewed_metrics(saved, read_json(args.ratings))
+                output = private_dir(root_dir) / f"review-{time.time_ns()}.json"
+            write_json(output, result)
+            result = {"saved_to": str(output), "systems": list(result.get("metrics", {})),
+                      "evaluation_sha256": result["evaluation_sha256"]}
         elif args.command in {"plan", "fetch"}:
             result = recommend(load_dataset(args.dataset), args.context, args.lora_rank, args.sizer, args.candidate, args.task)
             if args.command == "fetch":
                 result = {"downloaded": runtime.fetch(result), "quality": "unmeasured"}
         elif args.command == "train":
             result = runtime.train(args.dataset, args.name, args.task, args.context, args.lora_rank,
-                                   args.steps, args.learning_rate, args.sizer, args.candidate)
+                                   args.steps, args.learning_rate, args.sizer, args.candidate,
+                                   args.eval_every, args.patience)
         elif args.command in {"ask", "rank"}:
             result = runtime.query(args.run, "answer" if args.command == "ask" else "rank", args.question, args.sizer,
                                    limit=getattr(args, "limit", 5), max_new_tokens=getattr(args, "max_new_tokens", 96))
