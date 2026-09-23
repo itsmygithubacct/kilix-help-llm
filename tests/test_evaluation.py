@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 
 from help_llm.data import digest
-from help_llm.evaluation import (answer_row, explicit_refusal, known_position, retrieval_row,
+from help_llm.evaluation import (answer_row, compare_evaluations, explicit_refusal, known_position, retrieval_row,
                                  review_template, reviewed_metrics, rubric_proxy)
 from help_llm.runtime import evaluate_v2
 
@@ -66,6 +66,22 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual(result["metrics"]["bm25"]["known_relevant_at_1_n"], 1)
         self.assertEqual(result["metrics"]["bm25_extract"]["rubric_phrase_proxy_n"], 1)
         self.assertIsNone(result["examples"][1]["bm25"]["known_relevant_at_1"])
+
+    def test_paired_comparison_rejects_changed_evidence(self):
+        example = {"id": "q", "group": "g", "reference_source": "a:1", "question": "How?",
+                   "pool": ["a:1"], "base": {"proxies": {"rubric_phrase_proxy": False,
+                              "known_source_cited": True, "refusal_correct_proxy": True}},
+                   "adapted": {"proxies": {"rubric_phrase_proxy": True,
+                                 "known_source_cited": True, "refusal_correct_proxy": True}}}
+        baseline = {"schema": "kilix.help-llm.evaluation/v2", "dataset_sha256": "d" * 64,
+                    "split": "dev", "task": "answer", "context": 384, "count": 1,
+                    "run": None, "examples": [example]}
+        trained = {**baseline, "run": "adapted"}
+        result = compare_evaluations(baseline, trained)
+        self.assertEqual(result["paired_proxies"]["rubric_phrase_proxy"]["delta"], 1)
+        changed = {**trained, "examples": [{**example, "pool": ["a:2"]}]}
+        with self.assertRaisesRegex(ValueError, "evidence pools"):
+            compare_evaluations(baseline, changed)
 
 
 if __name__ == "__main__":

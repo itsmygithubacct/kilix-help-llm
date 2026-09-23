@@ -104,3 +104,51 @@ def review_template(report):
                          "abstention_correct": None, "note": ""}
                         for row in report["examples"]
                         for system in ("bm25_extract", "base", "adapted") if system in row]}
+
+
+def compare_evaluations(left, right):
+    """Paired proxy comparison with fixed questions, evidence pool and context."""
+    for key in ("schema", "dataset_sha256", "split", "task", "context", "count"):
+        if left.get(key) != right.get(key):
+            raise ValueError("comparison reports differ in " + key)
+    if left.get("schema") != "kilix.help-llm.evaluation/v2":
+        raise ValueError("comparison requires v2 evaluations")
+    left_rows = {row["id"]: row for row in left["examples"]}
+    right_rows = {row["id"]: row for row in right["examples"]}
+    if left_rows.keys() != right_rows.keys() or len(left_rows) != left["count"]:
+        raise ValueError("comparison examples differ")
+    if any(left_rows[key]["pool"] != right_rows[key]["pool"] or
+           left_rows[key]["question"] != right_rows[key]["question"] for key in left_rows):
+        raise ValueError("comparison evidence pools or questions differ")
+    system = "ranked" if left["task"] == "rank" else "adapted"
+    left_system = "base" if system == "adapted" and left.get("run") is None else system
+    if any(left_system not in row for row in left_rows.values()) or any(system not in row for row in right_rows.values()):
+        raise ValueError("both reports need trained outputs for this task")
+    keys = (("known_relevant_at_1", "known_relevant_mrr", "none_correct_proxy") if system == "ranked" else
+            ("rubric_phrase_proxy", "known_source_cited", "refusal_correct_proxy"))
+    paired = {}
+    for metric in keys:
+        samples = []
+        for key, left_row in left_rows.items():
+            a = left_row[left_system] if system == "ranked" else left_row[left_system]["proxies"]
+            b = right_rows[key][system] if system == "ranked" else right_rows[key][system]["proxies"]
+            if a.get(metric) is None or b.get(metric) is None:
+                continue
+            samples.append({"group": left_row["group"], "document": left_row["reference_source"].split(":")[0],
+                            "left": float(a[metric]), "right": float(b[metric])})
+        by_group = {}
+        for sample in samples:
+            by_group.setdefault(sample["group"], []).append(sample["right"] - sample["left"])
+        by_document = {}
+        for sample in samples:
+            by_document.setdefault(sample["document"], []).append(sample["right"] - sample["left"])
+        paired[metric] = {"n": len(samples), "groups": len(by_group),
+                          "left": sum(s["left"] for s in samples) / len(samples) if samples else None,
+                          "right": sum(s["right"] for s in samples) / len(samples) if samples else None,
+                          "delta": sum(s["right"] - s["left"] for s in samples) / len(samples) if samples else None,
+                          "group_mean_delta": sum(sum(v) / len(v) for v in by_group.values()) / len(by_group) if by_group else None,
+                          "document_mean_delta": {k: sum(v) / len(v) for k, v in by_document.items()}}
+    return {"schema": "kilix.help-llm.comparison/v1", "left_digest": digest(left),
+            "right_digest": digest(right), "dataset_sha256": left["dataset_sha256"],
+            "split": left["split"], "task": left["task"], "left_system": left_system, "right_system": system,
+            "paired_proxies": paired, "quality": "unqualified", "qualification_eligible": False}

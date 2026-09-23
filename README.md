@@ -158,11 +158,14 @@ these commands:
 ./kilix-help-llm review-template --evaluation /path/to/private-evaluation.json
 # Fill every correct and supported boolean in the generated private ratings file.
 ./kilix-help-llm review-import --evaluation /path/to/private-evaluation.json --ratings /path/to/private-ratings.json
+./kilix-help-llm compare --left /path/to/private-baseline.json --right /path/to/private-trained.json
 ```
 
 The review binds ratings to the exact evaluation and dataset digests. A reviewer
 can leave `command_correct` and `abstention_correct` null where inapplicable.
-Only `correct` and `supported` are required for every saved output. Ratings and
+Only `correct` and `supported` are required for every saved output. `compare`
+requires identical questions and BM25 evidence pools; it reports paired phrase,
+source and refusal proxies by fact group and held-out document. Ratings and
 raw answers remain under the private user-data root. No proxy or review
 command automatically promotes a candidate.
 

@@ -28,6 +28,9 @@ def parser():
         command.add_argument("--evaluation", required=True)
         if name == "review-import":
             command.add_argument("--ratings", required=True)
+    compare = commands.add_parser("compare", help="pair two saved v2 evaluations on identical evidence")
+    compare.add_argument("--left", required=True)
+    compare.add_argument("--right", required=True)
     for name in ("plan", "fetch", "train", "baseline"):
         command = commands.add_parser(name)
         command.add_argument("--dataset", required=True)
@@ -94,6 +97,18 @@ def main(argv=None):
             if not args.question.strip() or len(args.question) > 2000:
                 raise ValueError("question must contain 1-2000 characters")
             result = retrieve(load_dataset(args.dataset)["data"], args.question)
+        elif args.command == "compare":
+            from .data import private_dir, write_json
+            from .evaluation import compare_evaluations
+            root_dir = state_root() / "evaluations"
+            paths = [Path(args.left).absolute(), Path(args.right).absolute()]
+            if any(path.is_symlink() or path.parent.resolve() != root_dir.resolve() for path in paths):
+                raise ValueError("comparison inputs must be private saved evaluation files")
+            result = compare_evaluations(*(read_json(path) for path in paths))
+            output = private_dir(root_dir) / f"comparison-{time.time_ns()}.json"
+            write_json(output, result)
+            result = {"saved_to": str(output), "paired_proxies": result["paired_proxies"],
+                      "quality": "unqualified"}
         elif args.command in {"review-template", "review-import"}:
             from .data import private_dir, write_json
             from .evaluation import review_template, reviewed_metrics
