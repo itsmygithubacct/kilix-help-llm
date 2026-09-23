@@ -5,10 +5,31 @@ from unittest.mock import patch
 from help_llm.data import digest
 from help_llm.evaluation import (answer_row, compare_evaluations, explicit_refusal, known_position, retrieval_row,
                                  review_template, reviewed_metrics, rubric_proxy)
-from help_llm.runtime import evaluate_v2
+from help_llm.runtime import answer_selection_quality, evaluate_v2, train
 
 
 class EvaluationTests(unittest.TestCase):
+    def test_unknown_failure_cannot_be_offset_by_known_answer_gains(self):
+        known = {"source": "a:1", "relevant_sources": ["a:1"], "answer": "Run A.",
+                 "rubric": {"must_include": [["Run A"]]}, "question": "How?", "unanswerable": False}
+        unknown = {**known, "unanswerable": True, "relevant_sources": []}
+        labels = [known, known, unknown, unknown]
+        answer = {"answer": "Run A. [a:1]", "source": {"id": "a:1"}, "citation_valid": True}
+        refusal = {"answer": "I do not know from the supplied excerpt.", "citation_valid": False}
+        scores = []
+        for outputs in ([answer, answer, refusal, answer], [refusal] * 4,
+                        [answer, answer, refusal, refusal]):
+            with patch("help_llm.runtime.retrieve", return_value=[{"id": "a:1"}]), \
+                    patch("help_llm.runtime.generated", side_effect=outputs):
+                scores.append(answer_selection_quality(None, None, {}, labels, 384))
+        self.assertLess(scores[0], scores[1])
+        self.assertLess(scores[1], scores[2])
+
+    def test_invalid_seed_is_rejected_before_runtime_or_data_access(self):
+        for seed in (-1, 2**32, True, 1.5):
+            with self.assertRaisesRegex(ValueError, "seed"):
+                train("missing", "missing", "answer", 384, 4, 1, .0002, seed=seed)
+
     def test_known_positive_or_unknown_are_distinct(self):
         label = {"source": "a:1", "relevant_sources": ["a:1", "a:2"], "unanswerable": False}
         pool = [{"id": "b:1"}, {"id": "a:2"}, {"id": "a:1"}]

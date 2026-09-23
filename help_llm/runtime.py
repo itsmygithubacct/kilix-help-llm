@@ -254,13 +254,15 @@ def selection_labels(data):
 
 def answer_selection_quality(model, tokenizer, data, labels, context):
     """Development proxy on BM25 evidence, with known facts and unknowns distinct."""
+    known_count = sum(not label["unanswerable"] for label in labels)
     score = 0
     for label in labels:
         chunk = retrieve(data, label["question"], 1)[0]
         output = generated(model, tokenizer, label["question"], chunk, context, 96, "chat-nonthinking-v2")
         proxies = answer_row(output, label)
         if label["unanswerable"]:
-            score += proxies["explicit_refusal"]
+            # One fewer unknown-state error outranks every possible fact gain.
+            score += (known_count + 1) * proxies["explicit_refusal"]
         else:
             score += bool(proxies["known_source_cited"] and proxies["rubric_phrase_proxy"])
     return int(score)
@@ -332,10 +334,12 @@ def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None,
 
 
 def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, candidate=None,
-          eval_every=16, patience=3, negative_stride=4):
+          eval_every=16, patience=3, negative_stride=4, seed=17):
     if (not 1 <= steps <= 10000 or not 0 < learning_rate <= .01 or
             not 1 <= eval_every <= 10000 or not 1 <= patience <= 100 or not 1 <= negative_stride <= 100):
         raise ValueError("invalid training steps, learning rate, evaluation interval, patience or negative stride")
+    if type(seed) is not int or not 0 <= seed < 2**32:
+        raise ValueError("seed must be an integer from 0 through 4294967295")
     torch = configure()
     bundle = load_dataset(dataset)
     plan = recommend(bundle, context, rank, sizer, candidate, task)
@@ -346,7 +350,7 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
     started = time.monotonic()
     code_sha256 = digest({str(p.relative_to(SOURCE)): file_digest(p)
                           for p in sorted((SOURCE / "help_llm").glob("*.py"))})
-    torch.manual_seed(17)
+    torch.manual_seed(seed)
     try:
         model, tokenizer = load_base(checkpoint, task)
         model, head = attach(model, rank, task)
@@ -369,15 +373,18 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
                                     answer_negative_stride=0 if task == "answer" else 1)
             if task == "answer":
                 quality = lambda active_model: answer_selection_quality(active_model, tokenizer, bundle["data"], chosen, context)
-            selection = {"criterion": ("correct-source-and-phrase-or-unknown proxy count, then dev loss" if quality else
+            selection = {"criterion": ("unknown refusal count first, then correct-source-and-phrase count, then dev loss" if quality else
                                        "mean teacher-forced dev loss"),
+                         "quality_proxy_encoding": ("unknown_count * (known_total + 1) + known_correct_count" if quality else None),
+                         "known_total": sum(not r["unanswerable"] for r in chosen),
+                         "unknown_total": sum(r["unanswerable"] for r in chosen),
                          "groups": [r["group"] for r in chosen],
                          "eval_every": eval_every, "patience": patience, "history": []}
         def progress(step, loss, dev_loss=None):
             if step % 4 == 0 or step == steps or dev_loss is not None:
                 print(json.dumps({"step": step, "steps": steps, "loss": loss,
                                   "selection_dev_loss": dev_loss}), file=sys.stderr, flush=True)
-        losses = optimize(model, head, rows, steps, learning_rate, progress=progress,
+        losses = optimize(model, head, rows, steps, learning_rate, seed=seed, progress=progress,
                           dev_rows=selected_dev, eval_every=eval_every, patience=patience,
                           selection=selection, quality=quality)
         model.eval()
@@ -390,7 +397,7 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
         artifacts = {str(p.relative_to(directory)): file_digest(p) for p in directory.rglob("*") if p.is_file()}
         report = {"schema": "kilix.help-llm.run/v1", "dataset": dataset, "dataset_sha256": bundle["sha256"],
                   "checkpoint": checkpoint, "task": task, "context": context, "lora_rank": rank,
-                  "steps": steps, "actual_steps": len(losses), "learning_rate": learning_rate, "seed": 17, "losses": losses,
+                  "steps": steps, "actual_steps": len(losses), "learning_rate": learning_rate, "seed": seed, "losses": losses,
                   "dev_loss": dev_loss, "training_examples": len(rows), "dev_examples": len(dev),
                   "selection": selection,
                   "answer_negative_stride": negative_stride if task == "answer" and selection else None,

@@ -46,6 +46,8 @@ def parser():
             command.add_argument("--name", required=True)
             command.add_argument("--steps", type=int, default=32)
             command.add_argument("--learning-rate", type=float, default=.0002)
+            command.add_argument("--seed", type=int, default=17,
+                                 help="initialization and training-order seed for independent repeat runs")
             command.add_argument("--eval-every", type=int, default=16)
             command.add_argument("--patience", type=int, default=3)
             command.add_argument("--negative-stride", type=int, default=4,
@@ -137,7 +139,7 @@ def main(argv=None):
         elif args.command == "train":
             result = runtime.train(args.dataset, args.name, args.task, args.context, args.lora_rank,
                                    args.steps, args.learning_rate, args.sizer, args.candidate,
-                                   args.eval_every, args.patience, args.negative_stride)
+                                   args.eval_every, args.patience, args.negative_stride, args.seed)
         elif args.command in {"ask", "rank"}:
             result = runtime.query(args.run, "answer" if args.command == "ask" else "rank", args.question, args.sizer,
                                    limit=getattr(args, "limit", 5), max_new_tokens=getattr(args, "max_new_tokens", 96))

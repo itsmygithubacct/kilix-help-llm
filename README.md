@@ -134,8 +134,14 @@ small development sample every `--eval-every` steps, stops after `--patience`
 non-improving checks, restores the best adapter/head and reports the full
 development loss. The sample takes the first three fact groups and first unknown
 group per held-out document. Ranking selects by teacher-forced group loss;
-answer training selects by a source/phrase/unknown generation proxy, breaking
-ties with teacher-forced loss. The proxy cannot prove factual correctness.
+answer training first maximizes explicit unknown refusals, then the known
+source/phrase generation proxy, breaking ties with teacher-forced loss.
+One unknown-state error cannot be offset by more correct fact answers.
+The saved selection score encodes this order as unknown successes multiplied
+by one plus the number of known questions, plus known successes. The proxy
+cannot prove factual correctness or qualify the model. `--seed` controls both
+adapter/head initialization and training order (default 17); use another seed
+for a separately measured repeat of a fixed recipe.
 Calibration and test sets are accessed only when explicitly named for
 evaluation.
 
