@@ -58,7 +58,8 @@ class EvaluationTests(unittest.TestCase):
 
     def test_review_requires_exact_saved_outputs_and_decisions(self):
         report = {"schema": "kilix.help-llm.evaluation/v2", "dataset_sha256": "d" * 64,
-                  "examples": [{"id": "q", "bm25_extract": {}, "base": {}, "adapted": {}}]}
+                  "examples": [{"id": "q", "unanswerable": False, "group": "g", "reference_source": "a:1",
+                                "bm25_extract": {"output": {}}, "base": {"output": {}}, "adapted": {"output": {}}}]}
         template = review_template(report)
         self.assertEqual(len(template["ratings"]), 3)
         with self.assertRaisesRegex(ValueError, "requires correctness"):
@@ -70,6 +71,29 @@ class EvaluationTests(unittest.TestCase):
         report["examples"][0]["base"]["answer"] = "changed"
         with self.assertRaisesRegex(ValueError, "digest"):
             reviewed_metrics(report, template)
+
+    def test_review_joint_successes_separate_drafts_support_and_unknowns(self):
+        rows = [{"id": name, "group": name, "reference_source": "a:1", "unanswerable": name == "u",
+                 "adapted": {"output": {"answer": None if name == "draft" else "text",
+                                         "citation_valid": name != "u"}}}
+                for name in ("wrong", "unsupported", "draft", "u")]
+        report = {"dataset_sha256": "d", "examples": rows}
+        ratings = review_template(report)
+        for entry in ratings["ratings"]:
+            entry.update(correct=entry["id"] != "wrong", supported=entry["id"] != "unsupported",
+                         abstention_correct=True if entry["id"] == "u" else None)
+        result = reviewed_metrics(report, ratings)["stratified"]["adapted"]
+        self.assertEqual(result["answerable"]["count"], 3)
+        self.assertEqual(result["answerable"]["successes"]["correct_supported"], 1)
+        self.assertEqual(result["answerable"]["successes"]["accepted_correct_supported"], 0)
+        self.assertEqual(result["unknown"]["successes"]["accepted_correct_supported"], 1)
+        ratings["ratings"][0]["correct"] = 1
+        with self.assertRaisesRegex(ValueError, "boolean"):
+            reviewed_metrics(report, ratings)
+        ratings["ratings"][0]["correct"] = False
+        ratings["ratings"][-1]["abstention_correct"] = None
+        with self.assertRaisesRegex(ValueError, "abstention"):
+            reviewed_metrics(report, ratings)
 
     def test_v2_answer_baseline_keeps_unknowns_separate(self):
         labels = [{"id": "q", "group": "g", "split": "dev", "question": "How?", "answer": "Run A.",

@@ -172,8 +172,14 @@ these commands:
 ```
 
 The review binds ratings to the exact evaluation and dataset digests. A reviewer
-can leave `command_correct` and `abstention_correct` null where inapplicable.
-Only `correct` and `supported` are required for every saved output. `compare`
+can leave `command_correct` null where inapplicable; unknown questions require
+an explicit `abstention_correct` boolean. `correct` and `supported` are required
+for every saved output. Reports retain joint correctness/support counts,
+accepted-output and cited-output counts, separate answerable/unknown results,
+and document/fact-group breakdowns. A correct uncited draft is distinguished
+from a usable cited answer. Record `reviewer_kind` (`human` or `assistant`) and
+whether the review was `blinded`; these declarations do not independently
+certify the review. No review automatically grants qualification. `compare`
 requires identical questions and BM25 evidence pools; it reports paired phrase,
 source and refusal proxies by fact group and held-out document. Ratings and
 raw answers remain under the private user-data root. No proxy or review

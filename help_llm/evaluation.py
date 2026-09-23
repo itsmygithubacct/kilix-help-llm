@@ -76,6 +76,12 @@ def reviewed_metrics(report, ratings):
     entries = ratings.get("ratings")
     if not isinstance(entries, list):
         raise ValueError("ratings must be a list")
+    examples = {row["id"]: row for row in report["examples"]}
+    if not examples or len(examples) != len(report["examples"]):
+        raise ValueError("review examples must be nonempty and unique")
+    if any(type(row.get("unanswerable")) is not bool or not row.get("group") or
+           not row.get("reference_source") for row in examples.values()):
+        raise ValueError("review examples need answerability and source/group identity")
     expected = {(row["id"], key) for row in report["examples"]
                 for key in ("bm25_extract", "base", "adapted") if key in row}
     actual = {(entry.get("id"), entry.get("system")) for entry in entries if isinstance(entry, dict)}
@@ -83,22 +89,53 @@ def reviewed_metrics(report, ratings):
         raise ValueError("review must contain each saved system/example exactly once")
     allowed = {"correct", "supported", "command_correct", "abstention_correct"}
     for entry in entries:
-        if any(entry.get(key) not in (True, False, None) for key in allowed):
+        if any(entry.get(key) is not None and type(entry[key]) is not bool for key in allowed):
             raise ValueError("review judgments must be boolean or null")
         if entry.get("correct") is None or entry.get("supported") is None:
             raise ValueError("every review requires correctness and source support judgments")
+        if examples[entry["id"]]["unanswerable"] and type(entry.get("abstention_correct")) is not bool:
+            raise ValueError("unknown questions require an explicit abstention judgment")
         if not isinstance(entry.get("note", ""), str) or len(entry.get("note", "")) > 2000:
             raise ValueError("review note is invalid")
-    by_system = {}
+    reviewer_kind = ratings.get("reviewer_kind", "unspecified")
+    blinded = ratings.get("blinded")
+    if reviewer_kind not in {"unspecified", "human", "assistant"} or (blinded is not None and type(blinded) is not bool):
+        raise ValueError("reviewer metadata is invalid")
+    by_system, stratified = {}, {}
     for system in sorted({entry["system"] for entry in entries}):
         by_system[system] = summarize([e for e in entries if e["system"] == system], sorted(allowed))
+        strata = {}
+        for kind in ("answerable", "unknown"):
+            measured = []
+            for entry in entries:
+                row = examples[entry["id"]]
+                if entry["system"] != system or row["unanswerable"] != (kind == "unknown"):
+                    continue
+                output = row[system]["output"]
+                joint = entry["correct"] and entry["supported"]
+                if kind == "unknown":
+                    joint = joint and entry["abstention_correct"]
+                measured.append({"group": row["group"], "document": row["reference_source"].split(":")[0],
+                                 "correct_supported": joint,
+                                 "accepted_correct_supported": joint and output.get("answer") is not None,
+                                 "cited_correct_supported": joint and bool(output.get("citation_valid"))})
+            keys = ("correct_supported", "accepted_correct_supported", "cited_correct_supported")
+            strata[kind] = {"count": len(measured), "metrics": summarize(measured, keys),
+                            "successes": {key: sum(row[key] for row in measured) for key in keys},
+                            "by_document": {doc: summarize([r for r in measured if r["document"] == doc], keys)
+                                            for doc in sorted({r["document"] for r in measured})},
+                            "by_group": {group: summarize([r for r in measured if r["group"] == group], keys)
+                                         for group in sorted({r["group"] for r in measured})}}
+        stratified[system] = strata
     return {"schema": "kilix.help-llm.review/v1", "evaluation_sha256": digest(report),
             "dataset_sha256": report["dataset_sha256"], "ratings": entries,
-            "metrics": by_system, "qualification_eligible": False}
+            "metrics": by_system, "stratified": stratified,
+            "reviewer_kind": reviewer_kind, "blinded": blinded, "qualification_eligible": False}
 
 
 def review_template(report):
     return {"evaluation_sha256": digest(report), "dataset_sha256": report["dataset_sha256"],
+            "reviewer_kind": "unspecified", "blinded": None,
             "ratings": [{"id": row["id"], "system": system, "correct": None,
                          "supported": None, "command_correct": None,
                          "abstention_correct": None, "note": ""}
