@@ -114,6 +114,12 @@ evidence. V2 answer training includes one reviewed negative for every
 and explicitly unanswerable examples. Existing runs retain their original prompt format. The `baseline`
 command runs the unchanged model with retrieved evidence on a v1 dataset.
 
+For v2 answer training, `--unknown-repeats N` (1-16, default one) repeats
+explicit unanswerable training labels independently of the reviewed negative
+passage mix. It changes training exposure, not the frozen dataset or any
+development/calibration/test denominator. Runs record both sampling settings;
+new mixes require fresh evaluation and are not presumed to improve quality.
+
 Ranking trains a separate base-model adapter and a two-output head. New heads
 start at zero and receive normalized features. Reviewed v2 passage groups use a
 listwise objective that accepts any listed positive or a fixed none-of-these

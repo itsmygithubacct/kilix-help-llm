@@ -148,7 +148,11 @@ def chat_encoded(tokenizer, prompt, answer=None, context=384):
     return {"input_ids": ids, "labels": [-100] * len(prefix) + ids[len(prefix):]}
 
 
-def examples(data, tokenizer, task, context, split, answer_negative_stride=1):
+def examples(data, tokenizer, task, context, split, answer_negative_stride=1, answer_unknown_repeats=1):
+    if type(answer_unknown_repeats) is not int or not 1 <= answer_unknown_repeats <= 16:
+        raise ValueError("unknown repeats must be an integer from 1 through 16")
+    if answer_unknown_repeats != 1 and (task != "answer" or split != "train"):
+        raise ValueError("unknown repetition is only available for answer training")
     chunks = {c["id"]: c for c in data["chunks"]}
     rows = []
     answered = 0
@@ -158,7 +162,8 @@ def examples(data, tokenizer, task, context, split, answer_negative_stride=1):
         chunk = chunks[label["source"]]
         if task == "answer":
             target = ABSTENTION if label.get("unanswerable") else f"{label['answer']} [{chunk['id']}]"
-            rows.append(chat_encoded(tokenizer, answer_prompt(label["question"], chunk), target, context))
+            row = chat_encoded(tokenizer, answer_prompt(label["question"], chunk), target, context)
+            rows.extend([row] * (answer_unknown_repeats if label.get("unanswerable") else 1))
             if not label.get("unanswerable") and label.get("negatives") and answer_negative_stride > 0 and answered % answer_negative_stride == 0:
                 negative = chunks[label["negatives"][0]]
                 rows.append(chat_encoded(tokenizer, answer_prompt(label["question"], negative), ABSTENTION, context))
@@ -334,14 +339,18 @@ def optimize(model, head, rows, steps, learning_rate, seed=17, progress=None,
 
 
 def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, candidate=None,
-          eval_every=16, patience=3, negative_stride=4, seed=17):
+          eval_every=16, patience=3, negative_stride=4, seed=17, unknown_repeats=1):
     if (not 1 <= steps <= 10000 or not 0 < learning_rate <= .01 or
             not 1 <= eval_every <= 10000 or not 1 <= patience <= 100 or not 1 <= negative_stride <= 100):
         raise ValueError("invalid training steps, learning rate, evaluation interval, patience or negative stride")
     if type(seed) is not int or not 0 <= seed < 2**32:
         raise ValueError("seed must be an integer from 0 through 4294967295")
+    if type(unknown_repeats) is not int or not 1 <= unknown_repeats <= 16:
+        raise ValueError("unknown repeats must be an integer from 1 through 16")
     torch = configure()
     bundle = load_dataset(dataset)
+    if unknown_repeats != 1 and (task != "answer" or bundle["data"].get("schema") != "kilix.help-llm.dataset/v2"):
+        raise ValueError("unknown repetition requires v2 answer training")
     plan = recommend(bundle, context, rank, sizer, candidate, task)
     checkpoint = plan["candidate"]["generation_checkpoint" if task == "answer" else "decision_checkpoint"]
     directory = private_dir(state_root() / "runs") / identifier(name)
@@ -362,7 +371,8 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
         if trainable > sized["trainable_parameters"]:
             raise ValueError("actual adapter/head parameter count exceeds the shared sizing recipe")
         rows = examples(bundle["data"], tokenizer, task, context, "train",
-                        answer_negative_stride=negative_stride if task == "answer" and bundle["data"].get("schema") == "kilix.help-llm.dataset/v2" else 1)
+                        answer_negative_stride=negative_stride if task == "answer" and bundle["data"].get("schema") == "kilix.help-llm.dataset/v2" else 1,
+                        answer_unknown_repeats=unknown_repeats)
         dev = examples(bundle["data"], tokenizer, task, context, "dev")
         selection = None
         selected_dev = None
@@ -401,6 +411,7 @@ def train(dataset, name, task, context, rank, steps, learning_rate, sizer=None, 
                   "dev_loss": dev_loss, "training_examples": len(rows), "dev_examples": len(dev),
                   "selection": selection,
                   "answer_negative_stride": negative_stride if task == "answer" and selection else None,
+                  "answer_unknown_repeats": unknown_repeats if task == "answer" and selection else None,
                   "elapsed_seconds": time.monotonic() - started,
                   "process_peak_rss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024,
                   "runtime": {k: importlib.metadata.version(k) for k in

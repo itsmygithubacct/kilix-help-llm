@@ -11,6 +11,27 @@ AVAILABLE = all(importlib.util.find_spec(name) for name in ("torch", "transforme
 
 
 class QueryIdentityTests(unittest.TestCase):
+    def test_unknown_exposure_changes_only_explicit_training_unknowns(self):
+        labels = [{"split": split, "source": "a:1", "question": question,
+                   "answer": None if unknown else "Run A.", "unanswerable": unknown,
+                   "negatives": ["a:2"]}
+                  for split in ("train", "dev") for question, unknown in (("known", False), ("live", True))]
+        data = {"chunks": [{"id": "a:1", "text": "Run A."}, {"id": "a:2", "text": "Run B."}],
+                "examples": labels}
+        with patch("help_llm.runtime.chat_encoded", side_effect=lambda tokenizer, prompt, target, context: {"prompt": prompt, "target": target}):
+            normal = examples(data, None, "answer", 384, "train", 4)
+            repeated = examples(data, None, "answer", 384, "train", 4, 3)
+            dev = examples(data, None, "answer", 384, "dev", 4)
+        self.assertEqual(repeated, normal[:2] + [normal[2]] * 3)
+        self.assertEqual(dev, normal)
+        with self.assertRaisesRegex(ValueError, "only available"):
+            examples(data, None, "answer", 384, "dev", 4, 3)
+        with self.assertRaisesRegex(ValueError, "only available"):
+            examples(data, None, "rank", 384, "train", 4, 3)
+        for invalid in (0, 17, True, 1.5):
+            with self.assertRaisesRegex(ValueError, "integer"):
+                examples(data, None, "answer", 384, "train", 4, invalid)
+
     def test_answer_negative_stride_keeps_every_positive_and_unknown(self):
         chunks = [{"id": "a:1", "text": "Run A."}, {"id": "a:2", "text": "Run B."}]
         labels = [{"split": "train", "source": "a:1", "question": str(i), "answer": "Run A.",
