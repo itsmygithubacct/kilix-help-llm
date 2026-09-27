@@ -18,8 +18,17 @@ STOP = set("a an the and or of to in on for with is are be it this that how do i
 MIN_WORDS, MAX_WORDS = 60, 450
 
 
+QUESTION_WEIGHT = 0.5   # question-expansion terms count half; chosen on the development set (index/README.md)
+
+
 def tokens(text):
-    return [w for w in re.findall(r"[a-z0-9_+.-]+", text.lower()) if w not in STOP]
+    """Lower-case words; '.', '-' and '+' only inside a word (or a leading '--' option), so 'config.' == 'config'."""
+    out = []
+    for word in re.findall(r"[a-z0-9_+.-]+", text.lower()):
+        word = "--" + word[2:].strip(".-+") if word.startswith("--") else word.strip(".-+")
+        if word.strip("-") and word not in STOP:
+            out.append(word)
+    return out
 
 
 def sections(markdown):
@@ -42,6 +51,8 @@ def sections(markdown):
 
 
 def split_long(text):
+    """Split at paragraph boundaries up to MAX_WORDS. A single paragraph longer than that stays whole: passage ids
+    must match the corpus the questions were written for (8 such passages; see tests/test_lookup.py)."""
     paragraphs, current, out = re.split(r"\n\s*\n", text), [], []
     for paragraph in paragraphs:
         if current and len(" ".join(current).split()) + len(paragraph.split()) > MAX_WORDS:
@@ -84,10 +95,11 @@ def load_passages(root=ROOT, index=INDEX):
             passages.append(p)
             if same:
                 current.add(p["id"])
-    for line in open(index / "external.jsonl", encoding="utf-8"):
-        p = json.loads(line)
-        passages.append(p)
-        current.add(p["id"])
+    for line in (index / "external.jsonl").read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            p = json.loads(line)
+            passages.append(p)
+            current.add(p["id"])
     return passages, current
 
 
@@ -95,9 +107,13 @@ class Lookup:
     def __init__(self, root=ROOT, index=INDEX, k1=1.5, b=0.75):
         self.passages, current = load_passages(root, index)
         questions = json.loads((index / "questions.json").read_text(encoding="utf-8"))
-        self.docs = [Counter(tokens(p["heading"] + " " + p["text"] + " " +
-                                    (" ".join(questions.get(p["id"], [])) if p["id"] in current else "")))
-                     for p in self.passages]
+        self.docs = []
+        for p in self.passages:
+            doc = Counter(tokens(p["heading"] + " " + p["text"]))
+            if p["id"] in current:
+                for word, n in Counter(tokens(" ".join(questions.get(p["id"], [])))).items():
+                    doc[word] += n * QUESTION_WEIGHT
+            self.docs.append(doc)
         self.lengths = [sum(d.values()) for d in self.docs]
         self.average = sum(self.lengths) / max(1, len(self.lengths))
         frequency = Counter(word for d in self.docs for word in d)

@@ -23,7 +23,8 @@ candidate comparisons remain experimental. Existing v1 reports remain readable.
 ```
 
 `lookup` prints the documentation passages most likely to answer the question, with their source file and commit.
-It needs only Python's standard library and answers in well under a second. The index covers Kilix, kitty,
+It needs only Python's standard library and answers in under a second. Read the top few results: a related
+passage sometimes ranks above the most direct one. The index covers Kilix, kitty,
 pleb and plebian-os; see [help_llm/index/README.md](help_llm/index/README.md). It shows the documentation rather
 than writing an answer, so it cannot invent commands. Small local answer models were tried and did not yet
 answer reliably enough to ship.
