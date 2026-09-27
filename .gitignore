@@ -30,3 +30,5 @@ __pycache__/
 *.jsonl
 .env
 .env.*
+# The shipped lookup index is source, not generated output.
+!help_llm/index/external.jsonl

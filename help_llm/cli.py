@@ -20,6 +20,11 @@ def parser():
         ingest.add_argument("--" + name, required=True)
     inspect = commands.add_parser("inspect", help="show dataset identities and split counts")
     inspect.add_argument("--dataset", required=True)
+    lookup = commands.add_parser("lookup", help="find the documentation passages that answer a question; no model needed")
+    lookup.add_argument("question")
+    lookup.add_argument("-k", type=int, default=5, help="number of passages (default 5)")
+    lookup.add_argument("--full", action="store_true", help="print whole passages")
+    lookup.add_argument("--json", action="store_true", help="print JSON")
     search = commands.add_parser("search", help="BM25 retrieval baseline; no model needed")
     search.add_argument("--dataset", required=True)
     search.add_argument("question")
@@ -91,6 +96,15 @@ def main(argv=None):
         if args.command in {"fetch", "train", "ask", "rank", "evaluate", "baseline"}:
             runtime_python()
             from . import runtime
+        if args.command == "lookup":
+            from .lookup import Lookup, render
+            if not args.question.strip() or len(args.question) > 2000:
+                raise ValueError("question must contain 1-2000 characters")
+            if not 1 <= args.k <= 20:
+                raise ValueError("-k must be between 1 and 20")
+            hits = Lookup().search(args.question, args.k)
+            print(json.dumps(hits, ensure_ascii=False, indent=2) if args.json else render(hits, full=args.full))
+            return 0
         if args.command == "prepare":
             bundle = prepare(args.repo, args.revision, read_json(args.manifest), read_json(args.labels), args.name)
             result = {"dataset": args.name, "sha256": bundle["sha256"], "documents": len(bundle["data"]["documents"]),
