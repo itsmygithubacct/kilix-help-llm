@@ -13,5 +13,11 @@ against the passage). They are only used to find passages: a query is matched ag
 questions, which is how everyday wording ("split this terminal") reaches documents that use other words
 ("new-pane", "Ctrl+Alt+R"). Questions close to the project's held-out evaluation questions were removed.
 
-Measured on 253 held-out questions whose answers are in these documents: the answering passage is in the top 5
-for 79% of fully documented questions (plain BM25: 65%) and for 66% of "check my machine" questions (plain: 47%).
+Development-set measurements (not the held-out test set; used to choose `QUESTION_WEIGHT` = 0.5), on the project's
+v2 dev questions whose answers are in these documents: the answering passage is ranked first for 43% and in the top 5
+for 80% of 169 fully documented questions (plain BM25 top 5: 65%), and in the top 5 for 69% of 32 "check my machine"
+questions (plain BM25: 47%) and 58% of 52 partly documented ones. A related but less direct passage sometimes ranks
+first, so read the top few results.
+
+Passages follow the corpus the questions were written for: split at headings and between paragraphs at 450 words;
+a single paragraph longer than that stays whole (8 passages).
