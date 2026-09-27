@@ -15,6 +15,19 @@ tabs/panes, targeting, reading screens and logs, and sending scoped input.
 The v2 importer, ranking recipe and evaluation are implemented; matched
 candidate comparisons remain experimental. Existing v1 reports remain readable.
 
+## Look something up (no model needed)
+
+```sh
+./kilix-help-llm lookup "how do I split this terminal so I can see two things at once"
+./kilix-help-llm lookup "which of my panes is running htop right now" -k 3 --full
+```
+
+`lookup` prints the documentation passages most likely to answer the question, with their source file and commit.
+It needs only Python's standard library and answers in well under a second. The index covers Kilix, kitty,
+pleb and plebian-os; see [help_llm/index/README.md](help_llm/index/README.md). It shows the documentation rather
+than writing an answer, so it cannot invent commands. Small local answer models were tried and did not yet
+answer reliably enough to ship.
+
 ## Prepare a document dataset
 
 Python 3.11+ runs preparation, inspection, retrieval and sizing without model

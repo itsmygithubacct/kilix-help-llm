@@ -1,0 +1,242 @@
+[
+ {
+  "label": "kilix",
+  "path": "docs/kilix/AGENTS.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "2ec49328543c68f96099ace80bce812234eefaeef0e447888ef3b94cf0ab083d"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/README.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "3c76765207e3aacbb40222e552449a24e6fd5cb17ad2905ba8f3feb2ed30b585"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/README.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "fd96961496abe8f25063c9c16430826af316332dba79bc619f96e9efa9b02bf3"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/browsers.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "57f87fbffa3263c69a2cb03a3a5c5ece048ae921036b2778d18a322b95b01aca"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/models.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "364a368564b46b9c8d4a5ded444c99c812cd016585a317b6307710e58ba0f211"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/README.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "b59a05853a222194a8498772c49fccf4a99d13f6cd473fa9cd54a58e13a3fd17"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/authorization.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "a60487234b5bd9ee00fb7b8888bbbcf4f633c397aa9154ff36f5c5558110882b"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/bindings.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "41d7b78eb6913f2543631c506e41a0dd2b452149bb0b68240cc3bd3bb9703002"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/closing.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "9b6a02b4898c413c9f48bea7b58b7e01a4a0631637383199d056e549da84d25b"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/jobs.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "e90bb80900312c8f80fa279d187e3de01a5daac5ea017bf8727cb26f718890cb"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/keybytes.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "d8aadd06f00f897a5f4679cc8f9c00800e115d8ba355de2f77de0556764a8053"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/listing.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "59cbbdc343f3f017cb22c782e378a35b56cb27e5b877b2854966709fd1c002db"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/persistence.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "d970f90ceb4c4c23513f2f96ae8263b40c284f4837c920a9bc7dc9ec4d9483b0"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/retention.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "c44bf20969bacb8703783df8f4cb964c7febf5d45553ca1ea5d595ab1fd742ff"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/screens.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "7d3dc4c444afadd6089944980f784f690c3ac688c6b37ec48063efc75b5407ed"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/splits.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "1f5a18fdcfd8736fac604608f28d0c260d0ba3db8a6aa8b09de11e99a98b7bdf"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/switcher.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "d857ca00f0162894312fee49c1b0b9655b42157cb2c5c16dbb3bf470e45b314a"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/tabs.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "56cfec376ed5d86f2770201d01463ef514e40110b37858561105c121bba331fd"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/targeting.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "913ac90bbec47646a68c69b67ce4c2cdf1e8b124655dca8f4b2ac03be0be6f1d"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/transcripts.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "eb5ca78846bd4fedb5c6c573edfdcb956a73b0aa095e8797e68317674d76019a"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/operations/typing.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "95a779c4860acc93b16338503a2c89fa08fb1ee3035e6d611039510d95dc0741"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/panes.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "6ef33b4c6abb2c3353c73101a37c453f1aa95bb5ac6b9a9ad194e64b2db158d7"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/release.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "f3eee2d8687fe56f9b743f35f7e5a9db25af1abb08ed0c2702567117f0426662"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/settings.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "a4d42c99261cc28c73af2a7aed2453f91ffa8487cc0ae9b7b76ba6137e38c31a"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/speech.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "ff5739468e3beb5fee04b08bfce9c1a8dbaea9a7b1147e4fc25092376999cfc6"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/storage.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "17ef5e079efe8a529237a0a4d81d7e0d5098a276f93af430909d45dabc10e287"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/help/troubleshooting.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "2cc43148875ae6e16780805468287fc9072e3cfe935aa416b46ac56b7e3a34ab"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/01-getting-started.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "39524c3b6ca529f0615752c15404e2d9ad79341a03a895363433a9c678c476c6"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/02-command-line.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "dcb9b33615637a485c98ddc7416006bd54aab059c31459fc1148fa9c3b295257"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/03-configuration.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "2f6151983b8c8ffa7618e613e1f500f7c5572331b9384393630c651152f5d3e4"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/04-keyboard-and-mouse.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "982f697d4d8f111343ddb93d12dbd92e2427d023c87ea3cc4dcf5ca96d0f33ec"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/05-tabs-windows-layouts.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "ae7c57672550a35e4bfa7bfd7fec68f60b9efe1b699190e35c60c633176ccaa7"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/06-launch-and-sessions.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "4c9f658ababcda8cb8028967458fee07b5002a14272054aa3694356a5773224f"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/07-remote-control.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "9a7ecc562ef12a8e4f3fa6ef0a37e132a1362e08f4151187714682d682b09ce1"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/08-shell-integration.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "eac553ee208153fb4002d832d32f1190e48771b321245f2f4b4cac4e157f93c8"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/09-scrollback-search-marks.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "cced0f640b8434d6321cde237a05f69280c1c616aa37cb4bd7b0ae2933d0379c"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/10-clipboard-and-links.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "239d5b682015665784bea0d0679249a002fbad2d69031b0d668929e481577271"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/11-kittens.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "08248060e45024f46c8365f58d51878b78179fc430b57a5e844375713d082dc4"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/12-troubleshooting.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "5f0ed4a402685c71fd19a5313876fd725308ddb0ce817cb7c00bce00a0f4abfa"
+ },
+ {
+  "label": "kitty",
+  "path": "docs/kitty/README.md",
+  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
+  "sha256": "13b85d3137ab9a2262e91aaa2418dbc9083c0db11fae07448d77770f105811c1"
+ }
+]
