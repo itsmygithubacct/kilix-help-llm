@@ -4,14 +4,20 @@ These checks restrict retrieval; they do not establish that a passage answers a
 question. Original text, passage boundaries and citations are never rewritten.
 """
 import re
+from collections import defaultdict
 from pathlib import PurePosixPath
 
 
-def components(text):
-    """One word stream, without counting an identifier and its parts twice."""
+def negatives(text):
+    """Retain negative meaning as a term, without interpreting entailment."""
     text = re.sub(r"\bwon['’]t\b", "will not", text, flags=re.I)
     text = re.sub(r"\bcan['’]t\b", "can not", text, flags=re.I)
-    text = re.sub(r"n['’]t\b", " not", text, flags=re.I)
+    return re.sub(r"n['’]t\b", " not", text, flags=re.I)
+
+
+def components(text):
+    """Components for unknown natural words and page aliases."""
+    text = negatives(text)
     text = re.sub(r"([a-z0-9])([A-Z])", r"\1 \2", text)
     text = re.sub(r"([A-Z])([A-Z][a-z])", r"\1 \2", text)
     return re.findall(r"[a-z0-9]+", text.lower())
@@ -64,6 +70,42 @@ class Analyzer:
                 if word not in self.stop and (base := self.base(word)) not in self.stop]
 
 
+def atoms(text):
+    """Original-case whole tokens; the same edge punctuation as legacy tokens."""
+    for word in re.findall(r"[A-Za-z0-9_+.-]+", negatives(text)):
+        word = "--" + word[2:].strip(".-+") if word.startswith("--") else word.strip(".-+")
+        if word.strip("-"):
+            yield word
+
+
+def index_words(text, stop):
+    return [word.lower() for word in atoms(text) if word.lower() not in stop]
+
+
+class QueryTerms:
+    """Keep exact indexed terms; only resolve unknown natural-language words."""
+    def __init__(self, vocabulary, stop):
+        self.morphology = Analyzer([], stop)
+        self.morphology.vocabulary = set(vocabulary)
+        self.stop = stop
+
+    def words(self, text, required=()):
+        literal = {word.lower() for value in required for word in atoms(value)}
+        out = []
+        for original in atoms(text):
+            word = original.lower()
+            if word in self.stop:
+                continue
+            if (word in self.morphology.vocabulary or word in literal
+                    or word.startswith("--") or any(c in word for c in "_.+")):
+                out.append(word)
+                continue
+            parts = components(original)
+            out.extend(p if p in self.morphology.vocabulary else self.morphology.base(p)
+                       for p in parts if p not in self.stop)
+        return [word for word in out if word not in self.stop]
+
+
 _PAGE = re.compile(r"(?<![\w/.-])(?:[\w.-]+/)*[\w.-]+\.md\b", re.I)
 _PAGE_PREFIX = re.compile(
     r"^\s*(?:in|from|according to)\s+(?:the\s+)?(.+?)\s+"
@@ -93,13 +135,27 @@ def source_roles(text):
 def requested_roles(question):
     setting = bool(re.search(r"\b(?:setting|(?:config|configuration)\s+(?:key|option))\b", question, re.I))
     action = bool(re.search(r"\b(?:shortcuts?|hotkeys?|key\s*bindings?|keyboard\s+keys?)\b|"
-                            r"\b(?:which|what)\s+(?:key|action)\b", question, re.I))
+                            r"\b(?:which|what)\s+action\b", question, re.I))
     return setting, action
 
 
 def exact_literals(question):
-    literals = set(_STRUCTURED.findall(question))
-    literals.update(re.findall(r"(?<!`)`([^`\n]+)`(?!`)", question))
+    """Only explicit literal requirements and standalone identifier lookups.
+
+    Backticks in operation context alone are not an assertion that an answering
+    passage repeats that operation's name. Ambiguous requests stay eligible.
+    """
+    quoted = re.findall(r"(?<!`)`([^`\n]+)`(?!`)", question)
+    candidates = set(_STRUCTURED.findall(question)) | set(quoted)
+    stripped = question.strip().strip("`?.! ")
+    literals = {s for s in candidates if s == stripped}
+    for s in candidates:
+        token = r"`?" + re.escape(s) + r"`?"
+        if re.search(r"\b(?:named|spelled|literal|exact|exactly|must contain|must include)\s+"
+                     r"(?:(?:identifier|field|flag|option|key|string|text|the)\s+)*" + token, question, re.I):
+            literals.add(s)
+        if re.search(r"\b(?:what (?:is|does)|define|definition of|explain)\s+" + token, question, re.I):
+            literals.add(s)
     return sorted(s for s in literals if not _PAGE.fullmatch(s))
 
 
@@ -119,6 +175,44 @@ class Constraints:
         self.path_words = [set(analyzer.words(str(PurePosixPath(p["path"]).with_suffix("")))) for p in passages]
         self.stem_words = [set(analyzer.words(PurePosixPath(p["path"]).stem)) for p in passages]
         self.metadata = [words | set(analyzer.words(p["heading"])) for words, p in zip(self.path_words, passages)]
+        postings = defaultdict(set)
+        for i, text in enumerate(self.source):
+            for word in re.findall(r"(?:--)?[A-Za-z0-9_]+(?:[.+/-][A-Za-z0-9_]+)*", text):
+                postings[word].add(i)
+        self.postings = dict(postings)
+
+    def prepared(self):
+        return {"roles": self.roles, "path_words": [sorted(s) for s in self.path_words],
+                "stem_words": [sorted(s) for s in self.stem_words],
+                "metadata": [sorted(s) for s in self.metadata],
+                "vocabulary": sorted(self.analyzer.vocabulary),
+                "bases": self.analyzer.cache,
+                "postings": {word: sorted(ids) for word, ids in self.postings.items()}}
+
+    @classmethod
+    def restore(cls, passages, data, stop):
+        obj = cls.__new__(cls)
+        obj.passages = passages
+        obj.analyzer = Analyzer([], stop)
+        obj.analyzer.vocabulary = set(data["vocabulary"])
+        obj.analyzer.cache = data["bases"]
+        obj.roles = data["roles"]
+        obj.source = [p["heading"] + "\n" + p["text"] for p in passages]
+        for name in ("path_words", "stem_words", "metadata"):
+            setattr(obj, name, [set(words) for words in data[name]])
+        obj.postings = {word: set(ids) for word, ids in data["postings"].items()}
+        return obj
+
+    def literal_matches(self, literal):
+        if re.fullmatch(r"(?:--)?[A-Za-z0-9_]+(?:[.+/-][A-Za-z0-9_]+)*", literal):
+            candidates = self.postings.get(literal, set())
+        else:
+            # Phrases and punctuation are rare; narrow by their exact atoms.
+            words = re.findall(r"(?:--)?[A-Za-z0-9_]+(?:[.+/-][A-Za-z0-9_]+)*", literal)
+            candidates = set(range(len(self.passages)))
+            for word in words:
+                candidates &= self.postings.get(word, set())
+        return {i for i in candidates if contains_literal(self.source[i], literal)}
 
     def select(self, question):
         """Return topical question and eligible passage indices. No query I/O."""
@@ -137,7 +231,8 @@ class Constraints:
         literals = exact_literals(topic)
         setting, action = requested_roles(topic)
         eligible = {i for i in eligible if (not setting or self.roles[i][0])
-                    and (not action or self.roles[i][1])
-                    and all(contains_literal(self.source[i], s) for s in literals)}
+                    and (not action or self.roles[i][1])}
+        for literal in literals:
+            eligible &= self.literal_matches(literal)
         topic = _PAGE.sub("", topic)
         return topic, eligible

@@ -7,12 +7,10 @@ so everyday wording finds documents that use other words.
 """
 import hashlib
 import json
-import math
 import re
-from collections import Counter
 from pathlib import Path
 
-from .lexical import Analyzer, Constraints
+from .lexical import Constraints, QueryTerms, exact_literals
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = Path(__file__).resolve().parent / "index"
@@ -109,30 +107,18 @@ def load_passages(root=ROOT, index=INDEX):
 
 
 class Lookup:
-    def __init__(self, root=ROOT, index=INDEX, k1=1.5, b=0.75):
-        self.passages, current = load_passages(root, index)
-        questions = json.loads((index / "questions.json").read_text(encoding="utf-8"))
-        bodies = [p["heading"] + " " + p["text"] for p in self.passages]
-        expansions = [" ".join(questions.get(p["id"], [])) if p["id"] in current else ""
-                      for p in self.passages]
-        self.analyzer = Analyzer(bodies + expansions, STOP)
-        self.constraints = Constraints(self.passages, self.analyzer)
-        self.docs = []
-        for body, expansion in zip(bodies, expansions):
-            doc = Counter(self.analyzer.words(body))
-            for word, n in Counter(self.analyzer.words(expansion)).items():
-                doc[word] += n * QUESTION_WEIGHT
-            self.docs.append(doc)
-        self.lengths = [sum(d.values()) for d in self.docs]
-        self.average = sum(self.lengths) / max(1, len(self.lengths))
-        frequency = Counter(word for d in self.docs for word in d)
-        count = len(self.docs)
-        self.idf = {word: math.log(1 + (count - n + .5) / (n + .5)) for word, n in frequency.items()}
+    def __init__(self, root=ROOT, index=INDEX, k1=1.5, b=0.75, use_cache=True):
+        from .prepared import load
+        data, self.prepared_cache_hit = load(root, index, use_cache)
+        self.passages, self.docs = data["passages"], data["docs"]
+        self.lengths, self.average, self.idf = data["lengths"], data["average"], data["idf"]
+        self.analyzer = QueryTerms(self.idf, STOP)
+        self.constraints = Constraints.restore(self.passages, data["constraints"], STOP)
         self.k1, self.b = k1, b
 
     def search(self, question, k=5):
         topic, eligible = self.constraints.select(question)
-        query = self.analyzer.words(topic)
+        query = self.analyzer.words(topic, exact_literals(topic))
         scored = []
         for i, doc in enumerate(self.docs):
             if i not in eligible:

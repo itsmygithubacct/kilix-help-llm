@@ -35,28 +35,49 @@ do not evaluate this refreshed corpus. The BM25 formula and weights are unchange
 Merged passages keep every contributing section heading;
 this repairs missing search context without changing their body text or boundaries.
 
-The lexical candidate uses one normalized component stream for documents,
-headings, retained questions and queries. Separators and camel case split words
-without adding whole-token aliases. Ordinary suffixes reduce only to a unique
-shorter base attested in the corpus; ambiguous forms stay distinct. This is
-conservative morphology, not a dictionary or a semantic equivalence guarantee.
-Negation words remain searchable. The exported legacy `tokens()` helper remains
-available, but Lookup uses the analyzer in `help_llm/lexical.py`.
+The semantic successor retains whole-token document/heading/question counts.
+Known query terms keep their exact spelling rather than globally changing term
+frequencies, document frequencies and lengths. Unknown natural words may resolve
+to separator/camel components or an unambiguous attested ordinary inflection base.
+Unknown code identifiers, flags and chords are kept atomic. Negative terms remain
+searchable, and English negative contractions expand to `not`. This is lexical
+matching, not logical entailment or a dictionary of semantic equivalences.
 
-Backtick literals, flags, underscore identifiers and dotted names additionally
-require exact, case-sensitive source occurrences at identifier boundaries.
-Expansion questions cannot supply this evidence. Clear setting and shortcut/action
-requests require body evidence of the corresponding role; these heuristics do
-not certify that a returned passage supplies every requested fact. Recognized
+Standalone identifiers, explicitly required/named literals and recognized
+definition requests require case-sensitive, boundary-correct occurrences in the
+returned source. Contextual operation names in multi-term questions remain atomic
+ranking terms, without a compulsory co-occurrence filter. Backticks alone do not
+make ambiguous context a required answer literal. Expansion questions never
+supply literal or role evidence. Clear setting and shortcut/action requests require
+body evidence of that role; the ambiguous word `key` alone does not imply a keyboard.
+These heuristics do not certify complete factual support. Recognized
 explicit page requests restrict results by filename/path and heading metadata,
 preferring filename matches. Unrecognized phrasing remains ordinary search;
 unknown recognized page names return no results. A short page alias can be
 ambiguous. These constraints may reduce recall and require retention evaluation.
 
 All passage bodies, IDs, source commits and question attachments remain unchanged
-in this lexical candidate. Historical metrics above do not evaluate this analyzer
+in this candidate. Historical metrics above do not evaluate this analyzer
 or establish release qualification. Results are cited source passages, without
 generated answers, live-state access or semantic abstention guarantees.
+
+`lookup-prepared.json.gz` precomputes the lookup representation and source-only
+constraints. Its key hashes the actual source/index files, lookup/lexical/cache
+implementation, schema and Python implementation tag. Runtime validates those
+bytes and the compressed payload checksum; it never relies on timestamps or
+executes cached code. A missing, corrupt or stale artifact triggers fresh in-memory
+construction, including normal changed-document question/citation suppression.
+Runtime does not write cache files. Prepare or rebuild explicitly after source,
+index or implementation changes:
+
+```sh
+python3 -B -m help_llm.prepared
+```
+
+Preparation is deterministic for the same inputs and refuses inputs that change
+during construction. `Lookup(use_cache=False)` exercises the uncached path for
+verification. Cache-hit and fallback results must be identical. Cold process
+startup and uncached construction cost are separate performance measurements.
 
 Passages use the existing heading/paragraph cutter with a 450-word target; a single
 paragraph longer than that stays whole (10 passages in this snapshot, enumerated in
