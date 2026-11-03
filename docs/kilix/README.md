@@ -7,6 +7,10 @@ just like Tilix's pane headers, on top of kitty's GPU-rendered speed. For Tilix
 users who want kitty underneath, and anyone who wants clickable pane chrome on
 kitty.
 
+Native Windows and Linux development share this repository.
+See [Windows builds and WSL support](https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/windows/README.md) for build instructions,
+preview downloads, and platform limitations.
+
 It runs its own kitty binary with its own config and icon, so it leaves any
 kitty you already have completely untouched. Tracked defaults stay in
 `config/`; every Kilix-owned writable file lives below
@@ -22,22 +26,231 @@ complete tree. Freedesktop launchers/icons are the intentional exception:
 `--install-desktop` uses the standard XDG application paths, and records what
 it wrote in `state/` so `--uninstall-desktop` can take exactly that back out.
 
-![kilix — pages strip with + button, per-pane title bars with clickable split/maximize/close buttons, splits, and icat](https://raw.githubusercontent.com/itsmygithubacct/kilix/main/config/kilix_demo.png)
+![kilix — pages strip with + button, per-pane title bars with clickable split/maximize/close buttons, splits, and icat](https://raw.githubusercontent.com/itsmygithubacct/kilix/a77cac52799d0279a5ce3f74525fba40fc281dcd/config/kilix_demo.png)
+
+## Claudex and rollout logs
+
+`kilix install kilix-claudex` installs the public, MIT-licensed application at
+its catalog-pinned revision. It uses Python's standard library and performs no
+account login or agent launch during installation. `kilix claudex --help`
+works before installation; `kilix claudex` forwards commands to an explicit
+PATH installation, the verified catalog copy, or the existing local fallback.
+For example, `kilix claudex team plan team.json --json` previews a team before
+`kilix claudex team launch team.json` launches it. The application retains its
+private configuration independently of the installed source.
+
+The selected toolkit includes `kilix rollout log --pane N [--json]` for locating
+the log written by a pane's current agent. See `kilix rollout log --help` for
+selection and exit statuses.
 
 ## Release 0.2.2 — in development
 
-Prepared for the coordinated Plebian-OS 0.2.2 candidate. The supported upgrade
-source is 0.2.1; image, upgrade and final human acceptance remain pending.
+Pane logs open faster. The Log button starts the viewer without preparing a
+second runtime, and transcript replay reuses unchanged rows and batches plain
+text writes while preserving the recording's rendered output.
+
+The reviewed source integration is selected for the coordinated Plebian-OS
+0.2.2 candidate. Image, upgrade, rollback and final installed acceptance remain
+pending; supported upgrade paths are defined by the
+[OS upgrade policy](https://github.com/itsmygithubacct/plebian-os/blob/main/UPGRADING.md).
+
+`kilix fingerlock` finds a USB fingerprint reader, installs Debian `fprintd`
+on first use after an explicit yes, and enrolls, verifies, lists, or deletes
+fingers through fprintd. A verify result checks the reader. It does not unlock
+the screen, change login, or install `libpam-fprintd`.
+
+Amp and `kilix-music` share one per-user playback service, queue, transport
+controls and EQ. General music uses the selected `kilix-mpv` runtime; native
+EnCodec files and live streams retain their decoder and admission path.
+Closing either controller leaves the shared session running. The pinned Amp
+build includes the spectrum library and checks the installed mpv filter chain
+before it is reported installed.
+
+The Windows preview adds desktop automation through `kilix desktop`:
+application/control selectors, condition waits, local screenshots, UI Automation
+inspection/actions, keyboard and mouse input, application launch, and window
+management. Native Windows and WSL share SDK 1.18's `kilix_sdk.windows` client. Linux hosts can use
+`kilix windows --host SSH_ALIAS` through an existing SSH connection. See the
+[Windows desktop commands](https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/windows/README.md#windows-desktop-automation).
 
 See the [0.2.2 help guide](help/README.md) for current commands, storage,
 model setup, speech and troubleshooting. Older release sections below describe
 their named versions; they are not a current component inventory.
+For the human and agent workflows that connect terminal work, automation,
+verification and recovery, see [Kilix Workflows](https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/docs/workflows/README.md).
+
+`kilix ask` uses LFM2 for command interpretation, with an exact grammar fast path.
+To use the optional Needle 3 V9 model, install it with
+`kilix-needle install --commands needle3`, then run
+`kilix ask --model needle3 "open calculator"`. Both models use the same request
+validation and confirmation. `--model grammar` skips model loading.
+Model Setup and `kilix-needle workflows setup --model needle3` save the Ask
+preference after verification. An explicit `--model lfm2` overrides it for one
+request; `KILIX_ASK_COMMANDS_BACKEND` overrides the saved preference in a shell.
+The installer presents the model and runtime licences before downloading.
+
+Ask for current city weather with `kilix ask "What's the weather in Tokyo?"`
+or `kilix ask "weather in Paris, France in Celsius"`. This also works from the
+desktop Run dialog and Ask Kilix by voice after confirming the transcript.
+City weather uses a direct lookup without loading a language model. For a
+literal city name, use `kilix weather "New York"` or
+`kilix weather "London, United Kingdom" --unit celsius`.
+Answers identify the resolved city, country and conditions timestamp. A major
+city is selected when it clearly dominates same-name matches; otherwise add a
+country or state to distinguish them. These lookups use the widget's temperature
+unit by default and leave its saved ZIP, schedule and cached conditions alone.
+Only current conditions are supported, with stale data labeled and unavailable
+or timed-out requests reported. City names are sent to
+[Open-Meteo geocoding](https://open-meteo.com/en/docs/geocoding-api), then the
+resolved coordinates to its [weather API](https://open-meteo.com/en/docs).
+
+`kilix session` launches managed Codex, Claude or Grok runs with explicit folder
+trust, native UI or headless logging, and lifecycle inspection. New panes preserve
+focus. See [managed coding sessions](session.md) for commands, the importable
+`kilix_session` library and the installed `kilix-session` entry.
+
+`kilix pty` manages persistent terminal sessions and their journals; the PTY
+manager in Kilix 95 uses the same host interface. `kilix ralph` provides durable
+mailboxes and bounded follow-ups. The host also selects the reviewed multiplexer,
+agent-state tools, IceWM integration and Content catalog. Runtime qualification
+of each external agent/client remains separate from the local source tests.
+
+PTY selection checks apply to the selector supplied by the caller; they do not
+authenticate the user's original intent. Consumer qualification remains open.
+The host's ARM64 engine support does not imply that the complete Plebian-OS
+0.2.2 binary closure supports ARM64; its selected runtimes currently target AMD64.
 
 - The three-line Start button and status widgets open floating drop-downs above
   the panes. Panes keep their size and continue updating behind the popup.
 - Popups follow the page-strip position, fit the window when resized, and
   return focus to the original pane when dismissed. Outside clicks close the
   popup without activating the pane beneath it.
+- Right-click CPU/RAM, temperature, read-aloud, microphone or Wi-Fi for an
+  explanation and that widget's settings. Temperature offers Celsius and
+  Fahrenheit directly; microphone settings link to input devices and the
+  dictation model selector/installer. The CPU/RAM indicator measures logical
+  CPU cores and memory in use, not GPU utilization.
+- Weather accepts a five-digit US ZIP and shows temperature and conditions
+  after loading. Click the unconfigured Weather control or run
+  `kilix settings --widget weather`. Settings are saved in
+  `~/.local/gpu_terminal/settings.conf` (or `GPU_TERMINAL_SETTINGS_FILE`), with
+  a private last-result cache in the adjacent `kilix/weather.json`. No location
+  is detected or requested until a ZIP is supplied. A ZIP is sent to the
+  [Open-Meteo geocoder](https://open-meteo.com/en/docs/geocoding-api), and its
+  coordinates are sent to the [weather API](https://open-meteo.com/en/docs).
+  Weather-model estimates and GeoNames location data are attributed in the
+  card. Open-Meteo's free API is for non-commercial use; weather data is CC BY 4.0.
+  Choose refresh on load/manual, every 15/30/60/180 minutes, or daily at a
+  local system time. Schedules run while Kilix is open. Failed refreshes keep
+  the last reading marked stale; readings over two hours old are also marked
+  stale. Changing ZIP clears the previous location, and hiding the widget
+  cancels its fetch. Weather and the Linux device menus are hidden on native
+  Windows, where their settings tools are unavailable.
+- A lone left or right Windows/Super key opens the top-left Start menu on
+  release. Holding or repeating the key does not open multiple menus;
+  Super combinations keep their normal behavior. A second tap toggles the
+  menu, and focus changes cancel a pending tap. This default can be disabled
+  with `kilix settings --set super_start=off`. Native Windows and macOS keep
+  their normal key behavior; disabling Start also disables this shortcut.
+  A window manager or compositor that intercepts Super must forward the key
+  to Kilix for this shortcut to work.
+
+The RC5 desktop-completion candidate also routes desktop portals from managed
+private-X applications to the physical session. Application singleton names
+stay on their private D-Bus; each portal caller gets a separate host connection,
+translated request/session handles, and Unix file-descriptor forwarding.
+Disconnecting a client or killing its app releases its capture sessions. This
+relay requires the system Python's GIO bindings (`python3-gi` on Debian); the
+stream dependency installer includes them. A private XID is not forwarded as
+the parent of a physical-session dialog. Firefox and Chromium browsers in private panes use the
+system portal for screen capture while their GUIs stay on X11. This browser-only
+compatibility context uses an unreachable Wayland display path and preserves
+the normal browser and desktop permission dialogs. The SDK launcher and
+`kilix open-url` from an existing private pane share this policy. Chromium's Ozone
+platform is explicitly X11; its profile, sandbox and permission settings are retained.
+Firefox ESR and Chromium capture, cancellation, Stop sharing and source closure
+have bounded installed default-desktop VM evidence. Chromium also shares native
+dialogs within a minimized pane. Its browser preview and actual capture open
+separate portal sessions; this candidate asks for system consent for each, so
+answer the second picker after the browser's Share button. Multiple-source,
+display, lock and broader daily-use acceptance remains pending.
+
+Managed GTK applications using `GtkFileChooserNative` select desktop portal
+file choosers when a physical-session bus route is available. An explicit `GTK_USE_PORTAL=0` is
+preserved. The same private bus exposes native desktop notifications through
+the physical daemon, with separate identifiers for each caller. Replacement,
+closure and action signals stay with their owning application; closing the
+sender leaves an already displayed notification available, as with
+`notify-send`. Notification image hints keep their binary data, while private
+window IDs are removed. Pending service payloads are bounded to 16 MiB per
+message and 64 MiB across the relay. Native GTK Open, Save, Cancel and
+application-close checks, and Libnotify show/update/close/action checks, have
+component VM evidence; installed default-desktop acceptance remains pending.
+
+Managed local application panes now mirror ordinary clipboard formats through
+SDK 1.16: Unicode text, PNG/JPEG images, and local file URI lists. The relay
+supports incremental X11 transfers, limits each clipboard value to 64 MiB, bounds in-flight transfers, and stops
+with its pane. Network broadcast modes leave the host clipboard disconnected.
+Paste requests made during a copy wait for the complete requested format, with bounded
+waits and request counts. A failed acquisition refuses the waiting request
+instead of returning the previous clipboard as the new copy.
+Known targets and completed formats become available while other representations
+are still being collected. The hub retains its previous complete bundle until
+the new bundle finishes; all alternate-format bytes remain preserved.
+New empty panes initialize their clipboard endpoint. Pending copies refresh
+clipboard ownership so browser and GTK format caches discover the new value;
+older ownership notifications cannot overwrite a newer claim.
+Reply-buffered X11 events drain within the callback's event budget, so the
+desktop does not sleep between already available clipboard chunks.
+`KILIX_HOST_CLIP=0` disables host clipboard exchange. Kilix 95 and its built-in
+fallback use the same transport, including file-manager copy/cut/paste. Two
+GTK windows on separate private displays have component VM evidence for large
+text and image exchange; cross-app drag/drop and installed default-desktop
+acceptance remain pending.
+
+Managed private application buses also forward the physical session's
+accessibility discovery and status service. GTK/ATK applications can join the
+same AT-SPI registry as the session's screen reader while their application
+singleton names remain private. Status properties and change signals retain
+their types; discovery calls are bounded. The matching Kilix 95 candidate
+exposes its live pixel-shell tree separately. Native Kilix chrome, broader
+toolkit and input workflows, and complete screen-reader acceptance remain RC5 work.
+
+The native candidate also provides `get-pane-geometry`, consumed through
+`kilix_sdk.geometry.current()`. It reports the actual pane content bounds,
+cells, visibility, OS window origin and framebuffer/window sizes, including
+the space occupied by native pane chrome. The SDK refreshes a surviving
+broker client's route before selecting its pane, validates identity and bounds,
+and maps canvas rectangles to physical X11 coordinates. Hidden panes, changed
+terminal grids and unavailable screen origins are refused. Installed coordinate
+and text hit-testing qualification remains pending. X11 button events update
+the cursor from their own client coordinates before dispatch, so a click after
+a pointer warp or window move cannot reuse an older motion sample. Relative
+input with a disabled cursor retains its accumulated position.
+
+Broker-backed SDK clients can refresh their remote-control route after the
+original frontend exits. The replacement frontend's live attach process must
+match the caller's exact private broker runtime and session, executable, user,
+and process identities. Only the route, window identity, public key, and
+password-file path are refreshed; normal remote-control authentication remains
+required. Kilix 95's matching candidate applies this before launching tabs.
+`agent-control` applies the same refresh, recovering the broker identity with
+the route from its own process ancestors, so an agent that outlived its
+terminal keeps working from the restored pane.
+
+The matching Pleb supervisor also associates an ordinary initial page with one
+login. A crash retry attaches that surviving PTY as the first active page
+before starting a new desktop. The association persists across repeated
+frontend crashes; a missing or ambiguous match keeps the usual startup.
+Explicit startup-session definitions and URL launches keep their own commands.
+
+Managed local application panes register with the matching Pleb capture picker
+as individual Application pane sources. Private runtime records identify the
+live owner, application, X server and authority file without storing cookies or
+remote-control credentials. Every screenshot or sharing request still needs
+physical-desktop consent. Closing a pane removes its registration; stale
+process identities are refused. Network broadcast launches remain outside this
+local capture catalogue.
 
 ## Release 0.2.1
 
@@ -73,9 +286,9 @@ keyboard scrolling when the window is too short to show all entries.
 The menu supports mouse selection, arrow-key navigation, `Enter`, `Esc`, and
 mnemonic letters. Clicking outside dismisses it and returns focus to the
 original pane. Clicking Start again or pressing `Ctrl+Alt+M` toggles it.
-The left or right Windows/Super key
-opens the Kilix menu unless Kilix 95 or IceWM owns the active desktop context;
-in those cases the key is delegated to that desktop's Start menu.
+The left or right Windows/Super key opens this same top-left menu on a lone
+key release. The explicit `kilix_windows_key` action remains available for
+desktop launchers that want to delegate Start to Kilix 95 or IceWM.
 
 Configure the shared behavior with:
 
@@ -138,7 +351,10 @@ clock and timezone widget. The volume icon opens a compact slider on one click,
 the full clickable `kilix-volume` output selector on a double-click, and a
 settings card with a live Mute checkbox on right-click. The network icon shows
 compact connection status on one click and opens `nmtui` on a double-click.
-Right-clicking a non-volume widget opens Kilix Settings.
+Right-click CPU/RAM, temperature, read-aloud, microphone, Wi-Fi or weather
+for its own menu. Clock and calendar open clock settings; battery opens
+Kilix Settings. All widget menus are also accessible with
+`kilix settings --widget system|temperature|speech|microphone|network|weather`.
 
 Calendar, clock, volume, network, battery and temperature cards use the same
 popup layer as Start. They open next to the clicked control, above the panes,
@@ -162,7 +378,7 @@ Optional desktop pins carried by this Kilix release advance to:
 
 - **Kilix TUI utilities** — `dc462372aa7417fa9bfccd82b8312d62d1077f82`;
 - **Kilix Land** — `631b0d7f6da1cc1b8ff8656fffd8f2a9195df39d`;
-- **Kilix IceWM** — `0b9f11b45fddc5370c37b00e9cd9e42ac5a5f6d7`.
+- **Kilix IceWM** — `00e570ceff4d5c1374e8f9a92f01cedb620dfe40`.
 
 Kilix Cap stays on the pin 0.1.9 selected.
 
@@ -241,6 +457,17 @@ the pinned client as `kilix_sdk.telemetry`; `kilix telemetry status`,
 `snapshot`, `pane PID`, and `history` inspect the same source. Writer status is
 lock-backed, oversized process tables compact without stopping the sampler,
 and pane CPU includes commands that exit between process-table scans.
+
+Automatic samplers now share registered process owners and exit after five
+seconds without a live consumer. Identity includes the boot, PID namespace and
+start tick, so a reused PID does not retain a sampler. Explicit `kilix telemetry
+serve` remains persistent for service management. Automatic startup requires
+consumer lifetime support in the host-selected `kilix-telemetry` component.
+The transcript budget worker checks the frontend's start tick each second and
+exits when that frontend ends; budget passes remain once per minute. The host
+native-window observer binds its parent through a kernel process handle; session
+callers supply `--parent-start-tick` with `--parent-pid` to reject a PID reused
+before observer startup. An observer without a parent remains persistent.
 
 Optional desktop pins carried by this Kilix release advance to:
 
@@ -524,7 +751,7 @@ lives on `plebian-os` and plays at [plebian-os.com](https://plebian-os.com/#watc
 - **Network/Wi-Fi-in-chrome** — a network item immediately left of the calendar
   opens NetworkManager's `nmtui` in an overlay pane.
 - **Battery-in-chrome** — on laptops, a green/yellow/red battery item appears at the
-  far right of the page strip while the battery is discharging, with the percentage
+  far right of the page strip below full charge, including while charging, with the percentage
   shown to the left of the battery icon; click it to hide/show the percentage.
 - **Date/time-in-chrome** — the page strip shows a high-contrast local date and
   time immediately to the left of the battery item. Click its calendar icon for
@@ -533,6 +760,8 @@ lives on `plebian-os` and plays at [plebian-os.com](https://plebian-os.com/#watc
   reset, clear, split right/down, close.
 - **Drag-to-split by quadrant** — drag a pane's header onto another pane's edge to split it (Tilix's model).
 - **Pages (Tilix sessions)** — each page is a kitty tab, with an always-on page strip and a `+` button.
+  The strip holds ten pages per row: the eleventh starts a second row (up to 20),
+  and so on in rows of ten. The `+` button follows the last page and never starts a row.
 - **Input broadcast** — `Ctrl+Alt+B` mirrors your typing to every pane in the page
   (Tilix's "synchronize input").
 - **Tilix look & keys** — per-pane title bars, active-pane highlight, dimmed inactive panes, Tango palette, Tilix keybindings.
@@ -578,6 +807,381 @@ private Unix socket. Terminal bytes remain untouched, so live Kitty graphics,
 including file and POSIX shared-memory transfers, do not pass through a tmux
 parser.
 
+Closing the whole frontend, closing a page, or a Kilix crash detaches the
+client. Detached sessions are discovered on the next startup and reopened
+under the tab name and title they had; a pane that never recorded one opens
+as `recovered:<id>`. The per-pane `✕` and `Ctrl+Alt+W` are the explicit
+destructive path and always ask before asking the broker to terminate that
+pane. Set `KILIX_PTY_BROKER=0` to disable persistence,
+`KILIX_PTY_BROKER_AUTO_RECOVER=0` to leave detached sessions for manual
+attachment, or `KILIX_PTY_BROKER_JOURNAL_LIMIT` to change the bounded replay
+journal from its 64 MiB default.
+
+#### Where the sockets live
+
+Each pane is one broker session with a 1-64 character ID (letters, digits,
+`.`, `_`, `-`). Sessions live in one *runtime directory*, mode `0700`, owned by
+you. Kilix picks it the same way for every pane and every `kilix pty` command:
+
+1. `KITTY_PTY_BROKER_RUNTIME`, if set to an absolute path;
+2. otherwise `$XDG_RUNTIME_DIR/kilix-pty-broker`, when `XDG_RUNTIME_DIR` is an
+   absolute, private (`0700`), non-symlink directory you own (normally
+   `/run/user/<uid>`, which is empty after every reboot);
+3. otherwise the **fallback** `$KILIX_SESSION_HOME/pty-broker`
+   (`~/.local/gpu_terminal/kilix/session/pty-broker`). This is used when no
+   private `XDG_RUNTIME_DIR` exists, as on a bare SSH login or in some
+   containers. Unlike `/run/user`, it survives reboots, so sessions whose
+   broker died with the machine leave directories behind; `kilix pty reap
+   --runtime DIR` clears them (below).
+
+`kilix pty path` prints the runtime in effect. The standalone
+`kitty-pty-broker` command defaults to `$XDG_RUNTIME_DIR/kitty-pty-broker`, a
+different directory, so outside a Kilix pane it sees none of these sessions
+unless you pass `--runtime-dir` or use `kilix pty`. A socket path must fit in
+107 bytes (`RUNTIME/sessions/<id>/control.sock`); Kilix refuses a longer runtime
+and asks for a shorter `XDG_RUNTIME_DIR`.
+
+```
+RUNTIME/sessions/ID/control.sock   the broker's socket (0600; same-user peers only)
+RUNTIME/sessions/ID/journal.bin    replay journal, bounded (64 MiB by default)
+RUNTIME/sessions/ID/metadata       broker and child pid, start time (0600)
+RUNTIME/titles/ID.json             tab name and title, for recovery after a restart
+RUNTIME/reaped/                    journals of sessions proved dead (see below)
+```
+
+A broker removes its `sessions/ID` directory when it exits. One that was
+killed outright leaves it behind; the next `list` proves it dead (the recorded
+process is gone, or the machine has rebooted since) and clears it, moving its
+journal to `reaped/` instead of deleting it.
+
+#### Finding the session behind a pane
+
+Every pane process carries its session in `KITTY_PTY_BROKER_SESSION`. From
+outside the pane, `kilix pty pane PANE_ID` prints it (the ID is the one
+`kilix pane list` shows), and `kilix pty status --pane PANE_ID` asks the broker
+about it directly. Overlays and panes started with `KILIX_PTY_BROKER=0` have no
+session.
+
+#### `kilix pty`
+
+PTY management controls persistent terminal processes. `kilix session` remains
+the managed coding-run launcher, with its own run IDs, trust and logs.
+
+
+`kilix pty` with no arguments (or `tui`) opens the interactive session
+manager: it lists detached and attached panes, attaches a selected detached
+pane with Enter, watches any pane read-only with `o`, and offers an explicitly
+confirmed termination action. The subcommands below do the same from a script,
+against the runtime above.
+
+Agents default to plain `kilix pty` commands with `--json`, one call per read.
+Use `kilix pty help` or `kilix pty capabilities --json` for exact forms.
+`kilix-needle pty` is the cheaper alternative, using only its exact accepted forms.
+Agents never use the raw `kitty-pty-broker` CLI.
+
+```bash
+kilix pty list [--json] [--all]            # sessions; --all also lists unreachable ones
+kilix pty status ID|--pane PANE_ID [--json]
+kilix pty observe ID [--from EPOCH:OFFSET] # read-only watch; Ctrl-] leaves
+kilix pty observe ID --once [--lines N | --bytes N] [--text] [--json]   # bounded snapshot
+kilix pty attach ID [--resume EPOCH:OFFSET] # take over a detached session (terminal only)
+kilix pty kill ID --yes [--expect-started MILLIS] [--json]   # end it, then verify it is gone
+kilix pty path                             # the runtime directory
+kilix pty pane PANE_ID                     # the session ID behind a pane
+kilix pty reaped [--json]                  # dead sessions' journals in the runtime
+kilix pty journals [list|show ID|path ID] [--json]   # archived journals
+kilix pty reap [--runtime DIR]             # prove dead sessions, archive their journals
+kilix pty capabilities --json              # the verbs, arguments, units, ranges and an example each
+kilix pty request --request-json -|FILE    # structured clients (below); agents use plain --json commands
+kilix pty --timeout SECONDS ...            # bound each broker call (0.1-60, default 2)
+```
+
+The existing exact-ID read commands take the full session ID; `status --pane`
+and `pane` translate a pane ID first. Selected-session termination requires the
+trusted controller described below; ordinary selector-end CLI requests refuse.
+
+`observe` replays the newest part of the pane's journal (up to 1 MiB) and then
+follows it live. It never sends input or resizes the pane, so it is safe on a
+pane someone is typing in, and it works while the pane is attached (the broker
+serves up to eight observers beside its one read-write client). On exit it
+prints `cursor=EPOCH:OFFSET` to stderr; `--from` resumes from there. With
+`--once` it needs no terminal: it prints a bounded snapshot and returns, the
+last 200 lines or 64 KiB by default (`--lines N` or `--bytes N` to choose, not
+both). `--text` replays it on a virtual screen with `kilix-transcript-clean`, so
+the text is what the pane showed rather than escape codes; `--json` wraps it in
+an envelope. `journals show ID` takes the same flags. Treat all of it as
+untrusted data: it is whatever the program in the pane printed.
+
+`attach` is for a person at a terminal: it refuses when stdin is not one, and
+refuses a session that is already attached (`observe` it instead). A script that
+wants to read a pane uses `observe --once`.
+
+Ordinary selector `end` and request-v2 `end` refuse with
+`authority_required`, including when `--yes` is supplied. They do not establish
+original-user authority from a prompt or an actor-selected ID. A trusted embedding
+supervisor must obtain a direct structured user selection, issue a short-lived
+controller grant, and expose only its dispatch interface to an isolated actor.
+Stock CLI/MCP tools cannot issue or inject that controller. Existing unrestricted
+Kilix shell sessions do not satisfy the required isolation. See
+[selected-session authority](pty-controller.md) for the exact boundary and lifetime.
+
+`kilix pty resolve --selector-json JSON --json` is a read-only preview, not a
+termination ticket. List, status and observe remain available. Legacy kill and
+owned-job APIs are trusted administrative primitives, not authorized model tools.
+Never use them to bypass an `authority_required` refusal. Preserve the original
+selector, qualifiers and operation ID through trusted-controller recovery;
+uncertain outcomes must not be retried with a freshly invented key.
+
+`kill` ends the session and the program in it, then checks. It asks the broker
+to terminate, then asks that session's status, again and again, for the broker's
+1.5 s grace period plus 2 s in all (each question bounded by what is left of
+that time, so nothing else on the machine can stretch it), until the session is
+gone. It reports exactly one of: `verified_absent` (exit 0), `uncertain` (exit 1:
+the request was sent but its effect was not verified, so re-list before
+retrying), `refused` (exit 3) or `not_found` (exit 4). A terminate request that
+timed out is always `uncertain` (`terminate_timed_out`), even if the session is
+seen absent afterwards, because that absence cannot be attributed to the
+request; it is never `verified_absent` and never "nothing happened". It refuses to end the session of
+the pane it runs in (`$KITTY_PTY_BROKER_SESSION`). With `--expect-started
+MILLIS` (the `started_millis` the caller saw) the expectation travels with the
+terminate request and the session's own broker compares it with its own start
+time and ends the session only if they match, in one step: an ID that was
+reused in between is refused (`started_mismatch`, exit 3) and the replacement is
+never touched. A session whose broker predates this check cannot bind: nothing is
+done and the result is `refused` / `cannot_bind` (exit 3); a person can then end
+it with `kill ID --yes` without `--expect-started`. A plain `kill ID --yes` (no
+expectation) is the unconditional terminate it always was. `request_sent` is
+`false` in every refusal: nothing was applied. On a terminal it asks first;
+anywhere else `--yes` is required.
+
+Off a terminal, `kill` also needs to know whose pane it is running in, because that
+is how it refuses your own session: with `KITTY_PTY_BROKER_SESSION` unset or
+malformed and stdin not a terminal it is refused (`caller_unidentified`, exit 3)
+before anything is asked of a broker. A person at a terminal keeps the
+confirmation prompt, and can pass `--no-caller-check` to say they accept that the
+own-session check cannot apply; an identifiable own session is still refused, and so are
+a missing `--yes`, a stale expectation and a broker that cannot bind it. Agents and scripts never pass it: if the caller
+cannot be identified, stop and report.
+
+Every command that only queries the broker is bounded: a wedged broker costs
+`--timeout` seconds, not a hang, and `list` reports it as unreachable rather
+than stalling the healthy sessions behind it. `kilix` itself cuts off any one
+broker call after 10 seconds (`KILIX_PTY_GUARD`), or after 75 when `--timeout`
+is given, and waits at most that long for another build of the broker to finish
+before it can look the executable up; the transcript pass gives its liveness
+query 5 (`KILIX_PTY_LIST_TIMEOUT`) and its look-up 30. `--timeout` is checked
+for every command (0.1-60 seconds, exit 2 otherwise), including those that
+only read the disk. Broker errors are relayed as `kilix pty: ...` lines. These
+environment settings are numbers of seconds greater than 0 and at most 86400 (a
+day), the range every consumer (Python's poll, `timeout`, `flock -w`) can take;
+zero, a negative number, an empty or non-numeric value, and anything above 86400
+(including numbers too large to represent) are ignored in favour of the default,
+because a zero duration would otherwise mean "no deadline" to `timeout` and a huge
+one makes the waiting code fail. `scripts/build-pty-broker.sh` applies the same
+rule to `KILIX_PTY_BUILD_LOCK_TIMEOUT`; when that is unset or empty (a person
+running the script by hand) it waits for another build as long as it takes.
+Exit status: `0` success, `1`
+failure or uncertain, `2` usage error, `3` refused, `4` not found (`kill`,
+`status`). `kilix pty help` prints the usage to stdout.
+
+#### JSON contracts
+
+`--json` output of `list`, `status`, `reaped`, `journals`, `kill` and
+`observe --once` is a stable interface, consumed by Kilix 95 and by agents.
+Every document is an envelope: `"schema": "kilix.pty/v1"`, `"runtime"` (the
+directory asked, string) and `"timeout_seconds"` (the per-call bound in force,
+number; 2 by default, 1 for `list`, which asks every session under one deadline), then the fields below. New fields may be added within `v1`; existing
+ones keep their names, types and meaning. Session IDs are 1-64 characters from
+`[A-Za-z0-9._-]` (Kilix creates 16 lowercase hex).
+
+| Command | Fields after the envelope header |
+| --- | --- |
+| `list --json` | `sessions`: array of session objects; `unreachable`: array of `{"id","reachable":false,"error","recorded"}` (a session whose broker did not answer in time, or failed for a reason other than "not there"). A session missing from both arrays is not proven gone: a live broker whose socket pathname was moved aside is neither listed nor reaped (`status` says not found); only a `verified_absent` kill proves absence |
+| `status ID --json` | `session`: one session object. A missing session prints `{"result":"not_found","id"}` and exits 4 |
+| `reaped --json` | `reaped`: array of `{"id","started_millis","reaped_millis" (int or null),"journal_bytes","journal" (path),"meta" (path or null)}` for journals still in the runtime |
+| `journals --json` | `journals`: array, newest session first, of `{"id","started_millis","variant" (string or null),"reaped_millis","archived_millis","broker_pid","child_pid","raw_bytes","compressed_bytes","path"}`; the integers other than `started_millis` and `compressed_bytes` can be null when the `.meta` was missing |
+| `kill ID --json` | `result`, `id`, `request_sent` (bool), `reason` (string or null), `message`; also `started_millis` and `waited_ms` when known, `expected_started_millis` on a mismatch |
+| `observe ID --once --json`, `journals show ID --json` | `id`, `journal_epoch` and `cursor` (`"EPOCH:OFFSET"`; both null for a journal), `started_millis` (journals only), `total_bytes` (bytes read before bounding), `truncated` (bool), `untrusted` (always true), and `text` (with `--text`) or `bytes_b64` (base64 of the raw bytes) |
+
+An unreachable row's `recorded` object has `argv` (array of strings or null),
+`cwd` (string or null), `started_millis` (integer or null), and `truncated`
+(boolean). The broker records these at spawn; argv retains whole elements within
+1024 JSON bytes and cwd retains whole characters within 512 JSON bytes. Either
+bound, or replacing invalid UTF-8 bytes with `\ufffd`, sets `truncated`.
+Older metadata supplies null for fields it lacks; an existing start time is
+retained. Older brokers may omit `recorded` entirely. Kilix passes it through
+unchanged, including on any returned status object; live rows get no new field.
+A status call that fails still reports its error on stderr, without a JSON row;
+use `list --json` to read unreachable rows.
+
+Recorded startup data is display evidence. The shared broker evaluator conservatively treats missing/truncated facts as unknown; agents never count matches themselves.
+
+A session object, as `status` and `list` report it:
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | session ID |
+| `broker_pid`, `child_pid`, `foreground_pgrp` | integer | the broker, the pane's program, and the PTY's foreground process group |
+| `started_millis` | integer | Unix time the session started, milliseconds; with `id` it names one session, because an ID can be reused |
+| `journal_bytes`, `journal_epoch` | integer | size of the replay journal; changes when it restarts |
+| `attached` | boolean | a read-write client is connected |
+| `replay_complete` | boolean | the journal holds everything since the session started |
+| `rows`, `columns` | integer | the PTY's size |
+| `cwd` | string | the directory the session **started** in; never changes |
+| `cwd_now` | string or null | the program's current directory, read from `/proc`; null when unavailable or when it was removed |
+| `cwd_now_deleted` | boolean | `true` when that directory was removed (then `cwd_now` is null); always present |
+| `command` | string | the command line, bounded |
+| `boot_id` | string or null | the machine's boot ID when read |
+| `start_ticks` | integer or null | the broker process's start time (`/proc/PID/stat`, field 22) |
+| `reachable` | boolean | present and `true` on entries of `list --json` |
+
+`kill` results: `verified_absent`; `uncertain` (`reason` `still_listed`,
+`verify_failed`, `terminate_timed_out`, `terminate_failed`, `not_sent`, `receipt_not_saved` (the
+request ran but its receipt could not be written: a retry replays `interrupted`),
+`dispatch_failed`, `in_progress`, `interrupted`, `receipt_evicted`, `status_failed` or `status_timeout`; `request_sent` says whether a
+termination request went out); `refused` (`reason` `own_session`,
+`started_mismatch`, `cannot_bind`, `caller_unidentified` or `declined`); `not_found`. Exit status 0, 1, 3, 4.
+
+#### JSON requests
+
+`kilix pty request` is for structured clients; agents do not need it.
+Agents use the plain commands with `--json` described above.
+
+`kilix pty capabilities --json` prints, in about 3 KB, every verb the request
+route accepts with its arguments (type, unit, range), whether it needs consent,
+and one literal request to copy. Nothing is asked of a broker. `kilix pty request
+--request-json -` (or a file) takes one request and prints one receipt, both on a
+single line:
+
+```bash
+kilix pty request --request-json - <<'EOF'
+{"schema":"kilix.pty.request/v1","verb":"observe","args":{"id":"3fa9c2d41b7e6a05","max_lines":50,"text":true}}
+EOF
+```
+
+Verbs: `list`, `status` (`id` or `pane_id`), `pane`, `reaped`, `journals` (with an
+`id`, a bounded snapshot; without, the archive), `observe` and `kill`. `attach` and
+`reap` are not available here. A request is at most 16 KiB; unknown top-level
+fields or arguments are rejected, and an empty stdin is a one-line refusal whose
+`hint` is the example above. Units are in the names: `timeout_seconds` (0.1-60),
+`max_lines` (1-10000), `max_bytes` (1-1048576, not together with `max_lines`),
+`expect_started_millis`; a value out of range is refused with the unit and range
+in the message (`max_lines is in lines, 1-10000; got 30000`), never converted.
+Every refusal carries a `hint` with one accepted form.
+
+The receipt is the document the plain command prints with `--json`, from the
+same code. Reads need nothing more. `kill` additionally needs an `operation_id`
+(1-64 of letters, digits, `.`, `_`, `-`), **`expect_started_millis`** (the
+`started_millis` of the session as last listed or read; it is never inferred
+from a fresh lookup, and the broker ends the session only if it still matches),
+`--yes` on the command line (a request cannot carry its own consent) and a caller
+that can be identified (`$KITTY_PTY_BROKER_SESSION` set), or it refuses; it also
+refuses the caller's own session.
+
+The operation is reserved before anything is done: a `phase: intent` record is
+written durably (file and directory fsynced, under the store lock, with a
+per-operation lock held while a process dispatches it) first. The same
+`operation_id` with the same arguments then returns the stored receipt with
+`"duplicate": true` and sends nothing; with other arguments it is refused
+(`operation_id_reused`) before any dispatch. A process that dies after
+dispatching leaves an intent nobody owns, which replays as `uncertain` /
+`interrupted` (the request may have been sent: inspect the retained outcome;
+never automatically invent a new operation ID to evade uncertainty); two callers of one operation at once dispatch exactly once, and
+the second waits for and replays the first's receipt. Receipts of requests that
+were sent are kept privately (mode 0600) in `state/pty-operations/`, so an
+`uncertain` kill stays `uncertain`. The store holds at most 256 operations and
+the retention rule is explicit:
+
+- a record still in `phase: intent` (an unresolved operation) is never pruned;
+- a sent-`uncertain` receipt is kept until it is more than 30 days old (strictly
+  more than 2,592,000 seconds by the record file's modification time), and only
+  then may make room under capacity pressure. That includes a crashed operation:
+  its intent becomes a `done` / `uncertain` / `interrupted` record on the first
+  replay and enters the same 30-day horizon from that moment, so once it has
+  expired and room is needed the same `operation_id` can be dispatched again;
+- a finished `verified_absent` receipt may make room, oldest first, once it is
+  older than 90 seconds (a waiting caller's longest wait, 30 s, plus the longest
+  broker call, 60 s), after which that `operation_id` could be dispatched again
+  (the session is already gone, so a repeat is a harmless `not_found`);
+- a lock file is never removed while a process holds it.
+
+A caller that has seen a record for its `operation_id` (in progress, or finished)
+never dispatches that id itself. A waiter keeps the per-operation lock it wins
+through its re-read, uses it as proof that the owner is gone only while it is still
+the operation's current lock file (same device and inode; the lock of an evicted
+generation proves nothing, so it is dropped and the current owner is probed), and a finished receipt younger than the 90 seconds cannot be
+forgotten; if the record has nevertheless been forgotten when the waiter looks
+again (it stalled for longer than that), it returns `uncertain` /
+`receipt_evicted` with `request_sent: null` (unknown) and sends nothing: re-list.
+Only a caller that finds no record at all can dispatch an id. When 256 operations
+cannot be forgotten, a new kill is refused before anything is sent (`store_full`,
+exit 3).
+
+If the record was saved but the final directory fsync failed, the receipt is the
+real outcome with `"receipt_durable": false` and a `durability_note`: every replay
+returns the same outcome, but if the machine stops before the disk catches up a
+retry may report `interrupted` instead. The same holds when the failure is in the
+directory sync of recovering a crashed intent (the answer is the real `interrupted`
+receipt, `duplicate: true`, flagged). `receipt_durable` and `durability_note` are on
+that first returned document only: the saved record, and so every replay, does not
+carry them. If the receipt file itself could not be
+written, the answer is `uncertain` / `receipt_not_saved`, the intent stays and a
+retry replays `interrupted`. A refusal that sent nothing releases the
+reservation and can be retried under the same id. A kill receipt from this route
+also carries `operation_id` and `duplicate`. Every refusal carries a `hint` with
+one accepted form. Exit status: `2` the request is malformed (nothing ran), `3`
+refused (consent, identity, reused operation), otherwise as for the plain command.
+
+#### Journal archive
+
+A pane's replay journal is the raw terminal output the broker would replay to a
+new client. When a session is proved dead the broker keeps its journal rather
+than deleting it (an empty journal is not worth keeping, and one that cannot be
+kept safely is deleted as before). The broker also bounds `reaped/` itself, at
+256 MiB and 64 journals, oldest first. About once a minute, the same pass that bounds session logs
+(`kilix transcript prune` runs it on demand) moves those journals out of the
+runtime into `~/.local/gpu_terminal/kilix/state/pty-journals/` as
+`ID.STARTED_MILLIS.journal.zst`, with a `.meta` file beside each (mode `0600`).
+Each is compressed with `zstd -19 --long=27`, read back and compared byte for
+byte with the original, and only then is the original removed. Journals are
+long and repetitive (28 dead journals, 48 MB, came to 1.7 MB as one stream).
+Every zstd call of the archive is cut off after 10 minutes
+(`KILIX_PTY_ZSTD_TIMEOUT`), and so are the transcript pass's own compress and
+recompress calls (2 minutes there; the original is kept and the lock released).
+The archive runs after the transcript pass has released its lock, with a lock of
+its own (`state/pty-journals.lock`). Both locks are opened by a helper with
+`O_NOFOLLOW`: a symlink (dangling, or to a FIFO) is refused by the open itself, and
+nothing is created or truncated through it.
+
+If the name is already taken, nothing is lost. The same journal again is a retry,
+whether it is retained under the canonical name or under its variant name (even
+when the canonical one was evicted since): it is not copied again, and a missing
+`.meta` is finished. A *different* journal
+(another runtime reaped the same ID and start time, or an ID was reused) is kept
+beside the first as `ID.STARTED_MILLIS+HASH.journal.zst`, HASH being 12 hex
+digits of its own SHA-256, and the pass says so; `journals --json` shows it with
+a `variant`. The directory has its own budget, 256 MiB by default
+(`KILIX_PTY_JOURNAL_BUDGET`, in bytes; `0` leaves journals in the runtime for
+the broker's own bound). Only names `journals` would list (an archive plus its
+`.meta`) count toward it and only they are ever evicted; the *oldest session*
+(smallest `started_millis`, not the oldest file) goes first. Anything else in
+the directory is left alone, and a `.meta` with no journal is removed once it is
+an hour old.
+
+`kilix pty journals` lists them newest first. `journals path|show SELECTOR` takes
+exactly one of: `ID` (the newest archive of that ID), `ID.STARTED_MILLIS` (exactly
+the canonical archive of that start, never a newer variant) or
+`ID.STARTED_MILLIS+HASH` (exactly that variant); `path` prints the file and
+`journals show ID` writes the raw terminal bytes to stdout. Raw bytes can drive
+a terminal, so `show` refuses to write to one unless you pass `--force`; pipe it
+to a file or to `less -R`. Use `kilix transcript clean` on a pane's *session
+log* when you want readable text; a journal holds the screen state the broker
+replays, which is mostly useful to replay or to inspect what was last drawn.
+
+`kilix pty reap [--runtime DIR]` is the same step on demand for one runtime,
+including the fallback one: it asks the broker to prove which sessions are dead,
+lets it clear them, and archives what that produced.
+
 ### Session logging (on by default)
 
 Because the broker already owns every pane's PTY, it also records that pane's
@@ -588,6 +1192,9 @@ as `<session-id>.log`, mode `0600`, one per pane.
 ```bash
 kilix transcript                  # newest-first index, live and archived
 kilix transcript show <session>   # write one transcript to stdout
+kilix transcript view <session>   # search what the pane showed, in a pager
+kilix transcript clean <session>  # print what the pane showed, for people or agents
+kilix transcript clean --pane 29 --format json
 kilix transcript path             # print the directory
 kilix transcript prune            # apply the size budgets now
 kilix transcript archive          # move dead logs into the denser older tier
@@ -595,6 +1202,25 @@ kilix transcript archive          # move dead logs into the denser older tier
 
 Each log is bounded (8 MiB by default); on overflow the newest three quarters
 are kept and the oldest bytes are dropped, so a busy pane cannot fill the disk.
+
+A log is the raw output of whatever ran in the pane. Full-screen programs such
+as coding agents redraw the screen in place, so stripping the escape codes
+leaves spinner frames and half-drawn rows in no particular order. `view` and
+`clean` therefore replay the log on a virtual screen, with the pinned
+`third_party/kilix-transcript-clean` module, and read off what the pane showed,
+in order. They drop the program's status lines and prompt boxes, and join lines
+the terminal wrapped. The broker records the pane size in the log for this
+(a private escape that terminals ignore), so the replay wraps where the pane
+did. `clean --format json` gives the same text as sections per program, for
+agents, and Needle's logs reader uses the same replay.
+
+Click the document button in a pane's title bar to open that pane's saved log in
+a new tab. The viewer opens at the newest output: `g` goes to the first retained
+line, `G` to the last, `/` searches, and `q` closes the log tab. It shows a snapshot
+of all retained output at opening time, including output beyond the terminal's
+scrollback, replayed so it reads as the pane showed it. Logging
+must already have been enabled; output removed by retention limits cannot be
+recovered. The button is configurable as **Open pane session log** in Settings.
 
 That cap bounds one file, so the **directory** has its own two budgets. A log is
 plain only while its pane is live. Within a minute after the pane exits, the log
@@ -633,9 +1259,32 @@ kilix settings --set transcript_size=32M          # 2M | 8M | 32M | 128M
 kilix settings --set transcript_graphics=keep     # elide | keep
 ```
 
+### Back up and restore settings and documents
+
+```
+kilix backup create                 # ~/kilix-backups/kilix-backup-<time>.tar.gz (private, 0600)
+kilix backup list ARCHIVE           # what a restore would create or replace
+kilix backup restore ARCHIVE --yes  # restore; your current files are backed up first
+```
+
+A backup holds the shared settings file, your `kilix.env`, the desktop's
+configuration and saved state, and the documents on the desktop. Restoring only
+creates or replaces the files the archive names, and first keeps a copy of each
+file it replaces. It refuses the whole archive if any member is a link, escapes
+its folder, or fails its checksum. `list` and `restore` show every setting the
+archive would change, and flag every `kilix.env` key that can change what Kilix
+runs or downloads (all but a few display settings), because a backup file may
+come from somewhere else. A file whose name a backup cannot hold, such as one
+with a backslash in it, is left out and named when the backup is made. From the command line,
+restore refuses while the desktop is running, since the desktop would save its
+own state over the restored files. Control Panel > Backup in Kilix 95 restores
+and restarts the desktop for you. A restored `kilix.env` takes effect only in a
+new Kilix session (log out and back in); restarting the desktop is not enough.
+
 Closing the whole frontend, closing a page, or a Kilix crash detaches the
-client. Detached sessions are discovered on the next startup and opened in
-`recovered:<id>` tabs. The per-pane `✕` and `Ctrl+Alt+W` are the explicit
+client. Detached sessions are discovered on the next startup and reopened
+under the tab name and title they had; a pane that never recorded one opens
+as `recovered:<id>`. The per-pane `✕` and `Ctrl+Alt+W` are the explicit
 destructive path and always ask before asking the broker to terminate that
 pane. Set `KILIX_PTY_BROKER=0` to disable persistence,
 `KILIX_PTY_BROKER_AUTO_RECOVER=0` to leave detached sessions for manual
@@ -648,8 +1297,10 @@ explicitly confirmed termination action.
 
 ## Requirements
 
-- **Linux only**, x86_64 or arm64 for the prebuilt engine. The clickable-chrome
-  fork build currently supports x86_64. (No macOS/Windows.)
+- **Linux desktop:** x86_64 or arm64 for the prebuilt engine. The clickable-chrome
+  fork build supports x86_64 and arm64; arm64 builds use the system's
+  development packages (`KILIX_BUILD_MODE=system`). Native Windows preview
+  builds have [separate requirements](https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/windows/README.md); macOS is unsupported.
 - A running graphical session — **X11 or Wayland** (`$DISPLAY` or `$WAYLAND_DISPLAY`).
 - NetworkManager's **`nmtui`** for the clickable network/Wi-Fi item. Pleb and
   Plebian-OS install it; standalone Kilix shows an explanatory error if it is
@@ -677,12 +1328,37 @@ explicitly confirmed termination action.
   ships 1.25), it configures the exact `toolchain` version from `go.mod` so Go
   can fetch that checksum-verified toolchain on demand. `build.sh` forces that
   exact version even if the host has a newer Go — no open-ended latest lookup
-  and no manual Go install. Current kitty source also uses Python 3.12 syntax;
-  `build.sh` selects `python3.14`, `python3.13`, or `python3.12` in that order.
+  and no manual Go install. Current kitty source also uses Python 3.12 syntax:
+  of `python3.14`, `python3.13`, `python3.12` and `python3`, `build.sh` takes
+  the first that is 3.12 or newer and has its `Python.h`, and only when none
+  has the headers the first that is new enough, with a warning. `--verify`
+  reports the same interpreter and fails when its headers are missing.
   Set `KILIX_PYTHON=/path/to/python3.12+` when the desired interpreter is not
   on `PATH`.
 - The same dependency installer also includes kilix-amp's SDL/libsndfile/
   FluidSynth packages, so the desktop Media Player can build and play MIDI.
+  The fork build links none of them, so `--verify` reports them as the Media
+  Player's and does not fail without them; the desktop builds kilix-amp on
+  first use and needs them then. Kilix Amp needs only the FluidSynth library
+  and a SoundFont, but on Debian the package with FluidSynth's development
+  files depends on the `fluidsynth` player, so the player is installed too,
+  and its package enables a daemon for every login that holds the default
+  sound card, which dictation records from. When that enablement appeared
+  during this installer's own apt run, the installer removes it, says so,
+  and records it in `/var/lib/kilix/audio-holdoff.log` (time, link, and
+  why); the player stays installed. That includes the case where the run
+  completed an install of the player that you had started and left
+  unfinished, since apt finishes those whatever it is asked for; the
+  warning then says so, and how to re-enable the daemon. It holds even when
+  apt fails part-way or the installer is killed, because the next run
+  finishes the check against what the interrupted one recorded. An
+  enablement that was already there is left alone. One consequence: a
+  player you removed without purging leaves its enablement behind, and
+  when this installer brings the player back, the daemon starts at every
+  login again. The installer warns when that happens; turn it off with
+  `sudo systemctl --global disable fluidsynth.service`. This hold-off runs
+  on every host with apt, Debian, Ubuntu and Plebian OS alike: there is no
+  host detection.
 - **For read aloud:** `espeak-ng` plus `pacat`, `paplay`, or `aplay`. **For
   dictation:** x86_64, `parec` or `arecord`, and the pinned local Vosk closure
   installed by `kilix voice install`. Run `kilix voice doctor` to see the exact
@@ -745,8 +1421,8 @@ To get the buttons, install the build deps and build the fork:
 
 ### Optional coding-agent skills
 
-Kilix ships three separate skills as one versioned bundle: `kilix`,
-`kilix-model-switch`, and `kilix-session-launch`. They cover pane/session
+Kilix ships five separate skills as one versioned bundle: `kilix`,
+`kilix-model-switch`, `kilix-session-launch`, `kilix-desktop`, and `kilix-pty`. They cover pane/session
 administration, changing a model within an existing coding session, and
 creating a tab of initialized coding sessions. Installation is explicit:
 
@@ -850,6 +1526,7 @@ kilix settings                    # shared chrome/game settings TUI
 kilix settings --section tools    # memory monitor, Tmux Manager, or tb installer
 kilix transcript                  # list recorded pane session logs
 kilix transcript show <session>   # print one pane's transcript
+kilix transcript clean <session>  # print what one pane showed, without control codes
 kilix games list                  # show games available in Kilix 95
 kilix games settings              # open the TUI directly on Games
 kilix games disable doom          # hide a game (enable reverses it)
@@ -863,7 +1540,7 @@ kilix tui                          # install/verify the text-native desktop, the
 kilix land                         # install/build the walkable desktop, then open it
 kilix bonsai                       # the BitNet model store: browse, download, verify
 kilix bonsai list                  # one line per model, with size and state
-kilix bonsai pull vibevoice-asr-bitnet   # download one — this one is the dictation model
+kilix bonsai pull vibevoice-asr-bitnet   # the dictation model, once `kilix models install` took its licence
 kilix rtsp list                    # cameras this machine is configured for
 kilix rtsp view poolcam --tab      # one camera filling a new page
 kilix rtsp mosaic yard             # several in a grid
@@ -875,7 +1552,23 @@ kilix voice install               # pinned Kilix Voice + default Vosk model
 kilix stt --models                # all speech models, sizes, install/runtime state
 kilix stt --models --json         # versioned machine-readable catalog contract
 kilix stt --install lgraph-en-us --default lgraph-en-us
+kilix stt --install vibevoice-asr-bitnet --default vibevoice-asr-bitnet  # weights + VibeASR runtime
+kilix voice vibeasr               # (re)build the pinned VibeASR.cpp dictation runtime
+kilix stt --install whisper-small-en --default whisper-small-en  # weights + Whisper runtime
+kilix voice whisper               # (re)install the pinned Whisper dictation runtime
+kilix voice whistle               # install the pinned Whistle native library
+kilix tts --tiers                 # hardware-aware read-aloud choices
+kilix tts --interactive --tier neural   # first-use Piper setup and session
+kilix tts --interactive --tier pocket-cpu # measured Pocket/Alba CPU audition
+kilix tts --interactive --tier qwen-cpu # locked CPU runtime, then first-use Qwen model
+kilix tts --interactive --tier qwen-gpu # locked CUDA/FlashAttention runtime on an eligible GPU
+kilix tts --interactive --tier qwen-base-gpu # 0.6B Base with a fixed synthetic reference
+kilix tts --interactive --download-qwen qwen3-tts-0.6b-customvoice
+kilix tts --interactive --download-qwen qwen3-tts-0.6b-base --synthetic-reference
+kilix tts --interactive --download-qwen qwen3-tts-1.7b-voicedesign --description 'A warm clear voice'
+kilix tts --speak 'Hello' --model qwen3-tts-0.6b-customvoice # explicit provider path
 kilix voice doctor                # dependency and audio-device diagnostics
+kilix fingerlock                  # fingerprint reader: install fprintd on first use, enroll, verify
 kilix tts                         # read-aloud settings and test-phrase TUI
 kilix stt                         # dictation settings and microphone-level TUI
 kilix speak "hello"               # read explicit text aloud
@@ -885,6 +1578,170 @@ kilix status                      # version/commit, engine, writable config, pro
 
 Put `~/.local/gpu_terminal/sources/kilix` on your `PATH` (or
 `ln -s ~/.local/gpu_terminal/sources/kilix/kilix ~/.local/bin/kilix`) to just type `kilix`.
+The Qwen CPU and GPU tiers are explicit multi-GiB downloads on x86_64 Debian,
+not base-image dependencies. Each is installed only after selection and a
+hardware fit check; model weights still require the first-use licence notice.
+The GPU tier requires an unmasked Ampere-or-newer NVIDIA GPU 0 and uses locked
+CUDA PyTorch and FlashAttention 2. For an existing verified GPU environment,
+`KILIX_QWEN_GPU_PYTHON` may instead name its absolute Python path.
+The Base tier uses that GPU runtime and its own measured fit profile; no
+person's voice is cloned, and its weights require a separate first-use notice.
+The three direct `--download-qwen` commands install the locked CPU runtime
+and selected weights on first use, then open a foreground speech session.
+Repeating the command verifies and reuses the installation. Add `--device
+cuda:0` to select the optional GPU runtime explicitly. VoiceDesign uses the
+description to create a voice; `/description TEXT` changes it in the session.
+VoiceDesign (1.7B) has a length limit on small GPUs. On a physical 6 GiB GPU,
+generation plus decode was verified (with random weights) only to 30 s, and the
+decoder alone fit at 40 s; generation at 40 s was not established.
+Decoder-alone tests ran out of GPU memory at 48 s and 60 s, and generation to
+the 60 s cap ran out of memory. Separately, with real weights and streaming on
+an emulated 6 GiB limit (the allocator capped at 6 GiB on an 8 GiB RTX 3070),
+generation and the final decode finished without running out of memory through
+60 s, peaking at 5,712 MiB reserved. There, generation plus final decode
+reached the length bound and the worker then refused the job at that bound, so
+no job result was produced. The emulation does not stand in for the physical
+card. A request
+that runs out of memory before any audio is delivered reruns on the CPU,
+slowly. A streaming request that runs out after audio has started fails, and
+is never retried on the CPU. Keep VoiceDesign requests to 30 s or less on a
+6 GiB GPU. This is not a qualified GPU profile.
+Piper uses `--interactive --tier neural`; Pocket English/Alba uses
+`--interactive --download-pocket`. Each model presents its first-use licence
+notice before acquiring weights. `/save FILE.wav` saves the generated audio.
+The native Pocket Q8 research variant is not part of these speech paths.
+The explicit `--model qwen3-tts-0.6b-customvoice` read-aloud path lazily
+installs only the pinned Qwen socket client. Synthesis additionally requires a
+separately running, receipt-backed Qwen provider; the audition runtime and its
+model files do not satisfy that requirement, and neither is started implicitly.
+
+After installing one or more Qwen models (CustomVoice, 0.6B Base, 1.7B
+VoiceDesign) with their licences accepted, for example through
+`kilix models install <model>`, explicitly prepare and run the receipt-backed
+provider:
+
+```sh
+kilix tts provider prepare --uv /absolute/path/to/uv
+kilix tts provider serve
+# In another terminal:
+kilix tts provider status
+```
+
+Preparation requires uv 0.12.5 and builds the pinned dependency graph with
+managed Python 3.12.8. It checks each Qwen model's current licence coverage and
+installed files before building, stages a runtime for every model that passes
+(CustomVoice stays the default) and serves them all from one service; a model
+without a receipt is left out, and with none the command refuses. Model weights
+and acceptance receipts are never created by this command. `--device cuda`
+builds the CUDA 12.4 graph instead of the CPU one; such a provider uses NVIDIA
+GPU 0 when it is usable and otherwise runs each job on the CPU. The default
+`--device auto` picks `cuda` when GPU 0's device nodes exist and it reports
+compute capability 7.0 or newer, otherwise `cpu`. Add `--offline` to require already cached sources, Python and
+dependencies. Failed preparation leaves the previous selection intact. `serve`
+runs in the foreground; Ctrl-C stops the provider and cleans its owned workers.
+Status reports the running provider's state and model selection; it does not
+certify a new receipt check or release qualification. This route uses the host's
+actual model installation root and preserves the receipt and runtime directories
+selected during preparation.
+
+For a desktop user service, prepare first, then run:
+
+```sh
+kilix tts provider service install  # install only; no startup
+kilix tts provider service enable   # start, wait for readiness, then enable at login
+kilix tts provider service status
+kilix tts provider service disable  # stop and disable login startup
+```
+
+`start`, `stop`, and `restart` are also available. The unit selects an immutable
+prepared generation; preparing a newer generation does not change a running
+service. Stop it before reinstalling, or use `service enable` to stop the old
+generation and start the new one. Status probes the generation recorded in the
+unit. Startup checks current model receipts before opening the socket, and
+readiness must come from the unit's own process. Unit installation preserves
+user edits and restores the previous selection if publication fails. Nothing
+in this route downloads weights, accepts terms, or enables system-wide startup.
+
+The installed Tiny transcription model has an explicit managed route as well:
+
+```sh
+kilix models install whisper-tiny-ggml
+kilix transcribe prepare --engine /absolute/path/to/whisper-cli --engine-sha256 SHA256 \
+  --decoder /absolute/path/to/ffmpeg --decoder-sha256 SHA256
+kilix transcribe serve
+# In another terminal:
+kilix transcribe status
+kilix transcribe file speech.wav --format json
+kilix transcribe file speech.wav --stream --format json
+```
+
+Preparation requires reviewed whisper.cpp and decoder bytes, uv 0.12.5 and
+managed Python 3.12.8. Add `--offline` to require cached sources and Python.
+It checks existing model receipts and the full installed model before staging,
+copies the tools and manifest into a private generation, and binds its provider,
+Content, Licence and Python files. The model stays in Content's installation.
+Failed preparation preserves the previous selection. Foreground startup checks
+the current receipt and installed bytes before publishing its local socket;
+each job checks them again. `record --seconds N` explicitly captures a bounded
+microphone recording; file transcription requires no microphone. These tools
+provide a CPU development route; hardware, sustained-load and release
+qualification remain separate checks.
+
+`--stream` writes unstable transcript revisions to stderr and commits a
+corrected final transcript on stdout. For anonymous speaker turns, first run
+`sudo plebian-os-install-diarization-converter` on Plebian OS to install the
+optional software tool, then `kilix models install kilix-diarization-cpu` and add `--diarization` to
+`transcribe prepare`. Each request must explicitly use
+`--task diarize --diarization-session --format json`. Its separate speaker
+turns preserve recognized words and timestamps; labels belong only to that
+request and are discarded with it. Live speaker clustering is unavailable.
+The first-use screen shows the exact checkpoint, segmentation licence and
+component notices. Installation converts the pinned English CAM++ checkpoint
+locally in a bounded CPU process; its optional software tool requires about
+187 MiB compressed and 907 MiB installed, with a 2 GiB conversion memory
+ceiling. It uses the system's `libgomp1`, `libgfortran5` and `libquadmath0`
+packages. Conversion and installation took about 17 seconds on the retained
+CPU test host; first use also downloads 34 MiB of approved source models. An
+offline converted population can instead be installed with `models install
+kilix-diarization-cpu --supplied /absolute/path/to/population` under the same
+agreement and digest checks. Runtime inference uses ONNX and does not load
+the source pickle or import Torch. Quality and sustained-load qualification
+remain separate from these commands.
+
+## Fingerprint reader
+
+`kilix fingerlock` is the host verb for the machine's USB fingerprint reader.
+With no arguments it finds the reader, installs Debian `fprintd` the first
+time it is asked to, and reports what is enrolled:
+
+```sh
+kilix fingerlock                  # find the reader; install fprintd on first use
+kilix fingerlock enroll           # enroll the right index finger (or name one)
+kilix fingerlock verify           # touch the sensor; exit 0 on a match, 8 on none
+kilix fingerlock list             # enrolled fingers
+kilix fingerlock delete --all     # forget them
+kilix fingerlock doctor --json    # every check, as one kilix.fingerlock/v1 object
+```
+
+Discovery is read-only: the verb reads sysfs and asks the kernel whether the
+USB node is openable, and never opens it. Support is decided by libfprint's
+own hardware database once it is installed.
+
+The lazy install is one fixed command, `apt-get install -y
+--no-install-recommends fprintd`, run as root through `sudo` in your terminal
+(or in `xterm` when the caller has no terminal) after you say yes, or at once
+with `--yes`. Plebian OS points apt at a dated snapshot, so this installs the
+release's versions. No repository is added and no recommends are pulled.
+`libpam-fprintd` is not installed, and login is left unchanged.
+
+Everything after installation goes through fprintd over the system D-Bus,
+behind polkit. Verifying is allowed from an active seat session. Enrolling and
+deleting also need your password through a polkit authentication agent, and a
+bare terminal session may not have one: `--tty-agent` runs `pkttyagent` for
+the duration of the command. A successful `verify` checks the reader. It is
+not a screen-lock token and it does not unlock a session. Exit statuses are
+stable and documented at the top of `config/fingerlock.py`. Use `--redact`
+before sharing output: it removes the USB serial, port, and device node.
 
 ## Read aloud and dictation
 
@@ -917,15 +1774,37 @@ consumers may keep their frozen 0.1.9 fallback tables, but new integrations
 must consume this versioned command contract instead of copying the catalog.
 
 The catalog contains `small-en-us` (Vosk, 39.3 MiB), `lgraph-en-us` (Vosk,
-124.5 MiB), and `vibevoice-asr-bitnet` (VibeVoice, about 1.6 GiB). VibeVoice's
+124.5 MiB), `vibevoice-asr-bitnet` (VibeVoice, about 1.6 GiB),
+`whisper-small-en` (Whisper, 463.6 MiB), and `whistle` (Whistle, 16.2 MiB).
+Runtime support does not mean the model weights are installed. VibeVoice's
 weights are shared with Kilix Bonsai, so installing them does not create a
-second copy. They can be selected as a future-compatible default, but this
-version of the live voice runtime cannot dictate with them; the UI and CLI
-report that distinction instead of calling the weights runnable.
+second copy. VibeVoice dictates once its VibeASR runtime is built (below); it
+transcribes each turn when the turn ends rather than showing live partials.
 
-`kilix voice install` installs the immutable `kilix-voice` 0.1.3 source at
-commit `f501409a82bf73b738b14986e12441bce23ec1c6`, the official Vosk 0.3.45
-x86_64 wheel, and either the default `vosk-model-small-en-us-0.15` or the
+VibeVoice dictation runs through VibeASR.cpp. `kilix voice vibeasr` fetches
+upstream commit `c4334009c88060f86cdbbd684b62662f710b6c20` of
+microsoft/VibeASR.cpp (MIT) with the llama.cpp revision it records (a
+gitlink to XsquirrelC/llama.cpp, the fork carrying VibeASR's BitNet kernels),
+builds only `asr_infer` with llama.cpp and ggml linked in (libc, libstdc++ and
+libgomp stay the system's), and publishes it at
+`$KILIX_DATA_HOME/voice/vibeasr/current/bin/asr_infer`. It needs a C/C++
+toolchain and cmake, takes about a minute, and does nothing when that pinned
+build is already current. `kilix stt --install vibevoice-asr-bitnet` runs it
+after the licence-gated weights are in place.
+
+Whisper dictation runs through `kilix-whisper-stt`, a small provider around
+faster-whisper (CTranslate2, int8 on the CPU). `kilix voice whisper` fetches
+provider commit `15ef23b32da497a41198d3028e34715801de6196`, installs its
+locked environment with `uv sync --locked` under Python 3.12.8, and publishes
+it at `$KILIX_DATA_HOME/voice/whisper/current/bin/kilix-whisper-stt`. It does
+nothing when that pinned generation is already current. The provider holds no
+model and never downloads one; `kilix stt --install whisper-small-en` installs
+the licence-gated weights and then runs it.
+
+`kilix voice install` installs the immutable `kilix-voice` source revision
+pinned by `KILIX_VOICE_REF` in `scripts/install-kilix-voice.sh`, the official
+Vosk 0.3.45 wheel for the host (x86_64 or aarch64, each pinned by its own digest), and
+either the default `vosk-model-small-en-us-0.15` or the
 `--model lgraph-en-us` dynamic-graph model. Downloads are SHA-256 verified.
 The installer extracts only the wheel's fixed `vosk/libvosk.so` member, checks
 its ELF architecture and complete required Vosk API, loads the pinned acoustic
@@ -935,6 +1814,12 @@ digest. Their active links, the runtime link, command entrypoints, and install
 stamp are promoted as one rollback-safe transaction, so a pin change can never
 relabel an old payload. `--without-dictation` retains a smaller read-aloud-only
 path for non-x86_64 machines.
+
+Speech weights are downloaded only after their licence was shown and
+accepted. `kilix models install small-en-us` (or `lgraph-en-us`, or
+`vibevoice-asr-bitnet`) does that and records the receipt. Without one,
+`kilix voice install`, `kilix stt --install` and `kilix bonsai pull` stop
+with exit 3 before fetching the model and name that command.
 
 The native library and acoustic model each carry an adjacent
 `README.kilix-provenance` recording their upstream URL and checksum, plus a
@@ -996,11 +1881,19 @@ fallback. A single `kilix-telemetry` sampler publishes both aggregates to a
 private mmap ring; title bars refresh only when a displayed value changes and
 retain local process-tree fallbacks if the shared service is unavailable.
 
-The far right of the page strip can show thermometer, volume, network,
-calendar, local date/time, and (when applicable) battery items. The thermometer
-is disabled by default; when enabled it shows the hottest readable Linux
+The far right of the page strip can show system CPU and RAM, thermometer,
+volume, network, calendar, local date/time, and (when applicable) battery
+items. System CPU and RAM come first and are shown at all times by default, in
+the same form as a pane's resource chip: whole-system CPU use in logical-core
+equivalents to the left of the chip and RAM in use (total minus available) in
+GiB to its right, for example `6.4 󰍛 12.3`. Clicking it opens Kilix Memory and
+right-clicking it opens Kilix Settings.
+Set shared `KILIX_CHROME_SYSTEM_LOAD_MODE` to `auto` to apply the pane
+thresholds (CPU above `1.0`, RAM at 1 GiB or more), or `off` to hide it. The
+thermometer is disabled by default; when enabled it shows the hottest readable Linux
 thermal-zone/hwmon temperature to one decimal place in green below 80°C, yellow
-at 80–89°C, or red from 90°C. It sits at the left edge of the status group and
+at 80–89°C, or red from 90°C. It sits immediately right of the system CPU and
+RAM readout (at the left edge of the status group when that is off) and
 opens a compact status card on one click and `kilix-temps --graphics` on a
 double-click. A neutral `--°` remains clickable when no sensor can be read.
 The volume icon opens a compact slider on one click, the full clickable
@@ -1009,7 +1902,9 @@ live Mute checkbox on right-click. It sits to the left of the network/Wi-Fi
 icon, which shows compact connection status on one click and opens `nmtui` on
 a double-click. Click the calendar icon for a navigable month widget, or click
 the date/time text for a live local-date, clock, and timezone widget.
-When Linux reports a laptop battery is **discharging**, a battery status item appears to its right.
+On laptops, a battery status item appears to its right below full charge,
+including while charging or connected to AC. It hides when all present laptop
+batteries have valid 100% readings; unreadable charge remains visible as `?%`.
 It is green above 50%, yellow at 50% and below, red at 20% and below, and
 shows the percentage to the left of the battery icon. One click shows battery
 details and a double-click toggles the percentage on/off. Right-clicking the
@@ -1032,35 +1927,82 @@ The buttons only exist in the **fork build** — the prebuilt fallback is a plai
 
 `kilix models list` and `kilix models show ID` inspect the pinned Content
 catalog without initializing settings, installation directories or receipts.
-The plan shows the exact model/version, source, notices, disk allowances and
-actual host root. An inherited `KILIX_CONTENT_ROOT` does not override that root.
+The catalog file is parsed only after the pinned Content component has checked
+its bytes against the digest it ships; a component that cannot make that check
+is refused rather than trusted. The plan shows the exact model/version, source,
+licence identities, disk allowances, the receipt store the whole stack shares
+and the actual host root. An inherited `KILIX_CONTENT_ROOT` does not override
+that root, and neither command creates any of those directories.
 
 ```sh
 kilix models list
 kilix models show encodec-24khz-stateful
-kilix models install encodec-24khz-stateful --input /absolute/user-supplied/checkpoint.th
+kilix models verify yolox_s
 kilix models install whisper-tiny-ggml
+kilix models install whisper-tiny-ggml --from /media/usb/whisper-tiny-ggml
 ```
 
-Installation requires an interactive terminal and explicit confirmation;
-there is no `--yes` option or piped consent. Exact notices are shown before
-recording the selected artifact's decisions. Informational notices do not ask
-for license acceptance; affirmative requirements have separate, initially
-declined choices. User-supplied input is verified against the packaged size
-and digest, and recorded as supply, not acceptance of invented model terms.
-No checkpoint or its derivatives are bundled with this command.
+`kilix models verify ID` checks the existing licence receipt against the exact
+manifest and verifies every declared installed file. It creates no directories,
+changes no receipts, and performs no download or inference. Missing agreement
+or missing, altered or symlinked files beneath the installer root fail the check.
 
-The host packages the current exact notice texts. A future notice not bundled
-here requires `--notice LICENSE_ID=/absolute/text`, whose digest must match the
-new catalog. Unknown, altered or unsafe terminal text is refused. Explicit
-`--root /absolute/installer/root` before the subcommand targets another actual
-installer root, for example Kilix 95's separate apps root; it does not migrate
-models or reinterpret receipts. The same private per-user Content receipt
-store remains authoritative. `kilix models reconcile-receipts` explicitly
-recovers an interrupted receipt transaction without inventing any decision.
+For object detection, `kilix install yolox` prepares ONNX Runtime and a
+320-pixel model cut, then records a detector wrapper for `kilix look` and NVR.
+`KILIX_YOLOX_MODEL=yolox_nano kilix install yolox` selects nano; s is the
+default and tiny is also supported. Explicit reinstallation refreshes the
+selected model and module path. `kilix yolox check` requires the existing
+agreement and byte binding for the export, cut, tools and wrapper. Older
+runtimes without that binding need one explicit reinstall. These integrity
+checks do not certify inference or model accuracy.
 
-Setup uses the existing pinned tool, receipt, bounded acquisition/conversion
-and atomic selection APIs. Model availability still depends on the selected
+Installation requires an interactive terminal and explicit confirmation; there
+is no `--yes` option or piped consent. The licence screen is the licence
+authority's own and is printed verbatim before anything is recorded, including
+its marker for a bound text that changed since an earlier acceptance. An
+informational record asks for no licence acceptance at all. An affirmative one
+asks separately, after the install confirmation, and is satisfied only by
+typing the exact agreement line shown; anything else, including an empty line,
+declines and writes nothing. Unknown, altered or unsafe terminal text is
+refused before any prompt is printed. No checkpoint or its derivatives are
+bundled with this command.
+
+Acceptance is recorded as one receipt bound to the model's manifest and to the
+licence record behind its first licence. A model whose catalog record names a
+second licence has that licence's text printed in full and labelled as bound
+by nothing. Receipts are read and written at the one root
+`kilix_license.receipt_store_root()` reports — `$KILIX_LICENSE_RECEIPTS` if set,
+otherwise `$GPU_TERMINAL_HOME/license-receipts`, otherwise
+`$HOME/.local/gpu_terminal/license-receipts` — so this command and the gates that consume
+receipts cannot file and look in different places. Re-running `install` for a
+model an existing receipt already covers installs it without asking again, and
+a receipt written for a different manifest does not cover the new one.
+
+`kilix models install ID --from DIR` installs from files you already hold
+instead of downloading them, for an air-gapped or metered machine. `DIR` holds
+the model's files at their manifest paths, which is the layout an installed
+copy has, so a tree copied from another machine can be given unchanged. It is
+the same install, not a second one: the same licence screen, which adds the
+directory it reads and `download: none`, the same typed agreement and the same
+receipt, and the pinned component verifies every file against the manifest
+before anything is published; licence notices are written from the licence
+authority, never taken from `DIR`. Nothing is downloaded on any path under
+`--from`, including a model an existing receipt already covers. A missing or
+unreadable directory is refused, naming it, before anything is shown or
+recorded; a directory whose files do not match is refused after the typed
+agreement and installs nothing, and the acceptance typed by then stays
+recorded, as it does when a download fails. The receipt records that you
+accepted the licence, exactly as for a download. It does not record that you
+supplied the files. A pinned component without the supply surface refuses
+`--from` by name.
+
+Explicit `--root /absolute/installer/root` before the subcommand targets
+another actual installer root, for example Kilix 95's separate apps root; it
+does not migrate models or reinterpret receipts.
+
+Setup uses the pinned component's own bounded acquisition, conversion and
+atomic selection APIs, and its staged tree must match the record's manifest
+before it is published. Model availability still depends on the selected
 release's working delivery sources; an unpublished or unavailable source is
 not treated as installed. Disk allowances are not measured RAM/VRAM fit, and
 installation is not provider readiness or performance qualification. Ordinary
@@ -1144,7 +2086,7 @@ kilix browse --incognito site.com   # compatible spelling; same policy
 ```
 
 Both commands launch the first installed browser in this fixed order:
-`google-chrome`, `chromium-browser`, then `firefox-esr`. `--incognito` is
+`google-chrome`, `chromium`, `chromium-browser`, then `firefox-esr`. `--incognito` is
 translated to Firefox's `--private-window` spelling when necessary.
 
 Only when none of those real browsers is available does Kilix use its
@@ -1203,6 +2145,28 @@ catalogue; scripts and terminal-only programs are not changed. Set
 `KILIX_RUN_ALIASES=0` for native X11 windows, add commands with
 `KILIX_RUN_ALIAS_APPS="foo bar"`, or exclude one with
 `KILIX_RUN_ALIAS_EXCLUDE_APPS="foo"`.
+
+RC2 uses bare Openbox on each app's private display when it is installed.
+Normal app windows fill the pane; dialogs retain their own size and focus.
+Window decorations use Openbox's packaged dark Nightmare-02 theme.
+The private profile has no launcher or root menu, and never starts another
+Kilix. `KILIX_RUN_WM=openbox` requires this behavior; `KILIX_RUN_WM=none`
+selects the older WM-less fallback. The default `auto` uses Openbox when
+available. Install `openbox` and `dbus-daemon` for this path.
+
+App launches get a private session bus, so desktop singletons cannot send a
+request to an existing host process and open outside the pane. Apps keep their
+normal files and configuration, but host session-bus services are not shared.
+Browser links use this same pane route in Pleb. Host remote-control and Wayland
+display variables are removed from the app environment to prevent recursion
+and display escapes. A deliberate nested desktop requires
+`kilix run --desktop-session ...`; ordinary `kilix run kilix`/`kitty` is rejected.
+
+This is launch-time routing, not adoption of existing native windows. Scripts
+that directly execute an absolute app binary on the host display still create
+native windows. Use `kilix run /absolute/path/to/app` in those scripts. The
+host Openbox stays available to manage such windows without hiding them behind
+Kilix.
 
 Contained Chromium- and Firefox-family launches receive a private, disposable
 per-tab profile so an already-running native browser cannot capture the URL and
@@ -1460,9 +2424,9 @@ overrides.
 
 ### Kilix 95
 
-![kilix 95 — the desktop with the media player, file manager and Notepad open](https://raw.githubusercontent.com/itsmygithubacct/kilix/main/config/kilix95_with_amp.png)
+![kilix 95 — the desktop with the media player, file manager and Notepad open](https://raw.githubusercontent.com/itsmygithubacct/kilix/a77cac52799d0279a5ce3f74525fba40fc281dcd/config/kilix95_with_amp.png)
 
-![kilix 95 — from a shell to the desktop to Doom, all in kilix tabs](https://raw.githubusercontent.com/itsmygithubacct/kilix/main/docs/kilix95-doom-demo.gif)
+![kilix 95 — from a shell to the desktop to Doom, all in kilix tabs](https://raw.githubusercontent.com/itsmygithubacct/kilix/a77cac52799d0279a5ce3f74525fba40fc281dcd/docs/kilix95-doom-demo.gif)
 
 A full little desktop environment rendered as pixels in a kilix pane (same
 graphics path as `browse`/`run`): teal wallpaper, desktop icons, overlapping
@@ -1487,9 +2451,10 @@ right-click menu everywhere. Built in:
   graphics dependencies are shared with Temps rather than cloned into a second
   installer-owned source cache. The same monitor is available from the Kilix
   Settings TUI Tools section.
-- **PTY Sessions** — Start ▸ Programs ▸ PTY Sessions opens the persistent-pane
-  manager without placing that manager inside another brokered pane. Detached
-  panes can be selected and attached, refreshed, or deliberately terminated.
+- **PTY Sessions** — Start ▸ Programs ▸ PTY Sessions opens the graphical
+  persistent-pane manager with status, read-only previews, archived journals,
+  attachment and confirmed identity-bound termination. Tools retains the
+  **PTY Sessions (Terminal)** manager in an unbrokered tab.
 - **Games** — Start ▸ Programs ▸ Games. Each entry plays immediately if
   `~/.local/gpu_terminal/kilix-95/config/games.conf` already points at a working install, otherwise
   one consented click sets it up (paths saved to that file) and launches it in
@@ -1497,8 +2462,10 @@ right-click menu everywhere. Built in:
   dosbox-staging build if no dosbox is installed (fullscreen, fire on Space,
   sound on); **Bashed Earth** clones + builds
   [itsmygithubacct/bashed-earth](https://github.com/itsmygithubacct/bashed-earth).
-  Native catalog games include **Kilix Lights** and **Super Kilix**, which are
+  Native catalog games include **Pleb Tower**, **Kilix Lights**, and **Super Kilix**, which are
   cloned recursively, built, and launched directly in their Kilix tabs.
+  Play Pleb Tower from this menu, the TUI's Programs ▸ Games list, or
+  `kilix games play pleb-tower`. Its two campaigns span Maple Loop and Rail Yard.
   The Games tab, `kilix settings`, and `kilix games enable|disable NAME...`
   all select which entries appear, using the root-level shared settings file.
 - **Media Player** — Start ▸ Programs ▸ Media Player. The skin sits *directly
@@ -1654,6 +2621,44 @@ error. Amp and the multiplexer use the same installed native library.
 `~/.local/gpu_terminal/sources/kilix-apps/kilix-multiplexer`; also set
 `KILIX_MULTIPLEXER_COMMIT` to its full commit hash. This does not change the
 release pin.
+
+The multiplexer compiles a private snapshot of the exact Git objects, after
+checking every working file independently of Git index optimization flags.
+Builds use the provisioned GCC toolchain and a fixed compiler environment;
+ambient `CPATH`, `C_INCLUDE_PATH`, `LIBRARY_PATH`, compiler search overrides,
+loader injection and make environment overrides are not inherited. Use explicit
+`CFLAGS`, `CPPFLAGS`, `LDFLAGS` and `LDLIBS` for supported flags, and
+`PKG_CONFIG_PATH`/`PKG_CONFIG_LIBDIR` to select the installed package. Compiler
+plugins, response files, alternate sysroots/specs, profiling/module/LTO inputs,
+precompiled headers, linker scripts and dependency-output overrides
+are refused. No model setup occurs in this build path.
+
+Reuse checks the compiler/tool bytes, actual GCC header dependencies and linker
+inputs, native/Content package identity and all output digests. GCC's reported
+include search directories, including absent and earlier directories, are also
+recorded. Adding an earlier or nested header invalidates reuse even if the
+previously consumed header is unchanged. Before each actual compile, the
+captured helper discovers GCC's search with a preprocessing-only pass that
+preserves its search/language arguments. The build owner registers continuing
+kernel history before acknowledging compilation. This includes absent paths,
+symlink targets and negative `__has_include` decisions. Actual compiler logs
+must match the admitted population; discovery output cannot authorize a binary.
+Changed or unavailable relevant history refuses before fresh publication.
+Unchanged search paths share the owner's existing watches across translation
+units; ordinary complete generations still support reuse. Changed inputs
+force a fresh generation; a dependency changed during compilation refuses the
+build. Unprovable ancestor stability disables reuse. Failed or interrupted
+compilation preserves previous published outputs, and the dedicated owner
+retains both the directory flock and named build lock through descendant cleanup.
+Held directory descriptors and kernel mutation events protect the generated
+source hierarchy, including a directory swap followed by restoration. Lock name
+or directory changes refuse; a replacement lock cannot create two publishers
+in the same directory. Detected boundary loss during publication restores this
+transaction's replaced outputs while the directory remains locked. Replacement
+of the two binaries and stamp is not crash atomic: a crash or filesystem error
+can leave a partial pair, which the next identity validation rejects.
+The private build command
+has one 240-second budget including lock wait and raw Git capture.
 
 ### 3. A GUI app — view + control from a browser or VNC client
 
@@ -1949,8 +2954,8 @@ gtk-update-icon-cache -f ~/.local/share/icons/hicolor 2>/dev/null || true
 ## Development
 
 `./src` is a submodule of the
-[kitty fork](https://github.com/itsmygithubacct/kitty/tree/track-b/f118-kitty-v0.48.2)
-(branch `track-b/f118-kitty-v0.48.2`). It's a **full fork** — kilix keeps whatever changes make the
+[kitty fork](https://github.com/itsmygithubacct/kitty/tree/work/0.2.2-rc2-engine)
+(branch `work/0.2.2-rc2-engine`). It's a **full fork** — kilix keeps whatever changes make the
 best experience. The clickable-button feature is these Python files:
 
 - `kitty/window_title_bar.py` — draws the keyboard and
@@ -2055,7 +3060,9 @@ default 1 GiB threshold, `pane_memory=always` for an always-visible MiB/KiB
 readout, or `pane_memory=off` to hide the RAM side. The symmetric
 `pane_cpu=auto` shows pane process-tree use above one core (`1.0`); use
 `pane_cpu=always` or
-`pane_cpu=off` to override that policy.
+`pane_cpu=off` to override that policy. The top bar's system CPU and RAM
+readout takes `system_load=always` (the default), `system_load=auto` or
+`system_load=off`.
 
 - **Quieter page strip:** `tab_bar_min_tabs 2` (hide it until a 2nd page) and
   `tab_bar_show_new_tab_button no` (hide the `+`).
@@ -2071,7 +3078,7 @@ behavior, streaming/debug options and build/update pins.
 
 ## License
 
-kilix is **GPLv3** — see [`LICENSE`](https://github.com/itsmygithubacct/kilix/blob/main/LICENSE). It embeds and builds on a fork of kitty,
+kilix is **GPLv3** — see [`LICENSE`](https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/LICENSE). It embeds and builds on a fork of kitty,
 which is GPLv3, so the whole project is GPLv3.
 
 ## Credits
@@ -2079,3 +3086,181 @@ which is GPLv3, so the whole project is GPLv3.
 - **kilix** by *itsmygithubacct*.
 - `./src` is a fork of [kitty](https://github.com/kovidgoyal/kitty) by Kovid Goyal
   (GPLv3), modified to add clickable pane-title-bar buttons.
+# Native-window routing diagnostics
+
+Pleb sessions record applications that appear as host X11 windows outside
+Kilix tabs/panes in `~/.local/gpu_terminal/pleb/state/native-windows.jsonl`
+(or `PLEB_STATE_HOME`). This runs independently of clickable-chrome settings.
+Each observed window open, remap, and focus transition records its X window ID,
+WM class/command, local executable, argument vector, working directory, and up
+to eight available parent processes. XRes identifies local clients even when
+they omit `_NET_WM_PID`. Dialogs and skip-taskbar windows are included; Kilix's
+own windows, desktop/dock infrastructure, and nested in-pane displays are not.
+
+These records help identify applications and launch paths needing routing
+fixes. Process arguments are observed state, not recovered shell syntax:
+launchers that already exited, remote clients, and requests sent to an existing
+process through D-Bus may not expose the original invocation. Missing process
+details are marked unavailable. No environment variables, terminal output, or
+window titles are captured. Arguments and paths can contain private data; logs
+are local, mode 0600, and rotate at 10 MiB with four backups (about 50 MiB total).
+Do not publish raw logs without reviewing them.
+
+The system Python and `python3-xlib` run `scripts/native-window-log.py`.
+One watcher per display/state directory is enforced with a lock. It exits when
+the session parent or X server exits. Existing windows are inventoried at
+startup; very short-lived windows that vanish before inspection may lack
+metadata. Inspect records with `tail -f` or a JSON-lines reader.
+
+### Search the documentation
+
+Run `kilix help-search "how do I split a pane"` to search the bundled Kilix, Kitty, Pleb and Plebian-OS documentation. The pinned Help Search app installs on first use, uses no model weights, and returns source passages rather than generated answers.
+
+Kilix 95's optional startup voice uses the pinned Piper runtime through
+`kilix tts --prepare-system-voice` and `kilix tts --system-voice`. First-use setup
+shows the model notice in a terminal; the desktop owns the persistent session
+and its configurable greeting. No speech model is fetched during a normal
+restart of an enabled session.
+
+Enabled system voice polls the shared telemetry ring and local power/link state
+about every two seconds. It prepares the five fixed warning clips once, then
+plays cached audio without neural synthesis during an incident:
+
+| Condition | Spoken warning | Recovery |
+| --- | --- | --- |
+| Any temperature sensor above 101°C (213.8°F) | WARNING: the system is overheating | All readings at or below 98°C |
+| Discharging battery below 10% | battery low | Charging or at least 12% |
+| Discharging battery below 5% | battery critically low | Charging or at least 12% |
+| Previously connected physical links all down for 4 seconds | offline | A physical link reconnects |
+| Available RAM at most 2%, swap traffic at least 8 MiB/s, and memory PSI `some_avg10` at least 20%, sustained for 10 seconds | heavy swapping | A fresh sample no longer meets the conditions |
+
+Each warning is spoken once per incident, with a five-minute cooldown (one minute
+for offline). Starting below 5% announces only the critical battery warning.
+Unknown or stale readings do not trigger warnings. Network detection checks
+physical carrier, not Internet access; loopback and VPN links do not mask a lost
+uplink. Swap occupancy alone does not trigger speech. Swap detection needs Linux
+memory-pressure telemetry and consecutive samples no more than five seconds apart.
+Temperature thresholds use raw Celsius values regardless of display preferences.
+Turning system voice off stops these warnings too. Audio still depends on a
+working output device and the process being able to run under resource pressure.
+
+System voice also caches **Goodbye** for normal machine shutdown. On Plebian-OS,
+the worker listens to logind and releases its shutdown delay after playback.
+The desktop's Shut Down action waits briefly for a voice acknowledgement, with
+duplicate speech suppressed when logind also notifies the worker. Desktop-only
+restarts, owner-pipe closure and disabling voice remain silent. Generic hosts
+need system Python's `dbus` and `gi` bindings for logind notification; the desktop
+menu path works without them. Forced shutdown and power loss cannot guarantee
+audio playback.
+
+Additional enabled system-voice messages:
+
+- **power connected** / **running on battery**: a known system battery changes
+  power source for four seconds. Startup is silent; a fifteen-second per-direction
+  cooldown suppresses cable chatter. Peripheral batteries are ignored.
+- **disk space low**: the writable local filesystem for `/`, home or Kilix data
+  has less than 5% available and less than 2 GiB available. Filesystems are sampled
+  every thirty seconds and deduplicated; remote and read-only mounts are skipped.
+  Recovery requires at least 8% available or 3 GiB available. The existing
+  five-minute incident cooldown prevents repeated warnings.
+- **update complete. restart required**: the Plebian-OS whole-stack updater,
+  running as the desktop user, commits successfully, completes apt reconciliation,
+  and leaves restart to the user. It atomically replaces the private state event
+  `system-voice-update-complete`; the running voice worker announces each new
+  event once. Automatic restarts, failed updates and notices already present when
+  the worker starts are silent. Root-only maintenance updates do not emit a
+  per-user voice notice. A notification failure cannot fail an otherwise
+  successful update.
+
+All phrases use the existing pre-rendered warning cache; no synthesis is needed
+when power changes, disk space is low, or the updater commits.
+
+### Conversational Avatar
+
+Run `kilix avatar` to install the pinned native Avatar and open its conversation
+pane. Build dependencies are a C compiler, make, pkg-config, FreeType, fontconfig
+and zlib development headers. `kilix avatar --force-install` refreshes an existing
+installation to this release's pin. The source repository requires repository
+access when building from source.
+
+Select **Codex**, then **Codex setup**, to reuse Codex CLI sign-in, sign in with
+ChatGPT, or paste an API key into hidden terminal input. Avatar stores that key
+outside Git and the shared execution workspace, in a private directory and an
+owner-only file. The configuration check makes no paid generation request;
+service-side key validity is checked by the first conversation request. Codex
+CLI must be installed separately. The model and effort selection persists, and
+an explicitly saved default takes precedence on startup; the initial fallback is
+Luna / low. Local Qwen chat, Kristin speech and dictation use their existing
+explicit setup flows.
+
+## Model setup wizard
+
+Run `kilix wizard` (or `kilix wizard --tui`) for the terminal wizard. Kilix95
+uses the same saved choices in its startup window and **Model Setup** menu.
+Each unanswered model category offers checkbox alternatives, download/disk
+sizes, and available sizing recommendations. Accept or decline, then Continue.
+Speech, dictation, workflows, YOLOX vision, EnCodec audio, Bonsai images, sound
+recognition, System-local LLM for Avatar, other language models, embeddings,
+documents and visual chat each have a page. RAM/VRAM estimates that the sizer
+does not provide are shown as unavailable; a default is not a fit guarantee.
+
+Choices are saved before downloads begin. At the end, licence texts and all
+model-specific conditions are presented in groups, with one Yes/No question
+naming the affected models. Declining a group skips its models. Kilix95 hosts
+this agreement terminal inside the desktop. Accepted models receive individual
+receipts; microphone permission remains a separate question for dictation.
+Installing a catalog asset does not enable a runtime that does not support it.
+
+Selected diarization and Pocket TTS models need optional conversion software.
+After licence consent, the wizard shows the pinned OS installer's download
+details and asks separately before running its administrator step with `sudo`.
+It resolves every selected converter before downloading model weights. If
+software setup is declined or fails, choices remain pending: retry
+`kilix wizard finish`, or revisit the model page to change the selection.
+Listing pages and saving choices never invoke these installers.
+
+Useful CLI routes:
+
+```sh
+kilix wizard --json                 # inspect remaining pages and pending choices
+kilix wizard --all                  # revisit saved choices
+kilix wizard answer vision yes --model yolox_nano
+kilix wizard answer audio no
+kilix wizard finish                # terminal licence batch and installation
+```
+
+Repeat `--model` to select alternatives together. The recommended selection is
+first when checked in the interactive wizard; Avatar uses the first selected
+System-local LLM as its default. Closing setup retains saved choices and leaves
+unfinished installation available for retry. No model or licence is accepted
+by merely opening or listing the wizard.
+
+### Terminal images and video
+
+Use `kilix image -- photo.png` to display images and `kilix video FILE_OR_URL`
+to play local video or direct streams in the current terminal. See
+[terminal media](https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/docs/terminal-media.md) for controls and renderer options.
+
+### Durable agent mailboxes
+
+`kilix ralph` exposes the pinned [Ralph module](https://github.com/itsmygithubacct/kilix-ralph/blob/2c42a16c4931e1780c12283655ee7aceec08f3ac/README.md)
+without starting the terminal engine. Run `kilix ralph --help` for its queue,
+receiver and worker commands. Pull receivers explicitly claim messages at their
+idle boundary. Provider adapters require their own guarded delivery and durable
+receipts; they do not use terminal keystrokes or the pane activity detector.
+The managed streaming provider owns a separate session and does not take over
+an existing interactive session. Native provider compatibility requires separate
+qualification against the selected client version.
+
+Recurring schedules start paused. Use `--max-wakes` to bound a schedule and
+`serve --once` for a single worker pass. No worker starts at installation or boot.
+Cancellation applies only before a message is claimed; uncertain or provider-owned
+messages require reconciliation and must not be blindly resent. Worker shutdown
+preserves queue state. See the module documentation for restart, cleanup and
+receipt retention limits. `KILIX_RALPH_HOME` selects a local module checkout.
+
+Selected-session original-user authority requires a trusted embedding controller;
+ordinary selector `end` CLI/JSON calls now refuse with `authority_required`.
+Read-only operations and owned-job primitives remain available. See
+[the controller boundary](pty-controller.md) for issuance, scope, expiry,
+replay, revocation and the required isolation from model shell/broker access.

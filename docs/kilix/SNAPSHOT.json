@@ -1,0 +1,204 @@
+{
+  "schema": "kilix-help-document-snapshot/v1",
+  "license": "MIT, continuing the author-provided dual-license convention recorded in docs/README.md.",
+  "upstream_software_license": "GPLv3; the software LICENSE link remains an upstream link.",
+  "documents": [
+    {
+      "path": "docs/kilix/AGENTS.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/AGENTS.md",
+      "upstream_sha256": "10aa8f30d57fbcce61bbd710e9bae116646e5e03adb3a865f84d705a0e1c55e3",
+      "bundled_sha256": "6c9b2ce37a19589ba19a9fcf484b6eb957d40db74524105c1f55a845edcad46d",
+      "adaptations": [
+        "Replace superseded selector-end advice with pinned controller/CLI refusal boundary.",
+        "Include max in the pinned Codex reasoning-effort validator values."
+      ],
+      "link_rewrites": []
+    },
+    {
+      "path": "docs/kilix/README.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "README.md",
+      "upstream_sha256": "3546b97231cbe13fa653be68f824ae05a88022f713329fccc1cca0ddf87ed4a1",
+      "bundled_sha256": "0996ecb0fe76ea5cd06d42f59fddf84389551b4212a5f9328069fa1b20127efa",
+      "adaptations": [
+        "Reconcile selector-end instructions with the same revision's controller boundary.",
+        "Remove automatic fresh-operation-ID advice after an uncertain legacy outcome."
+      ],
+      "link_rewrites": [
+        {
+          "from": "windows/README.md",
+          "to": "https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/windows/README.md",
+          "upstream_target": "windows/README.md"
+        },
+        {
+          "from": "config/kilix_demo.png",
+          "to": "https://raw.githubusercontent.com/itsmygithubacct/kilix/a77cac52799d0279a5ce3f74525fba40fc281dcd/config/kilix_demo.png",
+          "upstream_target": "config/kilix_demo.png"
+        },
+        {
+          "from": "windows/README.md#windows-desktop-automation",
+          "to": "https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/windows/README.md#windows-desktop-automation",
+          "upstream_target": "windows/README.md"
+        },
+        {
+          "from": "docs/help/README.md",
+          "to": "help/README.md",
+          "upstream_target": "docs/help/README.md"
+        },
+        {
+          "from": "docs/workflows/README.md",
+          "to": "https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/docs/workflows/README.md",
+          "upstream_target": "docs/workflows/README.md"
+        },
+        {
+          "from": "docs/session.md",
+          "to": "session.md",
+          "upstream_target": "docs/session.md"
+        },
+        {
+          "from": "docs/pty-controller.md",
+          "to": "pty-controller.md",
+          "upstream_target": "docs/pty-controller.md"
+        },
+        {
+          "from": "windows/README.md",
+          "to": "https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/windows/README.md",
+          "upstream_target": "windows/README.md"
+        },
+        {
+          "from": "config/kilix95_with_amp.png",
+          "to": "https://raw.githubusercontent.com/itsmygithubacct/kilix/a77cac52799d0279a5ce3f74525fba40fc281dcd/config/kilix95_with_amp.png",
+          "upstream_target": "config/kilix95_with_amp.png"
+        },
+        {
+          "from": "docs/kilix95-doom-demo.gif",
+          "to": "https://raw.githubusercontent.com/itsmygithubacct/kilix/a77cac52799d0279a5ce3f74525fba40fc281dcd/docs/kilix95-doom-demo.gif",
+          "upstream_target": "docs/kilix95-doom-demo.gif"
+        },
+        {
+          "from": "docs/help/operations/README.md",
+          "to": "help/operations/README.md",
+          "upstream_target": "docs/help/operations/README.md"
+        },
+        {
+          "from": "LICENSE",
+          "to": "https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/LICENSE",
+          "upstream_target": "LICENSE"
+        },
+        {
+          "from": "docs/terminal-media.md",
+          "to": "https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/docs/terminal-media.md",
+          "upstream_target": "docs/terminal-media.md"
+        },
+        {
+          "from": "third_party/kilix-ralph/README.md",
+          "to": "https://github.com/itsmygithubacct/kilix-ralph/blob/2c42a16c4931e1780c12283655ee7aceec08f3ac/README.md",
+          "upstream_target": "third_party/kilix-ralph/README.md"
+        },
+        {
+          "from": "docs/pty-controller.md",
+          "to": "pty-controller.md",
+          "upstream_target": "docs/pty-controller.md"
+        }
+      ]
+    },
+    {
+      "path": "docs/kilix/help/README.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/help/README.md",
+      "upstream_sha256": "4dfa0f8ac3d3fce76f0e95fffa923549f2f185838a6efbb9ced1a72fbc9735a9",
+      "bundled_sha256": "a8334eb05ebc028f4f23ce83e2c7ab60277ee3551b6e00efcbbb2a43bc874d00",
+      "adaptations": [],
+      "link_rewrites": [
+        {
+          "from": "../../README.md",
+          "to": "../README.md",
+          "upstream_target": "README.md"
+        }
+      ]
+    },
+    {
+      "path": "docs/kilix/help/operations/persistence.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/help/operations/persistence.md",
+      "upstream_sha256": "c0e369281bc19b2a77910e326fa3a82aa78b60d2e20e8691a704a0ad084a66e6",
+      "bundled_sha256": "a4a866eeca10c0020abde7e0cba626305b8cf817e67d3e31323355a1e0659499",
+      "adaptations": [
+        "Replace superseded selector-end advice; preserve separately labelled human-only administrative recovery."
+      ],
+      "link_rewrites": []
+    },
+    {
+      "path": "docs/kilix/help/settings.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/help/settings.md",
+      "upstream_sha256": "dcf2c058056061de11196a321cfa3169cd73c38051c0acb18994e733f243207e",
+      "bundled_sha256": "dcf2c058056061de11196a321cfa3169cd73c38051c0acb18994e733f243207e",
+      "adaptations": [],
+      "link_rewrites": []
+    },
+    {
+      "path": "docs/kilix/help/storage.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/help/storage.md",
+      "upstream_sha256": "f0420584c51d9b52c27b57fae2cf604ddb79bcf0ee44e9d790ce08538520fb34",
+      "bundled_sha256": "f0420584c51d9b52c27b57fae2cf604ddb79bcf0ee44e9d790ce08538520fb34",
+      "adaptations": [],
+      "link_rewrites": []
+    },
+    {
+      "path": "docs/kilix/session.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/session.md",
+      "upstream_sha256": "5b6e8fbd6af05a4b3216476297aff959ee5a8b62e868c0cad0adbf01da73b453",
+      "bundled_sha256": "5b6e8fbd6af05a4b3216476297aff959ee5a8b62e868c0cad0adbf01da73b453",
+      "adaptations": [],
+      "link_rewrites": []
+    },
+    {
+      "path": "docs/kilix/structured-actions.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/structured-actions.md",
+      "upstream_sha256": "35be60d33af6c9ee4e435e1298fc500bc85b5e7c6477d216bdc54b4a7a238973",
+      "bundled_sha256": "e6f944424cf49f331751aee15230a0795237d46ec081c3ae0f8e513093341c0b",
+      "adaptations": [
+        "Use a generic workspace/title in the example; preserve request semantics."
+      ],
+      "link_rewrites": []
+    },
+    {
+      "path": "docs/kilix/pty-controller.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/pty-controller.md",
+      "upstream_sha256": "e5da2b1a0f53c04323e6e8435f32ef8b139d9daf23ca91d7d96eed83c48a8519",
+      "bundled_sha256": "b584083093b7919d49f7c2261e49b27efcd372d721f79ffaeed565c30ace460d",
+      "adaptations": [],
+      "link_rewrites": [
+        {
+          "from": "pty-supervisor.md",
+          "to": "https://github.com/itsmygithubacct/kilix/blob/a77cac52799d0279a5ce3f74525fba40fc281dcd/docs/pty-supervisor.md",
+          "upstream_target": "docs/pty-supervisor.md"
+        }
+      ]
+    }
+  ],
+  "dependency_scope": {
+    "session.md": "Required by refreshed automation, help index and storage pages for managed-run trust, exact prompts, lifecycle and storage.",
+    "structured-actions.md": "Required by refreshed automation guidance for typed requests, recovery, trust and effort limits.",
+    "pty-controller.md": "Required to explain and correct the pinned implementation's refusal of untrusted selector-end calls."
+  },
+  "implementation_reconciliation": {
+    "selector_end": "config/kilix_pty_selector.py untrusted_execute; config/kilix_pty_controller.py; docs/pty-controller.md at the upstream revision.",
+    "reasoning_efforts": "config/agent_control.py REASONING_EFFORTS at the upstream revision."
+  }
+}

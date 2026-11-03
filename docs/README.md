@@ -12,3 +12,22 @@ this directory is released under the repository's MIT licence (see
 These pages describe the software as of the versions named above. When
 Kilix or kitty changes, update them with a new snapshot and do not edit them
 in place without noting the source revision.
+
+For the 0.2.3 Help candidate, six Kilix documents (README, AGENTS, the help
+index, persistence, settings and storage) are refreshed from Kilix
+`a77cac52799d0279a5ce3f74525fba40fc281dcd`. The managed-session, structured-action
+and selected-session-controller guides from that same revision are also
+included because the refreshed workflows depend on them. These author-written
+copies continue the MIT convention above; this does not change the upstream
+software's GPLv3 licence. The remaining Kilix pages and the independent kitty
+guide retain their existing snapshots.
+
+[kilix/SNAPSHOT.json](kilix/SNAPSHOT.json) records each exact upstream path,
+revision, original and bundled SHA-256, rewritten link, and editorial correction.
+Links to bundled pages stay local. Other relative links point to immutable
+upstream revisions, including the selected submodule revision where relevant.
+The copied automation/persistence instructions are reconciled with that
+revision's trusted-controller refusal boundary; ordinary selector-end CLI calls
+do not acquire original-user authority. Source-version and optional-component
+qualification limits remain in the documents. A refreshed Help corpus does not
+install or qualify the described desktop components.
