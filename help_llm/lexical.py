@@ -118,6 +118,25 @@ _DEFINITION = re.compile(
     r"(?:sets?|controls?|selects?|changes?|enables?|disables?|determines?|limits?|caps?)\b", re.I)
 _ASSIGNMENT = re.compile(r"(?<![-\w.])[A-Za-z_]\w*=(?!=)\S+")
 _CHORD = re.compile(r"\b(?:ctrl|control|alt|shift|super|cmd|meta)(?:\+[A-Za-z0-9_]+)+\b", re.I)
+_SETTING_TYPE = (r"(?:\b(?:environment|env)\s+variables?|"
+                 r"\b(?:configuration|config)\s+(?:variables?|settings?|options?|keys?)|\bsettings?)\b")
+_SETTING_NAME = (r"(?:`[A-Za-z_][\w.-]*`|"
+                 r"\b(?-i:[A-Z][A-Z0-9]*_[A-Z0-9_]+)\b)")
+_TYPED_SETTING = re.compile(
+    _SETTING_TYPE + r"\s*:?\s+" + _SETTING_NAME + r"|"
+    + _SETTING_NAME + r"\s+(?:is\s+(?:(?:an?|the)\s+)?)?" + _SETTING_TYPE, re.I)
+
+
+def typed_setting(text):
+    """An explicit type/name declaration does not need a particular predicate.
+
+    This establishes a source role, not complete factual support. Output fields,
+    action names and unrelated configuration mentions do not supply this type.
+    """
+    text = negatives(text)
+    return any(not re.search(r"\b(?:not|never|no|neither)\s+(?:(?:an?|the)\s+)?$",
+                             text[:m.start()], re.I)
+               for m in _TYPED_SETTING.finditer(text))
 
 
 def source_roles(text):
@@ -125,7 +144,8 @@ def source_roles(text):
     actions = set(re.findall(r"`([\w.-]+)`\s+action\b", text))
     actions.update(re.findall(r"\baction\s+`([\w.-]+)`", text))
     actions.update(re.findall(r"(?m)^\s*map\s+\S+\s+([\w.-]+)", text))
-    setting = bool(_ASSIGNMENT.search(text) or any((m[1] or m[2]) not in actions for m in _DEFINITION.finditer(text)))
+    setting = bool(_ASSIGNMENT.search(text) or typed_setting(text)
+                   or any((m[1] or m[2]) not in actions for m in _DEFINITION.finditer(text)))
     action = bool(_CHORD.search(text) or re.search(r"(?m)^\s*map\s+\S+\s+\S+", text)
                   or actions
                   or re.search(r"\b(?:press|hit)\s+(?:`)?(?:Enter|Escape|Esc|F\d{1,2})\b", text, re.I))

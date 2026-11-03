@@ -50,6 +50,12 @@ ranking terms, without a compulsory co-occurrence filter. Backticks alone do not
 make ambiguous context a required answer literal. Expansion questions never
 supply literal or role evidence. Clear setting and shortcut/action requests require
 body evidence of that role; the ambiguous word `key` alone does not imply a keyboard.
+An explicit declaration identifying an identifier as an environment variable or
+configuration key, option, variable or setting supplies setting-role evidence
+independently of its descriptive verb. Direct negated declarations, output-field
+labels and action labels do not supply that type. Assignment and ordinary
+identifier-definition patterns remain additional evidence. None of these patterns
+establishes that a passage answers the complete question.
 Setting intent requires a nominal request; the verb in "does setting a field"
 does not demand configuration-definition evidence. These heuristics do not
 certify complete factual support. Explicit filenames and paths restrict results
