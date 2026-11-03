@@ -22,10 +22,18 @@ first, so read the top few results.
 
 The 0.2.3 documentation snapshot is recorded in `docs/kilix/SNAPSHOT.json`. Its
 index contains 3,380 retained expansion questions. No new questions were generated.
-Changed or removed passages lose their questions; an unchanged heading and exact
+Changed or removed support loses its questions; an unchanged heading and complete
 passage text in the same source document can retain questions at a new ordinal ID.
+An unambiguous passage that keeps the complete old text as its exact leading
+paragraphs can also retain those questions after new paragraphs are appended.
+The new paragraphs must be reviewed for contradictions or qualifications of the
+old text; textual containment alone is not a semantic review. This snapshot's
+three prefix migrations add corroborating model-verification, tab terminology
+and raw-listing facts while preserving all old text. No questions were generated.
 An ordinal match alone never establishes support. The historical measurements above
-do not evaluate this refreshed corpus. The BM25 scorer and its weights are unchanged.
+do not evaluate this refreshed corpus. The BM25 formula, weights and tokenizer
+are unchanged. Merged passages now keep every contributing section heading;
+this repairs missing search context without changing their body text or boundaries.
 
 Passages use the existing heading/paragraph cutter with a 450-word target; a single
 paragraph longer than that stays whole (10 passages in this snapshot, enumerated in
@@ -35,8 +43,8 @@ To reproduce the source/question manifests from the committed document snapshot:
 
 ```sh
 python3 -B -m help_llm.refresh \
-  --base c4bf4367a23fffef6efa941550baf8603424fb2c \
-  --documents-revision 68736f0401fc7f2f7cba0a15462c7d51531e68a1 \
+  --base 038ddfcfa173c8117a32dd9b585c92c7c0af8368 \
+  --documents-revision b90d1e6f9be8f459c1f0784c66a8b92a5cb8088f \
   --report ../refresh-report.json
 ```
 

@@ -65,19 +65,22 @@ def split_long(text):
 
 
 def cut(label, path, raw):
-    """Passages of one Markdown file, identical to the corpus the questions were written for."""
+    """Cut one file, retaining every section heading when short sections merge."""
     merged = []
     for heading, text in sections(raw):
         if merged and len(merged[-1][1].split()) < MIN_WORDS:
-            merged[-1] = (merged[-1][0], merged[-1][1] + "\n\n" + text)
+            headings = merged[-1][0]
+            if heading not in headings:
+                headings = headings + [heading]
+            merged[-1] = (headings, merged[-1][1] + "\n\n" + text)
         else:
-            merged.append((heading, text))
+            merged.append(([heading], text))
     out, n = [], 0
-    for heading, text in merged:
+    for headings, text in merged:
         for part in split_long(text):
             n += 1
             out.append({"id": f"{label}:{path}#{n}", "source": label, "repo": "kilix-help-llm", "path": path,
-                        "heading": " > ".join(heading), "text": part})
+                        "heading": " | ".join(" > ".join(h) for h in headings), "text": part})
     return out
 
 

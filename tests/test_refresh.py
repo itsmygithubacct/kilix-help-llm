@@ -45,3 +45,22 @@ class ExpansionReconciliationTest(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 checked_revision(value)
         self.assertEqual(checked_revision('a'*40),'a'*40)
+
+    def test_complete_prefix_retains_support_after_a_separate_paragraph_is_added(self):
+        old = [passage(1,'An existing operation.')]
+        new = [passage(3,'An existing operation.\n\nAn additional documented operation.')]
+        retained, rows = reconcile(old,new,{old[0]['id']:['Existing operation?']})
+        self.assertEqual(retained,{new[0]['id']:['Existing operation?']})
+        self.assertEqual(rows[0]['reason'],'complete-leading-passage-preserved')
+
+    def test_partial_sentence_or_nonleading_match_does_not_transfer_questions(self):
+        old = [passage(1,'An existing operation.')]
+        for text in ('An existing operation. is no longer available.',
+                     'Historical:\n\nAn existing operation.', 'A different operation.'):
+            with self.subTest(text=text):
+                self.assertEqual(reconcile(old,[passage(1,text)],{old[0]['id']:['Question?']})[0],{})
+
+    def test_ambiguous_complete_prefix_does_not_transfer_questions(self):
+        old = [passage(1,'An existing operation.')]
+        new = [passage(2,old[0]['text']),passage(3,old[0]['text']+'\n\nAdditional text.')]
+        self.assertEqual(reconcile(old,new,{old[0]['id']:['Question?']})[0],{})

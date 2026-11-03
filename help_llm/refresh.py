@@ -1,7 +1,7 @@
 """Deterministically refresh a committed documentation snapshot and its expansions.
 
 Run after committing the documents. Existing expansion questions move only with
-an unambiguous, byte-identical heading/text pair in the same document. No model
+an unambiguous matching heading and complete unchanged leading text in the same document. No model
 is used and no questions are generated. Search behavior is not modified.
 """
 import argparse
@@ -19,11 +19,14 @@ def reconcile(old, new, questions):
     """Return retained questions and an explicit passage-ID crosswalk."""
     destinations = defaultdict(list)
     for p in new:
-        destinations[(p['source'], p['path'], p['heading'], p['text'])].append(p['id'])
+        destinations[(p['source'], p['path'], p['heading'])].append(p)
     retained, crosswalk = {}, []
     for p in old:
-        matches = destinations[(p['source'], p['path'], p['heading'], p['text'])]
-        target = matches[0] if len(matches) == 1 else None
+        matches = [candidate for candidate in destinations[(p['source'], p['path'], p['heading'])]
+                   if candidate['text'] == p['text'] or candidate['text'].startswith(p['text'] + '\n\n')]
+        target = matches[0]['id'] if len(matches) == 1 else None
+        reason = ('exact-heading-and-text' if target and matches[0]['text'] == p['text'] else
+                  'complete-leading-passage-preserved' if target else 'changed-removed-or-ambiguous')
         values = questions.get(p['id'], [])
         if target and values:
             if target in retained:
@@ -33,7 +36,9 @@ def reconcile(old, new, questions):
                           'text_sha256':hashlib.sha256(p['text'].encode()).hexdigest(),
                           'questions_retained':len(values) if target else 0,
                           'questions_removed':0 if target else len(values),
-                          'reason':'exact-heading-and-text' if target else 'changed-removed-or-ambiguous'})
+                          'reason':reason,
+                          'preserved_prefix_characters':len(p['text']) if target else 0,
+                          'new_text_sha256':hashlib.sha256(matches[0]['text'].encode()).hexdigest() if target else None})
     return retained, crosswalk
 
 
