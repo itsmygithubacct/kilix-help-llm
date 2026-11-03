@@ -7,3 +7,7 @@ If the broker does not acknowledge remote pane termination, the fork refuses to 
 Closing a page normally detaches its broker-backed clients; explicit per-pane termination is a separate action. Check foreground_processes in the raw listing before closing a pane you did not create.
 
 Exclude the caller's KITTY_WINDOW_ID when selecting other panes for cleanup. There is no basic kilix close verb in this source revision; use the documented remote-control close commands.
+
+Here a page is a tab: `close-tab` closes the tab container, while
+`close-window` terminates one pane. Closing a tab normally detaches its persistent
+clients; it does not request the separate per-pane termination.

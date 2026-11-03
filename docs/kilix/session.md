@@ -255,7 +255,7 @@ root/dry-run flags are rejected. A submission failure stops later submissions,
 retaining earlier runs and their receipts. The batch does not impose a global
 worker limit or infer extra workers from a layout.
 
-## Storage, library and installation
+## Private run storage and retention
 
 Default storage is **`~/.local/gpu_terminal/kilix/agent-runs`**. It follows
 `GPU_TERMINAL_HOME` and `KILIX_STORAGE_HOME`; `KILIX_AGENT_RUNS_HOME` or `--root`
@@ -275,6 +275,8 @@ and `tmp/`. Headless runs add raw `events.jsonl`, `stderr.log` and, for Codex or
 Claude, `final.txt` when supplied. Background runs add `runner.log`. Cancellation
 adds `stop.json`. The exclusive worker claim prevents replay of an existing run.
 Validation failures before preparation do not create run directories.
+
+## Library and installation
 
 The importable **`config/kilix_session`** package belongs to the existing Kilix
 host repository alongside `agent_control`, `agent_trust` and `agent_programs`.

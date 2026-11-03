@@ -9,10 +9,12 @@
       "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
       "upstream_path": "docs/AGENTS.md",
       "upstream_sha256": "10aa8f30d57fbcce61bbd710e9bae116646e5e03adb3a865f84d705a0e1c55e3",
-      "bundled_sha256": "6c9b2ce37a19589ba19a9fcf484b6eb957d40db74524105c1f55a845edcad46d",
+      "bundled_sha256": "7bc189f62aacec09f726ba7df0924db3ab3ba2726f691062524c9ef7c4642e54",
       "adaptations": [
         "Replace superseded selector-end advice with pinned controller/CLI refusal boundary.",
-        "Include max in the pinned Codex reasoning-effort validator values."
+        "Include max in the pinned Codex reasoning-effort validator values.",
+        "Name the live rollout-log workflow explicitly.",
+        "Give the existing refusal/missing/ambiguous exit-code paragraph its own section; facts unchanged."
       ],
       "link_rewrites": []
     },
@@ -22,12 +24,14 @@
       "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
       "upstream_path": "README.md",
       "upstream_sha256": "3546b97231cbe13fa653be68f824ae05a88022f713329fccc1cca0ddf87ed4a1",
-      "bundled_sha256": "2a4a5baf47445c206d1f6836bdc38a5f6ecfae8be0623af94dee76f59cd98b66",
+      "bundled_sha256": "b3ba745a087681a8fdcc02f864f3e83209e7c233f33b6a45ab9e2c179d90c845",
       "adaptations": [
         "Reconcile selector-end instructions with the same revision's controller boundary.",
         "Remove automatic fresh-operation-ID advice after an uncertain legacy outcome.",
         "Repair the obsolete F12 heading anchor; describe skill symlinks without the obsolete count of three.",
-        "Correct the toolkit selection from af7e848 to the exact installer/catalog pin; retain installed-capability qualification."
+        "Correct the toolkit selection from af7e848 to the exact installer/catalog pin; retain installed-capability qualification.",
+        "Correct the native-window heading level so it does not become the root of unrelated following sections.",
+        "Make Help Search a sibling section, outside native-window diagnostics."
       ],
       "link_rewrites": [
         {
@@ -129,9 +133,10 @@
       "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
       "upstream_path": "docs/help/operations/persistence.md",
       "upstream_sha256": "c0e369281bc19b2a77910e326fa3a82aa78b60d2e20e8691a704a0ad084a66e6",
-      "bundled_sha256": "a4a866eeca10c0020abde7e0cba626305b8cf817e67d3e31323355a1e0659499",
+      "bundled_sha256": "f23ad0e727c94b18cf04576a10320feb3bcbdc1138af483899698a005eb38117",
       "adaptations": [
-        "Replace superseded selector-end advice; preserve separately labelled human-only administrative recovery."
+        "Replace superseded selector-end advice; preserve separately labelled human-only administrative recovery.",
+        "Expose the existing replay-journal/transcript separation and default under a descriptive heading."
       ],
       "link_rewrites": []
     },
@@ -161,8 +166,11 @@
       "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
       "upstream_path": "docs/session.md",
       "upstream_sha256": "5b6e8fbd6af05a4b3216476297aff959ee5a8b62e868c0cad0adbf01da73b453",
-      "bundled_sha256": "5b6e8fbd6af05a4b3216476297aff959ee5a8b62e868c0cad0adbf01da73b453",
-      "adaptations": [],
+      "bundled_sha256": "a91ed740774067ddaa71715241e7ad7d35b561041c360c1c7603438da758874c",
+      "adaptations": [
+        "Name the existing private managed-run storage and retention policy.",
+        "Separate library installation from private run data without editing either body."
+      ],
       "link_rewrites": []
     },
     {
@@ -204,6 +212,42 @@
         "Related existing page: correct the stale toolkit pin against the selected installer and Content catalog without claiming installed CLI capability."
       ],
       "link_rewrites": []
+    },
+    {
+      "path": "docs/kilix/help/operations/closing.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/help/operations/closing.md",
+      "upstream_sha256": "9b6a02b4898c413c9f48bea7b58b7e01a4a0631637383199d056e549da84d25b",
+      "adaptations": [
+        "Clarify the existing page/tab and pane/window command terminology; existing text is an unchanged prefix."
+      ],
+      "link_rewrites": [],
+      "bundled_sha256": "558dd72fc6b24d0bd39c20ba6ab82011a0fd2efa925aaa04ea085d06337a5133"
+    },
+    {
+      "path": "docs/kilix/help/operations/listing.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/help/operations/listing.md",
+      "upstream_sha256": "59cbbdc343f3f017cb22c782e378a35b56cb27e5b877b2854966709fd1c002db",
+      "adaptations": [
+        "Document the selected engine foreground_processes field alongside the raw listing command; existing text is an unchanged prefix."
+      ],
+      "link_rewrites": [],
+      "bundled_sha256": "0ebb7920da95ed97fe05d334e8b7d40b0de263bd8468d2195f804b04431a4c5e"
+    },
+    {
+      "path": "docs/kilix/help/models.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/help/models.md",
+      "upstream_sha256": "364a368564b46b9c8d4a5ded444c99c812cd016585a317b6307710e58ba0f211",
+      "adaptations": [
+        "Bring the exact read-only verification paragraph from the pinned README into the focused model-setup guide; existing text is an unchanged prefix."
+      ],
+      "link_rewrites": [],
+      "bundled_sha256": "e22633660e5bc30cc119523906ce20d428c5712ea1cedcc1fb1ef17364fd64b3"
     }
   ],
   "dependency_scope": {
@@ -214,5 +258,36 @@
   "implementation_reconciliation": {
     "selector_end": "config/kilix_pty_selector.py untrusted_execute; config/kilix_pty_controller.py; docs/pty-controller.md at the upstream revision.",
     "reasoning_efforts": "config/agent_control.py REASONING_EFFORTS at the upstream revision."
+  },
+  "retrieval_repair": {
+    "base": "038ddfcfa173c8117a32dd9b585c92c7c0af8368",
+    "changes": {
+      "docs/kilix/README.md": [
+        "Correct the native-window heading level so it does not become the root of unrelated following sections.",
+        "Make Help Search a sibling section, outside native-window diagnostics."
+      ],
+      "docs/kilix/AGENTS.md": [
+        "Name the live rollout-log workflow explicitly.",
+        "Give the existing refusal/missing/ambiguous exit-code paragraph its own section; facts unchanged."
+      ],
+      "docs/kilix/session.md": [
+        "Name the existing private managed-run storage and retention policy.",
+        "Separate library installation from private run data without editing either body."
+      ],
+      "docs/kilix/help/operations/persistence.md": [
+        "Expose the existing replay-journal/transcript separation and default under a descriptive heading."
+      ],
+      "docs/kilix/help/operations/closing.md": [
+        "Clarify the existing page/tab and pane/window command terminology; existing text is an unchanged prefix."
+      ],
+      "docs/kilix/help/operations/listing.md": [
+        "Document the selected engine foreground_processes field alongside the raw listing command; existing text is an unchanged prefix."
+      ],
+      "docs/kilix/help/models.md": [
+        "Bring the exact read-only verification paragraph from the pinned README into the focused model-setup guide; existing text is an unchanged prefix."
+      ]
+    },
+    "support": "All factual additions are existing pinned documentation/engine facts; other edits change section structure.",
+    "prefix_migrations_review": "The closing, listing and model guides append corroborating facts without qualifying or superseding their unchanged leading text."
   }
 }

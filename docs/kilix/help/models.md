@@ -25,3 +25,8 @@ to 900 seconds; `install --timeout` accepts 1 through 3600 seconds.
 Catalog membership and installation do not prove provider readiness, performance
 or RAM/VRAM fit. Ordinary Amp, remote and voice launches do not automatically
 run this setup interface, acquire these models or accept their terms.
+
+`kilix models verify ID` checks the existing licence receipt against the exact
+manifest and verifies every declared installed file. It creates no directories,
+changes no receipts, and performs no download or inference. Missing agreement
+or missing, altered or symlinked files beneath the installer root fail the check.

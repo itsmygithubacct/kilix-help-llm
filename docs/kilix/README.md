@@ -3086,7 +3086,7 @@ which is GPLv3, so the whole project is GPLv3.
 - **kilix** by *itsmygithubacct*.
 - `./src` is a fork of [kitty](https://github.com/kovidgoyal/kitty) by Kovid Goyal
   (GPLv3), modified to add clickable pane-title-bar buttons.
-# Native-window routing diagnostics
+## Native-window routing diagnostics
 
 Pleb sessions record applications that appear as host X11 windows outside
 Kilix tabs/panes in `~/.local/gpu_terminal/pleb/state/native-windows.jsonl`
@@ -3112,7 +3112,7 @@ the session parent or X server exits. Existing windows are inventoried at
 startup; very short-lived windows that vanish before inspection may lack
 metadata. Inspect records with `tail -f` or a JSON-lines reader.
 
-### Search the documentation
+## Search the documentation
 
 Run `kilix help-search "how do I split a pane"` to search the bundled Kilix, Kitty, Pleb and Plebian-OS documentation. The pinned Help Search app installs on first use, uses no model weights, and returns source passages rather than generated answers.
 

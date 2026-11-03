@@ -7,3 +7,8 @@ The ACT marker identifies the tab or pane that currently has focus. PANE_ID iden
 The pane listing includes its title, foreground process name and working directory to help distinguish similar panes. KITTY_WINDOW_ID is the calling pane's own ID, not the ID of whichever pane has focus.
 
 For raw structured state, run `kitten @ --password-file "$KILIX_RC_PASSWORD_FILE" ls`. Raw listing JSON contains OS windows, their tabs, and each tab's windows; the innermost windows are panes.
+
+Each raw pane object includes `foreground_processes`, the list of
+foreground processes. Inspect that field before closing a pane you did not
+create. The raw field is separate from the process-name summary displayed
+by `kilix ls --panes`.

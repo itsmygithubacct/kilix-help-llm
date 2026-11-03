@@ -2,6 +2,8 @@
 
 Every normal pane runs under a PTY broker, so closing the window or a Kilix crash only detaches it. Detached sessions are found on the next startup and reopened under their recorded tab name and title (recovered:ID when none was recorded). Set KILIX_PTY_BROKER_AUTO_RECOVER=0 to leave them for manual attachment, or KILIX_PTY_BROKER=0 to turn pane persistence off. Session logging is inactive when KILIX_PTY_BROKER=0 because the broker owns the recorded output stream.
 
+## Replay journal and transcript limits
+
 The per-pane close button and Ctrl+Alt+W explicitly request termination and ask before destroying the pane. The replay journal is bounded separately from transcripts and defaults to 64 MiB; KILIX_PTY_BROKER_JOURNAL_LIMIT changes it.
 
 ## See detached sessions

@@ -36,3 +36,9 @@ revision's trusted-controller refusal boundary; ordinary selector-end CLI calls
 do not acquire original-user authority. Source-version and optional-component
 qualification limits remain in the documents. A refreshed Help corpus does not
 install or qualify the described desktop components.
+
+The subsequent retrieval repair corrects section hierarchy and names existing
+workflow sections. It also brings the pinned model-verification paragraph and
+raw foreground-process field into their focused help guides and clarifies
+page/tab terminology. The original snapshot and every adaptation remain in
+`kilix/SNAPSHOT.json`; these edits do not change desktop behavior.

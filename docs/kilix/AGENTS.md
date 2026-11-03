@@ -392,7 +392,7 @@ explicit request:
 - `claudex_team.py launch` opens the five-pane `claudex-team` tab; `plan` and
   `status` only read.
 
-## Rollout log for a pane
+## Live rollout logs
 
 `kilix rollout log --pane PANE_ID` prints the path of the log the program in
 that live Kilix pane is writing. `kilix rollout` forwards to
@@ -413,6 +413,8 @@ The pane's foreground program decides which file it is (`kind`):
   tmux client.
 - `kilix`: the Kilix PTY transcript of the pane's broker session, for anything
   else.
+
+### Exit status and ambiguous matches
 
 An agent pane whose own log cannot be found is reported as missing, never
 answered with the Kilix transcript: that transcript is the terminal, not the
