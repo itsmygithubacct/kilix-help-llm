@@ -6,31 +6,33 @@
     {
       "path": "docs/kilix/AGENTS.md",
       "upstream_repository": "kilix",
-      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_revision": "9049a1a645e6a670a57ae9bc028ef0e6a0265ac6",
       "upstream_path": "docs/AGENTS.md",
-      "upstream_sha256": "10aa8f30d57fbcce61bbd710e9bae116646e5e03adb3a865f84d705a0e1c55e3",
-      "bundled_sha256": "34c8598965a9c9e78cba3ee6f1e09400328a1c920b4daa607368118e5f3d00fb",
+      "upstream_sha256": "16cc2be35841f7bc53214f7ae14a957ea121debd52ced85f23a54107cae41f94",
+      "bundled_sha256": "bfb182c8d4271b42b1a3125de0f3bc8ec18181d1a761d42a04cafec7a3ff6bd7",
       "adaptations": [
         "Replace superseded selector-end advice with pinned controller/CLI refusal boundary.",
         "Include max in the pinned Codex reasoning-effort validator values.",
-        "Keep log selection, missing-log refusal and ambiguous exit-status facts together under a descriptive heading."
+        "Keep log selection, missing-log refusal and ambiguous exit-status facts together under a descriptive heading.",
+        "Import the exact selected-source delta from a77cac5 to 9049a1a while retaining the separately recorded earlier local reconciliations and immutable links."
       ],
       "link_rewrites": []
     },
     {
       "path": "docs/kilix/README.md",
       "upstream_repository": "kilix",
-      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_revision": "9049a1a645e6a670a57ae9bc028ef0e6a0265ac6",
       "upstream_path": "README.md",
-      "upstream_sha256": "3546b97231cbe13fa653be68f824ae05a88022f713329fccc1cca0ddf87ed4a1",
-      "bundled_sha256": "b3ba745a087681a8fdcc02f864f3e83209e7c233f33b6a45ab9e2c179d90c845",
+      "upstream_sha256": "f66a5d066c51785efbd9dbfbe1695ae1c4a2576c8218bd304e9b956585b2778d",
+      "bundled_sha256": "af472795983eb667da232f014ddf916eaa764c4db1030866a496b4ebdeb0f650",
       "adaptations": [
         "Reconcile selector-end instructions with the same revision's controller boundary.",
         "Remove automatic fresh-operation-ID advice after an uncertain legacy outcome.",
         "Repair the obsolete F12 heading anchor; describe skill symlinks without the obsolete count of three.",
         "Correct the toolkit selection from af7e848 to the exact installer/catalog pin; retain installed-capability qualification.",
         "Correct the native-window heading level so it does not become the root of unrelated following sections.",
-        "Make Help Search a sibling section, outside native-window diagnostics."
+        "Make Help Search a sibling section, outside native-window diagnostics.",
+        "Import the exact selected-source delta from a77cac5 to 9049a1a while retaining the separately recorded earlier local reconciliations and immutable links."
       ],
       "link_rewrites": [
         {
@@ -287,5 +289,103 @@
     },
     "support": "All factual additions are existing pinned documentation/engine facts; other edits change section structure.",
     "prefix_migrations_review": "The closing, listing and model guides append corroborating facts without qualifying or superseding their unchanged leading text."
+  },
+  "selected_source_reconciliation": {
+    "selected_kilix_revision": "9049a1a645e6a670a57ae9bc028ef0e6a0265ac6",
+    "prior_kilix_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+    "documents": [
+      {
+        "path": "docs/kilix/AGENTS.md",
+        "upstream_path": "docs/AGENTS.md",
+        "previous_sha256": "10aa8f30d57fbcce61bbd710e9bae116646e5e03adb3a865f84d705a0e1c55e3",
+        "selected_sha256": "16cc2be35841f7bc53214f7ae14a957ea121debd52ced85f23a54107cae41f94",
+        "same": false
+      },
+      {
+        "path": "docs/kilix/README.md",
+        "upstream_path": "README.md",
+        "previous_sha256": "3546b97231cbe13fa653be68f824ae05a88022f713329fccc1cca0ddf87ed4a1",
+        "selected_sha256": "f66a5d066c51785efbd9dbfbe1695ae1c4a2576c8218bd304e9b956585b2778d",
+        "same": false
+      },
+      {
+        "path": "docs/kilix/help/README.md",
+        "upstream_path": "docs/help/README.md",
+        "previous_sha256": "4dfa0f8ac3d3fce76f0e95fffa923549f2f185838a6efbb9ced1a72fbc9735a9",
+        "selected_sha256": "4dfa0f8ac3d3fce76f0e95fffa923549f2f185838a6efbb9ced1a72fbc9735a9",
+        "same": true
+      },
+      {
+        "path": "docs/kilix/help/operations/persistence.md",
+        "upstream_path": "docs/help/operations/persistence.md",
+        "previous_sha256": "c0e369281bc19b2a77910e326fa3a82aa78b60d2e20e8691a704a0ad084a66e6",
+        "selected_sha256": "c0e369281bc19b2a77910e326fa3a82aa78b60d2e20e8691a704a0ad084a66e6",
+        "same": true
+      },
+      {
+        "path": "docs/kilix/help/settings.md",
+        "upstream_path": "docs/help/settings.md",
+        "previous_sha256": "dcf2c058056061de11196a321cfa3169cd73c38051c0acb18994e733f243207e",
+        "selected_sha256": "dcf2c058056061de11196a321cfa3169cd73c38051c0acb18994e733f243207e",
+        "same": true
+      },
+      {
+        "path": "docs/kilix/help/storage.md",
+        "upstream_path": "docs/help/storage.md",
+        "previous_sha256": "f0420584c51d9b52c27b57fae2cf604ddb79bcf0ee44e9d790ce08538520fb34",
+        "selected_sha256": "f0420584c51d9b52c27b57fae2cf604ddb79bcf0ee44e9d790ce08538520fb34",
+        "same": true
+      },
+      {
+        "path": "docs/kilix/session.md",
+        "upstream_path": "docs/session.md",
+        "previous_sha256": "5b6e8fbd6af05a4b3216476297aff959ee5a8b62e868c0cad0adbf01da73b453",
+        "selected_sha256": "5b6e8fbd6af05a4b3216476297aff959ee5a8b62e868c0cad0adbf01da73b453",
+        "same": true
+      },
+      {
+        "path": "docs/kilix/structured-actions.md",
+        "upstream_path": "docs/structured-actions.md",
+        "previous_sha256": "35be60d33af6c9ee4e435e1298fc500bc85b5e7c6477d216bdc54b4a7a238973",
+        "selected_sha256": "35be60d33af6c9ee4e435e1298fc500bc85b5e7c6477d216bdc54b4a7a238973",
+        "same": true
+      },
+      {
+        "path": "docs/kilix/pty-controller.md",
+        "upstream_path": "docs/pty-controller.md",
+        "previous_sha256": "e5da2b1a0f53c04323e6e8435f32ef8b139d9daf23ca91d7d96eed83c48a8519",
+        "selected_sha256": "e5da2b1a0f53c04323e6e8435f32ef8b139d9daf23ca91d7d96eed83c48a8519",
+        "same": true
+      },
+      {
+        "path": "docs/kilix/help/operations/switcher.md",
+        "upstream_path": "docs/help/operations/switcher.md",
+        "previous_sha256": "d857ca00f0162894312fee49c1b0b9655b42157cb2c5c16dbb3bf470e45b314a",
+        "selected_sha256": "d857ca00f0162894312fee49c1b0b9655b42157cb2c5c16dbb3bf470e45b314a",
+        "same": true
+      },
+      {
+        "path": "docs/kilix/help/operations/closing.md",
+        "upstream_path": "docs/help/operations/closing.md",
+        "previous_sha256": "9b6a02b4898c413c9f48bea7b58b7e01a4a0631637383199d056e549da84d25b",
+        "selected_sha256": "9b6a02b4898c413c9f48bea7b58b7e01a4a0631637383199d056e549da84d25b",
+        "same": true
+      },
+      {
+        "path": "docs/kilix/help/operations/listing.md",
+        "upstream_path": "docs/help/operations/listing.md",
+        "previous_sha256": "59cbbdc343f3f017cb22c782e378a35b56cb27e5b877b2854966709fd1c002db",
+        "selected_sha256": "59cbbdc343f3f017cb22c782e378a35b56cb27e5b877b2854966709fd1c002db",
+        "same": true
+      },
+      {
+        "path": "docs/kilix/help/models.md",
+        "upstream_path": "docs/help/models.md",
+        "previous_sha256": "364a368564b46b9c8d4a5ded444c99c812cd016585a317b6307710e58ba0f211",
+        "selected_sha256": "364a368564b46b9c8d4a5ded444c99c812cd016585a317b6307710e58ba0f211",
+        "same": true
+      }
+    ],
+    "scope": "All 13 declared upstream document blobs checked: 11 unchanged; README and AGENTS updated by their exact selected-source deltas. Existing immutable link targets and local safety/provenance adaptations are retained. This does not claim that every historical external/kitty source is freshly selected."
   }
 }

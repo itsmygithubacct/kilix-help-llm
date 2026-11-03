@@ -42,3 +42,12 @@ workflow sections. It also brings the pinned model-verification paragraph and
 raw foreground-process field into their focused help guides and clarifies
 page/tab terminology. The original snapshot and every adaptation remain in
 `kilix/SNAPSHOT.json`; these edits do not change desktop behavior.
+
+The filtering successor reconciles the selected Kilix 0.2.2 source at
+`9049a1a645e6a670a57ae9bc028ef0e6a0265ac6`. Eleven of the thirteen declared
+upstream document blobs are unchanged. README adds local Ollama prerequisites
+and resumable wizard acquisition; AGENTS adds explicit launch syntax, supported
+Ask route labels, bounded live-log discovery and request-file wording. Their
+exact upstream deltas are applied while retaining the prior documented local
+reconciliations and immutable link targets. `kilix/SNAPSHOT.json` records this
+comparison. Other historical corpus sources keep their stated versions.
