@@ -103,7 +103,7 @@ def main(argv=None):
             if not 1 <= args.k <= 20:
                 raise ValueError("-k must be between 1 and 20")
             hits = Lookup().search(args.question, args.k)
-            print(json.dumps(hits, ensure_ascii=False, indent=2) if args.json else render(hits, full=args.full))
+            print(json.dumps(hits, ensure_ascii=False, indent=2, sort_keys=True) if args.json else render(hits, full=args.full))
             return 0
         if args.command == "prepare":
             bundle = prepare(args.repo, args.revision, read_json(args.manifest), read_json(args.labels), args.name)
