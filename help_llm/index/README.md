@@ -31,9 +31,32 @@ old text; textual containment alone is not a semantic review. This snapshot's
 three prefix migrations add corroborating model-verification, tab terminology
 and raw-listing facts while preserving all old text. No questions were generated.
 An ordinal match alone never establishes support. The historical measurements above
-do not evaluate this refreshed corpus. The BM25 formula, weights and tokenizer
-are unchanged. Merged passages now keep every contributing section heading;
+do not evaluate this refreshed corpus. The BM25 formula and weights are unchanged.
+Merged passages keep every contributing section heading;
 this repairs missing search context without changing their body text or boundaries.
+
+The lexical candidate uses one normalized component stream for documents,
+headings, retained questions and queries. Separators and camel case split words
+without adding whole-token aliases. Ordinary suffixes reduce only to a unique
+shorter base attested in the corpus; ambiguous forms stay distinct. This is
+conservative morphology, not a dictionary or a semantic equivalence guarantee.
+Negation words remain searchable. The exported legacy `tokens()` helper remains
+available, but Lookup uses the analyzer in `help_llm/lexical.py`.
+
+Backtick literals, flags, underscore identifiers and dotted names additionally
+require exact, case-sensitive source occurrences at identifier boundaries.
+Expansion questions cannot supply this evidence. Clear setting and shortcut/action
+requests require body evidence of the corresponding role; these heuristics do
+not certify that a returned passage supplies every requested fact. Recognized
+explicit page requests restrict results by filename/path and heading metadata,
+preferring filename matches. Unrecognized phrasing remains ordinary search;
+unknown recognized page names return no results. A short page alias can be
+ambiguous. These constraints may reduce recall and require retention evaluation.
+
+All passage bodies, IDs, source commits and question attachments remain unchanged
+in this lexical candidate. Historical metrics above do not evaluate this analyzer
+or establish release qualification. Results are cited source passages, without
+generated answers, live-state access or semantic abstention guarantees.
 
 Passages use the existing heading/paragraph cutter with a 450-word target; a single
 paragraph longer than that stays whole (10 passages in this snapshot, enumerated in

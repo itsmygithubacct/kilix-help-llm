@@ -12,6 +12,8 @@ import re
 from collections import Counter
 from pathlib import Path
 
+from .lexical import Analyzer, Constraints
+
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = Path(__file__).resolve().parent / "index"
 STOP = set("a an the and or of to in on for with is are be it this that how do i my can what where why when does from by as at".split())
@@ -110,12 +112,16 @@ class Lookup:
     def __init__(self, root=ROOT, index=INDEX, k1=1.5, b=0.75):
         self.passages, current = load_passages(root, index)
         questions = json.loads((index / "questions.json").read_text(encoding="utf-8"))
+        bodies = [p["heading"] + " " + p["text"] for p in self.passages]
+        expansions = [" ".join(questions.get(p["id"], [])) if p["id"] in current else ""
+                      for p in self.passages]
+        self.analyzer = Analyzer(bodies + expansions, STOP)
+        self.constraints = Constraints(self.passages, self.analyzer)
         self.docs = []
-        for p in self.passages:
-            doc = Counter(tokens(p["heading"] + " " + p["text"]))
-            if p["id"] in current:
-                for word, n in Counter(tokens(" ".join(questions.get(p["id"], [])))).items():
-                    doc[word] += n * QUESTION_WEIGHT
+        for body, expansion in zip(bodies, expansions):
+            doc = Counter(self.analyzer.words(body))
+            for word, n in Counter(self.analyzer.words(expansion)).items():
+                doc[word] += n * QUESTION_WEIGHT
             self.docs.append(doc)
         self.lengths = [sum(d.values()) for d in self.docs]
         self.average = sum(self.lengths) / max(1, len(self.lengths))
@@ -125,9 +131,12 @@ class Lookup:
         self.k1, self.b = k1, b
 
     def search(self, question, k=5):
-        query = tokens(question)
+        topic, eligible = self.constraints.select(question)
+        query = self.analyzer.words(topic)
         scored = []
         for i, doc in enumerate(self.docs):
+            if i not in eligible:
+                continue
             score = 0.0
             for word in query:
                 f = doc.get(word)
