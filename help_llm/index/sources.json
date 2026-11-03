@@ -2,20 +2,20 @@
  {
   "label": "kilix",
   "path": "docs/kilix/AGENTS.md",
-  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
-  "sha256": "2ec49328543c68f96099ace80bce812234eefaeef0e447888ef3b94cf0ab083d"
+  "commit": "e7bb51a8edf754e207e6f99caf10fa1fda0a1be1",
+  "sha256": "6c9b2ce37a19589ba19a9fcf484b6eb957d40db74524105c1f55a845edcad46d"
  },
  {
   "label": "kilix",
   "path": "docs/kilix/README.md",
-  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
-  "sha256": "3c76765207e3aacbb40222e552449a24e6fd5cb17ad2905ba8f3feb2ed30b585"
+  "commit": "e7bb51a8edf754e207e6f99caf10fa1fda0a1be1",
+  "sha256": "0996ecb0fe76ea5cd06d42f59fddf84389551b4212a5f9328069fa1b20127efa"
  },
  {
   "label": "kilix",
   "path": "docs/kilix/help/README.md",
-  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
-  "sha256": "fd96961496abe8f25063c9c16430826af316332dba79bc619f96e9efa9b02bf3"
+  "commit": "e7bb51a8edf754e207e6f99caf10fa1fda0a1be1",
+  "sha256": "a8334eb05ebc028f4f23ce83e2c7ab60277ee3551b6e00efcbbb2a43bc874d00"
  },
  {
   "label": "kilix",
@@ -74,8 +74,8 @@
  {
   "label": "kilix",
   "path": "docs/kilix/help/operations/persistence.md",
-  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
-  "sha256": "d970f90ceb4c4c23513f2f96ae8263b40c284f4837c920a9bc7dc9ec4d9483b0"
+  "commit": "e7bb51a8edf754e207e6f99caf10fa1fda0a1be1",
+  "sha256": "a4a866eeca10c0020abde7e0cba626305b8cf817e67d3e31323355a1e0659499"
  },
  {
   "label": "kilix",
@@ -140,8 +140,8 @@
  {
   "label": "kilix",
   "path": "docs/kilix/help/settings.md",
-  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
-  "sha256": "a4d42c99261cc28c73af2a7aed2453f91ffa8487cc0ae9b7b76ba6137e38c31a"
+  "commit": "e7bb51a8edf754e207e6f99caf10fa1fda0a1be1",
+  "sha256": "dcf2c058056061de11196a321cfa3169cd73c38051c0acb18994e733f243207e"
  },
  {
   "label": "kilix",
@@ -152,8 +152,8 @@
  {
   "label": "kilix",
   "path": "docs/kilix/help/storage.md",
-  "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
-  "sha256": "17ef5e079efe8a529237a0a4d81d7e0d5098a276f93af430909d45dabc10e287"
+  "commit": "e7bb51a8edf754e207e6f99caf10fa1fda0a1be1",
+  "sha256": "f0420584c51d9b52c27b57fae2cf604ddb79bcf0ee44e9d790ce08538520fb34"
  },
  {
   "label": "kilix",
@@ -238,5 +238,23 @@
   "path": "docs/kitty/README.md",
   "commit": "408adbdf8bf0008021e81c38dd8556020327e445",
   "sha256": "13b85d3137ab9a2262e91aaa2418dbc9083c0db11fae07448d77770f105811c1"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/session.md",
+  "commit": "e7bb51a8edf754e207e6f99caf10fa1fda0a1be1",
+  "sha256": "5b6e8fbd6af05a4b3216476297aff959ee5a8b62e868c0cad0adbf01da73b453"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/structured-actions.md",
+  "commit": "e7bb51a8edf754e207e6f99caf10fa1fda0a1be1",
+  "sha256": "e6f944424cf49f331751aee15230a0795237d46ec081c3ae0f8e513093341c0b"
+ },
+ {
+  "label": "kilix",
+  "path": "docs/kilix/pty-controller.md",
+  "commit": "e7bb51a8edf754e207e6f99caf10fa1fda0a1be1",
+  "sha256": "b584083093b7919d49f7c2261e49b27efcd372d721f79ffaeed565c30ace460d"
  }
 ]
