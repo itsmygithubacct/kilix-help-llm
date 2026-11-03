@@ -21,7 +21,7 @@ questions (plain BM25: 47%) and 58% of 52 partly documented ones. A related but 
 first, so read the top few results.
 
 The 0.2.3 documentation snapshot is recorded in `docs/kilix/SNAPSHOT.json`. Its
-index contains 3,432 retained expansion questions. No new questions were generated.
+index contains 3,380 retained expansion questions. No new questions were generated.
 Changed or removed passages lose their questions; an unchanged heading and exact
 passage text in the same source document can retain questions at a new ordinal ID.
 An ordinal match alone never establishes support. The historical measurements above
@@ -36,7 +36,7 @@ To reproduce the source/question manifests from the committed document snapshot:
 ```sh
 python3 -B -m help_llm.refresh \
   --base c4bf4367a23fffef6efa941550baf8603424fb2c \
-  --documents-revision e7bb51a8edf754e207e6f99caf10fa1fda0a1be1 \
+  --documents-revision 68736f0401fc7f2f7cba0a15462c7d51531e68a1 \
   --report ../refresh-report.json
 ```
 

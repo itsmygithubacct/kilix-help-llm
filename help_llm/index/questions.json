@@ -101,21 +101,6 @@
   "kilix deletes old transcripts as soon as the log folder gets big, correct?",
   "Does kilix start deleting old session logs as soon as the log folder gets big?"
  ],
- "kilix:docs/kilix/README.md#23": [
-  "kilix next page shortcut",
-  "keyboard shortcut to go to the next page in kilix?",
-  "How do I resize panes from the keyboard in Kilix?",
-  "kilix resize a pane with keyboard instead of dragging",
-  "Does the Ctrl+Shift+B leader take over the real tmux prefix?",
-  "If I use Kilix's Ctrl+Shift+B tmux-style keys, does that hijack my real tmux prefix?",
-  "what does F12 do in kilix, i expected kittys numberd title list",
-  "Pressed F12 in kilix expecting kitty's numbered list of window titles and got something totally different. What is this thing?",
-  "I clicked a web link in Kilix and it opened in Firefox instead of inside the pane. Is that expected?",
-  "Clicked a link in Kilix and it popped open in Firefox rather than in the pane. Is that supposed to happen?",
-  "Does Kilix keep a history of what I dictate?",
-  "Does Kilix keep a record of everything I say when I use voice typing?",
-  "Does Kilix 0.1.7 dictation keep a history of what I said, and where is that history stored if I turn it on?"
- ],
  "kilix:docs/kilix/README.md#24": [
   "What does the Kilix Memory dashboard show?",
   "What will I actually see if I open Kilix's memory dashboard?",
@@ -155,18 +140,6 @@
   "Before running kilix --build I want to know if anything is missing, without installing stuff.",
   "before i build kilix from source, can i check my machine has all the deps without it changing anything",
   "How do I get kilix installed from scratch, and roughly how long does the first-run fork build take?"
- ],
- "kilix:docs/kilix/README.md#45": [
-  "what's the --force flag to make the skill installer overwrite my existing skill files?",
-  "the skill installer won't overwrite my existing skill files. is there some force option?",
-  "I installed the kilix skills but my agent's skill list didn't change",
-  "I installed the Kilix skills but my coding agent still lists the same skills as before. Did the install fail?",
-  "pull latest kilix",
-  "how do i get the newest kilix",
-  "How do I get a kilix entry in my application menu and taskbar?",
-  "How do I get Kilix to show up in my apps menu and taskbar?",
-  "does removing the skils delete the snapshots too",
-  "if I remove the agent skill pack kilix installed, does it also clean up the old saved copies it kept around?"
  ],
  "kilix:docs/kilix/README.md#53": [
   "What is the little keyboard button on each pane's title bar for?",
@@ -411,26 +384,6 @@
   "i'm in a TUI that hogs the mouse and i can't drag-select its output to copy it. any way around that?",
   "How do I select and copy text inside a full-screen app like htop in Kilix, and does the copied text keep its colours when I paste it?"
  ],
- "kilix:docs/kilix/README.md#83": [
-  "open pane center kilix",
-  "how do i bring up the kilix screen that shows all my panes",
-  "What keys does the Pane Center use for filtering and sending?",
-  "In Kilix's Pane Center, which keys filter the list and send a message?",
-  "My script needs to wait until a Codex pane finishes its turn before sending more. What command waits for that?",
-  "My script has to wait until Codex is done with its turn in a pane before it sends the next message. How do I wait for that reliably?",
-  "If the Pane Center tool isn't installed, F12 opens a blank overlay that vanishes?",
-  "If the Pane Center isn't installed, what does F12 do? Just flash a blank screen that disappears?",
-  "how to open pane center showing only this page",
-  "how do i open the pane overview already filtered to just this page",
-  "Is my Codex pane idle yet so I can send the next prompt?",
-  "is my codex pane finished working yet so I can send it the next prompt?",
-  "list panes with activity state",
-  "I sent a message with kilix panes send and it was accepted. Did it arrive?",
-  "I sent a message to one of my panes and it said accepted. did it actually get there?",
-  "F12 does nothing obvious, is the pane center even installed",
-  "hit F12 and nothing obvious happened. is the pane center thing even installed on here?",
-  "What does F12 do in Kilix, and can I change it to a different key?"
- ],
  "kilix:docs/kilix/README.md#84": [
   "My fingers keep hitting tmux prefix keys. Does Kilix have something similar?",
   "years of tmux muscle memory, I keep hitting the prefix key. is there anything like that in Kilix?",
@@ -667,19 +620,6 @@
   "How do I open htop in a new split below my current pane in Kilix?",
   "If I leave out the direction, kilix new-pane splits downward?",
   "if I split a pane from the command line and don't say which way, does the new one go underneath?"
- ],
- "kilix:docs/kilix/help/operations/switcher.md#1": [
-  "kilix switcher open",
-  "how do I pull up the kilix screen that lets me jump between pages and panes?",
-  "Can I search for a pane inside the switcher?",
-  "Can I type to search for a pane in the Kilix pane switcher?",
-  "how to show only current page panes in the swticher",
-  "in the kilix pane swticher how do i show only the panes on the page im on",
-  "I'm in the F12 switcher looking at a pane I want gone. Can I close it from there?",
-  "in the F12 pane picker, can i close the pane i'm looking at right there?",
-  "The default toolkit pin gives me kilix panes dump and send, right?",
-  "with the toolkit version kilix ships by default, do I get the newer commands for dumping panes and sending text to them?",
-  "How do I jump to another pane in Kilix from the keyboard and filter the list by name, and can I rebind the switcher to a key other than F12?"
  ],
  "kilix:docs/kilix/help/operations/tabs.md#1": [
   "How can I open a new kilix page that starts in /tmp?",
