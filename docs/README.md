@@ -22,6 +22,11 @@ copies continue the MIT convention above; this does not change the upstream
 software's GPLv3 licence. The remaining Kilix pages and the independent kitty
 guide retain their existing snapshots.
 
+The related switcher operation page also corrects an obsolete toolkit pin to
+the exact host-installer and Content selection. README corrections include the
+matching version boundary, an obsolete internal anchor and an outdated skill
+symlink count. These edits change documentation, not installed components.
+
 [kilix/SNAPSHOT.json](kilix/SNAPSHOT.json) records each exact upstream path,
 revision, original and bundled SHA-256, rewritten link, and editorial correction.
 Links to bundled pages stay local. Other relative links point to immutable

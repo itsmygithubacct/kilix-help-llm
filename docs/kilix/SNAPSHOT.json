@@ -22,10 +22,12 @@
       "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
       "upstream_path": "README.md",
       "upstream_sha256": "3546b97231cbe13fa653be68f824ae05a88022f713329fccc1cca0ddf87ed4a1",
-      "bundled_sha256": "0996ecb0fe76ea5cd06d42f59fddf84389551b4212a5f9328069fa1b20127efa",
+      "bundled_sha256": "2a4a5baf47445c206d1f6836bdc38a5f6ecfae8be0623af94dee76f59cd98b66",
       "adaptations": [
         "Reconcile selector-end instructions with the same revision's controller boundary.",
-        "Remove automatic fresh-operation-ID advice after an uncertain legacy outcome."
+        "Remove automatic fresh-operation-ID advice after an uncertain legacy outcome.",
+        "Repair the obsolete F12 heading anchor; describe skill symlinks without the obsolete count of three.",
+        "Correct the toolkit selection from af7e848 to the exact installer/catalog pin; retain installed-capability qualification."
       ],
       "link_rewrites": [
         {
@@ -190,6 +192,18 @@
           "upstream_target": "docs/pty-supervisor.md"
         }
       ]
+    },
+    {
+      "path": "docs/kilix/help/operations/switcher.md",
+      "upstream_repository": "kilix",
+      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_path": "docs/help/operations/switcher.md",
+      "upstream_sha256": "d857ca00f0162894312fee49c1b0b9655b42157cb2c5c16dbb3bf470e45b314a",
+      "bundled_sha256": "5275c47f67ca59d5c1b626ec70e232433995384d388841d7ce164b9add66c95c",
+      "adaptations": [
+        "Related existing page: correct the stale toolkit pin against the selected installer and Content catalog without claiming installed CLI capability."
+      ],
+      "link_rewrites": []
     }
   ],
   "dependency_scope": {

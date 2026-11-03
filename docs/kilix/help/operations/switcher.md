@@ -6,4 +6,4 @@ Tab cycles the switcher's scope between all pages, the current page and other pa
 
 F2 edits the selected page's title in the switcher. The x key requests a close confirmation in the pinned switcher.
 
-The host's default toolkit pin af7e848 provides the interactive switcher, not the later panes list, dump, wait and send command interface. Use the basic kilix ls, focus and watch verbs plus authenticated kitten operations when the richer Pane Center CLI is unavailable.
+The selected host installer and Content catalog pin toolkit 61a514f536a804d82f20bda7e65c7bf3145a229a. Check the installed toolkit for richer Pane Center CLI support; the wrapper verb alone does not establish it. Use the basic kilix ls, focus and watch verbs plus authenticated kitten operations when that interface is unavailable.

@@ -656,7 +656,7 @@ pane resize moving to kitty's interactive resize mode on `Ctrl+Shift+R`; and a
 new [`Ctrl+Shift+B` leader](#tmux-style-leader--ctrlshiftb)
 puts tmux's pane and window keys on Kilix's panes and pages without shadowing the
 real tmux prefix that `kilix serve` depends on. `F12` now opens
-[a real switcher](#going-to-a-page-or-a-pane--f12) — one tree of pages and panes
+[a real switcher](#pane-center--f12-or-kilix-panes) — one tree of pages and panes
 with each pane's process, directory and live screen — in place of the numbered
 title list kitty ships; the scoped remote-control credential gains
 `close-window`, `close-tab` and `set-tab-title` so it can act on what it lists,
@@ -1473,7 +1473,7 @@ as an additional owner; `status` reports this as `shared`.
 The `--agent` choice tracks registration/removal ownership, not isolation from
 the other client; both automatically discover the shared `.agents` root.
 
-The installer creates three symlinks to a private version snapshot through one
+The installer creates one symlink per bundled skill to a private version snapshot through one
 atomic version pointer in the sibling `.kilix-skill-bundles` directory. It checks
 recorded file bytes, modes and registration inodes before changing an existing
 set. Existing user-owned agent directories may retain their normal `0775` mode;
@@ -2793,11 +2793,11 @@ talks to the terminal directly.
 
 ### Pane Center — `F12` or `kilix panes`
 
-**Version boundary:** this host's default toolkit installer and Content package
-select `af7e848`, which provides the interactive switcher. The richer CLI and
-activity features described below require a later compatible toolkit. They
-are not established merely by this host accepting the `panes` verb. For the
-selected 0.2.2 source, use the [operation guide](help/operations/README.md),
+**Version boundary:** the selected host installer and Content catalog pin
+`61a514f536a804d82f20bda7e65c7bf3145a229a` for the toolkit. Confirm richer CLI
+and activity features against the installed toolkit; the host accepting the
+`panes` verb does not establish their availability. Use the
+[operation guide](help/operations/README.md),
 basic `kilix ls`, `focus` and `watch`, and authenticated `kitten @` commands.
 
 `F12` opens the **Pane Center** (`kilix-panes`, with `kilix-switch` retained as
