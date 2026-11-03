@@ -56,6 +56,10 @@ independently of its descriptive verb. Direct negated declarations, output-field
 labels and action labels do not supply that type. Assignment and ordinary
 identifier-definition patterns remain additional evidence. None of these patterns
 establishes that a passage answers the complete question.
+Conventional uppercase names with underscores can also supply this clue when
+used as the subject of descriptive prose. Explicit output-field/action types and
+negated setting declarations do not acquire that clue. This naming convention
+does not turn arbitrary identifiers or uppercase words into configuration keys.
 Setting intent requires a nominal request; the verb in "does setting a field"
 does not demand configuration-definition evidence. These heuristics do not
 certify complete factual support. Explicit filenames and paths restrict results

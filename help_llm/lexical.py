@@ -125,6 +125,14 @@ _SETTING_NAME = (r"(?:`[A-Za-z_][\w.-]*`|"
 _TYPED_SETTING = re.compile(
     _SETTING_TYPE + r"\s*:?\s+" + _SETTING_NAME + r"|"
     + _SETTING_NAME + r"\s+(?:is\s+(?:(?:an?|the)\s+)?)?" + _SETTING_TYPE, re.I)
+_ENV_SUBJECT = re.compile(
+    r"(?:^|(?<=[.!?])\s+)[ \t]*(?:[-*][ \t]+)?(?:[Tt]he[ \t]+)?"
+    r"(?:`([A-Z][A-Z0-9]*_[A-Z0-9_]+)`|([A-Z][A-Z0-9]*_[A-Z0-9_]+))"
+    r"\s+([a-z][^.!?]*)", re.M)
+_OTHER_ROLE = re.compile(
+    r"(?:(?:is|are)\s+(?:(?:only|just|simply)\s+)?(?:(?:an?|the)\s+)?)?"
+    r"(?:(?:structured|output|report|json|result|response|read-only)\s+)*"
+    r"(?:fields?|properties|property|columns?|actions?|commands?|constants?|data)\b", re.I)
 
 
 def typed_setting(text):
@@ -139,12 +147,30 @@ def typed_setting(text):
                for m in _TYPED_SETTING.finditer(text))
 
 
+def environment_definition(text, actions):
+    """Recognize a conventional environment name used as a prose subject.
+
+    The naming convention is a role clue, not entailment. An explicit contrary
+    role or a negated setting declaration must not acquire this clue.
+    """
+    for match in _ENV_SUBJECT.finditer(negatives(text)):
+        name, description = match[1] or match[2], match[3]
+        if name in actions or _OTHER_ROLE.match(description):
+            continue
+        if re.search(r"\b(?:not|never|no|neither)\s+(?:(?:an?|the)\s+)?"
+                     + _SETTING_TYPE, description, re.I):
+            continue
+        return True
+    return False
+
+
 def source_roles(text):
     """Use body evidence, never expansion questions or heading vocabulary."""
     actions = set(re.findall(r"`([\w.-]+)`\s+action\b", text))
     actions.update(re.findall(r"\baction\s+`([\w.-]+)`", text))
     actions.update(re.findall(r"(?m)^\s*map\s+\S+\s+([\w.-]+)", text))
     setting = bool(_ASSIGNMENT.search(text) or typed_setting(text)
+                   or environment_definition(text, actions)
                    or any((m[1] or m[2]) not in actions for m in _DEFINITION.finditer(text)))
     action = bool(_CHORD.search(text) or re.search(r"(?m)^\s*map\s+\S+\s+\S+", text)
                   or actions
