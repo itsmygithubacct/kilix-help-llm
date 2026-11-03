@@ -133,7 +133,15 @@ def source_roles(text):
 
 
 def requested_roles(question):
-    setting = bool(re.search(r"\b(?:setting|(?:config|configuration)\s+(?:key|option))\b", question, re.I))
+    # A gerund such as "does setting FIELD to VALUE ..." describes an operation,
+    # not a request to identify a configuration definition. Require a noun phrase.
+    clause_words = {"do", "does", "did", "is", "are", "was", "were", "will", "would",
+                    "could", "should", "can", "may", "might", "happen", "happens",
+                    "when", "if", "while", "before", "after", "by", "without", "not"}
+    nominal = re.finditer(r"(?:\b(?:which|what)|^\s*(?:find|show|identify|name)"
+                          r"(?:\s+me)?(?:\s+the)?)\s+((?:[\w-]+\s+){0,3})settings?\b", question, re.I)
+    setting = (bool(re.search(r"\b(?:config|configuration)\s+(?:key|option)\b", question, re.I))
+               or any(not (set(m[1].lower().split()) & clause_words) for m in nominal))
     action = bool(re.search(r"\b(?:shortcuts?|hotkeys?|key\s*bindings?|keyboard\s+keys?)\b|"
                             r"\b(?:which|what)\s+action\b", question, re.I))
     return setting, action
@@ -175,6 +183,11 @@ class Constraints:
         self.path_words = [set(analyzer.words(str(PurePosixPath(p["path"]).with_suffix("")))) for p in passages]
         self.stem_words = [set(analyzer.words(PurePosixPath(p["path"]).stem)) for p in passages]
         self.metadata = [words | set(analyzer.words(p["heading"])) for words, p in zip(self.path_words, passages)]
+        self.aliases = [[w for w in analyzer.words(PurePosixPath(p["path"]).stem) if not w.isdigit()]
+                        for p in passages]
+        self.scopes = [set(analyzer.words(str(PurePosixPath(p["path"]).parent) + " " + p["source"]))
+                       for p in passages]
+        self.source_names = {w for p in passages for w in analyzer.words(p["source"])}
         postings = defaultdict(set)
         for i, text in enumerate(self.source):
             for word in re.findall(r"(?:--)?[A-Za-z0-9_]+(?:[.+/-][A-Za-z0-9_]+)*", text):
@@ -185,6 +198,8 @@ class Constraints:
         return {"roles": self.roles, "path_words": [sorted(s) for s in self.path_words],
                 "stem_words": [sorted(s) for s in self.stem_words],
                 "metadata": [sorted(s) for s in self.metadata],
+                "aliases": self.aliases, "scopes": [sorted(s) for s in self.scopes],
+                "source_names": sorted(self.source_names),
                 "vocabulary": sorted(self.analyzer.vocabulary),
                 "bases": self.analyzer.cache,
                 "postings": {word: sorted(ids) for word, ids in self.postings.items()}}
@@ -197,11 +212,34 @@ class Constraints:
         obj.analyzer.vocabulary = set(data["vocabulary"])
         obj.analyzer.cache = data["bases"]
         obj.roles = data["roles"]
+        obj.aliases = data["aliases"]
+        obj.scopes = [set(words) for words in data["scopes"]]
+        obj.source_names = set(data["source_names"])
         obj.source = [p["heading"] + "\n" + p["text"] for p in passages]
         for name in ("path_words", "stem_words", "metadata"):
             setattr(obj, name, [set(words) for words in data[name]])
         obj.postings = {word: set(ids) for word, ids in data["postings"].items()}
         return obj
+
+    def named_pages(self, description):
+        """Resolve the most specific source-derived name, retaining real scope.
+
+        Words around a recognized name may describe the guide rather than name
+        it. No adjective list is needed. A known source or disambiguating path
+        qualifier still applies; unknown names never become unrestricted search.
+        """
+        words = [w for w in self.analyzer.words(description) if w not in {"help", "documentation"}]
+        matches = [(len(alias), i) for i, alias in enumerate(self.aliases) if alias
+                   and any(words[start:start + len(alias)] == alias
+                           for start in range(len(words) - len(alias) + 1))]
+        if matches:
+            longest = max(length for length, _ in matches)
+            candidates = {i for length, i in matches if length == longest}
+            known_scope = self.source_names | set().union(*(self.scopes[i] for i in candidates))
+            required_scope = set(words) & known_scope
+            return {i for i in candidates if required_scope <= self.scopes[i] | set(self.aliases[i])}
+        name = set(words)
+        return {i for i, metadata in enumerate(self.metadata) if name and name <= metadata}
 
     def literal_matches(self, literal):
         if re.fullmatch(r"(?:--)?[A-Za-z0-9_]+(?:[.+/-][A-Za-z0-9_]+)*", literal):
@@ -224,10 +262,7 @@ class Constraints:
         prefix = _PAGE_PREFIX.match(question)
         topic = question[prefix.end():] if prefix else question
         if prefix and not pages:
-            name = set(self.analyzer.words(prefix[1])) - {"help", "documentation"}
-            # A named file is stronger evidence than a generic heading mention.
-            direct = {i for i, words in enumerate(self.stem_words) if name and name <= words}
-            eligible &= direct or {i for i, words in enumerate(self.metadata) if name and name <= words}
+            eligible &= self.named_pages(prefix[1])
         literals = exact_literals(topic)
         setting, action = requested_roles(topic)
         eligible = {i for i in eligible if (not setting or self.roles[i][0])

@@ -50,14 +50,20 @@ ranking terms, without a compulsory co-occurrence filter. Backticks alone do not
 make ambiguous context a required answer literal. Expansion questions never
 supply literal or role evidence. Clear setting and shortcut/action requests require
 body evidence of that role; the ambiguous word `key` alone does not imply a keyboard.
-These heuristics do not certify complete factual support. Recognized
-explicit page requests restrict results by filename/path and heading metadata,
-preferring filename matches. Unrecognized phrasing remains ordinary search;
-unknown recognized page names return no results. A short page alias can be
-ambiguous. These constraints may reduce recall and require retention evaluation.
+Setting intent requires a nominal request; the verb in "does setting a field"
+does not demand configuration-definition evidence. These heuristics do not
+certify complete factual support. Explicit filenames and paths restrict results
+to that page. A natural named-guide prefix resolves the longest complete
+filename-stem alias, retaining source and path qualifiers. Other descriptive
+words around a recognized name do not rename the page. Equally named pages can
+remain ambiguous; unknown recognized page names return no results. These
+constraints may reduce recall and require retention evaluation.
 
-All passage bodies, IDs, source commits and question attachments remain unchanged
-in this candidate. Historical metrics above do not evaluate this analyzer
+The selected-source reconciliation changes five passage bodies and updates the
+13 bundled source citations. Passage IDs and all 3,380 question attachments are
+preserved; the five changed passages had no expansion questions. Its source
+identity and retained adaptations are recorded in `docs/kilix/SNAPSHOT.json`.
+Historical metrics above do not evaluate this analyzer
 or establish release qualification. Results are cited source passages, without
 generated answers, live-state access or semantic abstention guarantees.
 
@@ -87,8 +93,8 @@ To reproduce the source/question manifests from the committed document snapshot:
 
 ```sh
 python3 -B -m help_llm.refresh \
-  --base 038ddfcfa173c8117a32dd9b585c92c7c0af8368 \
-  --documents-revision b90d1e6f9be8f459c1f0784c66a8b92a5cb8088f \
+  --base 6bbdb9fb4407f3dd96d55f58eb3116882e35bd82 \
+  --documents-revision c2253379f575032aadc8cfc6209487180b151549 \
   --report ../refresh-report.json
 ```
 

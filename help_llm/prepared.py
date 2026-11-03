@@ -16,7 +16,7 @@ import zlib
 
 from .lexical import Analyzer, Constraints, index_words
 
-VERSION = b"help-lookup-prepared-v1"
+VERSION = b"help-lookup-prepared-v2"
 FILENAME = "lookup-prepared.json.gz"
 MAX_BYTES = 32 * 1024 * 1024
 
@@ -90,11 +90,12 @@ def valid(data):
     if not all(isinstance(w, str) and type(v) in (int, float) and math.isfinite(v) and v > 0 for w, v in data["idf"].items()):
         return False
     c = data["constraints"]
-    if not all(len(c[k]) == n for k in ("roles", "path_words", "stem_words", "metadata")):
+    if not all(len(c[k]) == n for k in ("roles", "path_words", "stem_words", "metadata", "aliases", "scopes")):
         return False
     if not all(len(role) == 2 and all(type(v) is bool for v in role) for role in c["roles"]):
         return False
-    if not all(isinstance(w, str) for words in [c["vocabulary"], *c["path_words"], *c["stem_words"], *c["metadata"]] for w in words):
+    if not all(isinstance(w, str) for words in [c["vocabulary"], c["source_names"], *c["path_words"],
+                                              *c["stem_words"], *c["metadata"], *c["aliases"], *c["scopes"]] for w in words):
         return False
     return (all(isinstance(k, str) and isinstance(v, str) for k, v in c["bases"].items())
             and all(isinstance(w, str) and all(type(i) is int and 0 <= i < n for i in ids) for w, ids in c["postings"].items()))
