@@ -12,3 +12,16 @@ this directory is released under the repository's MIT licence (see
 These pages describe the software as of the versions named above. When
 Kilix or kitty changes, update them with a new snapshot and do not edit them
 in place without noting the source revision.
+
+## 0.2.2 release-status refresh
+
+The release-status sections in `kilix/README.md`, `kilix/help/README.md` and
+`kilix/help/release.md` were updated on November 3, 2026 against Kilix commit
+`216a75840fbe446b70a97287654a76fdae41689f` and the published Plebian-OS 0.2.2
+Linux release. This is a targeted status correction, not a replacement of the
+older command snapshot above. Existing model, Windows, ARM64 and hardware
+qualification limits remain in place.
+
+The lookup index retains the original hashes for these edited corpus files,
+so it searches the new text without attaching questions written for the older
+passages. No training dataset, adapter or evaluation result was regenerated.

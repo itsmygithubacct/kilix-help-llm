@@ -24,10 +24,18 @@ it wrote in `state/` so `--uninstall-desktop` can take exactly that back out.
 
 ![kilix — pages strip with + button, per-pane title bars with clickable split/maximize/close buttons, splits, and icat](https://raw.githubusercontent.com/itsmygithubacct/kilix/main/config/kilix_demo.png)
 
-## Release 0.2.2 — in development
+## Release 0.2.2 — Linux
 
-Prepared for the coordinated Plebian-OS 0.2.2 candidate. The supported upgrade
-source is 0.2.1; image, upgrade and final human acceptance remain pending.
+Kilix 0.2.2 ships in the coordinated Plebian-OS Linux release published
+November 3, 2026. The supported upgrade source is 0.2.1. Use the `v0.2.2` tag
+for the released source; this help corpus retains the older command snapshot
+documented in its [provenance](../README.md).
+
+Linux installation and lifecycle qualification covers QEMU/KVM BIOS and EFI
+virtual machines. Bare-metal USB installation and physical GPU operation were
+not qualified. Windows remains at `windows-v0.2.2-preview.4`; ARM64 is not a
+supported OS release target. See the [published release notes](https://github.com/itsmygithubacct/plebian-os/releases/tag/v0.2.2)
+for known issues and deferred feature qualification.
 
 See the [0.2.2 help guide](help/README.md) for current commands, storage,
 model setup, speech and troubleshooting. Older release sections below describe
@@ -41,9 +49,9 @@ their named versions; they are not a current component inventory.
 
 ## Release 0.2.1
 
-Prepared 2026-08-25 for the coordinated Plebian-OS 0.2.1 release. The supported
-upgrade source is 0.2.0. This component remains an unpublished candidate until
-the coordinated image and upgrade acceptance gates pass.
+Historical changes for the coordinated Plebian-OS 0.2.1 release, prepared
+August 25, 2026. Its supported upgrade source was 0.2.0. For the current Linux
+release and supported upgrade paths, see the 0.2.2 section above.
 
 - Kilix Techno soundbanks install lazily from immutable, checksum-bound CC0
   source archives. The bundled catalog also carries compact CC0 instrument and
