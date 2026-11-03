@@ -9,12 +9,11 @@
       "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
       "upstream_path": "docs/AGENTS.md",
       "upstream_sha256": "10aa8f30d57fbcce61bbd710e9bae116646e5e03adb3a865f84d705a0e1c55e3",
-      "bundled_sha256": "7bc189f62aacec09f726ba7df0924db3ab3ba2726f691062524c9ef7c4642e54",
+      "bundled_sha256": "34c8598965a9c9e78cba3ee6f1e09400328a1c920b4daa607368118e5f3d00fb",
       "adaptations": [
         "Replace superseded selector-end advice with pinned controller/CLI refusal boundary.",
         "Include max in the pinned Codex reasoning-effort validator values.",
-        "Name the live rollout-log workflow explicitly.",
-        "Give the existing refusal/missing/ambiguous exit-code paragraph its own section; facts unchanged."
+        "Keep log selection, missing-log refusal and ambiguous exit-status facts together under a descriptive heading."
       ],
       "link_rewrites": []
     },
@@ -267,8 +266,7 @@
         "Make Help Search a sibling section, outside native-window diagnostics."
       ],
       "docs/kilix/AGENTS.md": [
-        "Name the live rollout-log workflow explicitly.",
-        "Give the existing refusal/missing/ambiguous exit-code paragraph its own section; facts unchanged."
+        "Keep log selection, missing-log refusal and ambiguous exit-status facts together under a descriptive heading."
       ],
       "docs/kilix/session.md": [
         "Name the existing private managed-run storage and retention policy.",
