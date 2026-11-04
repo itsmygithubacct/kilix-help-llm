@@ -483,7 +483,8 @@ def ranked(data, model, tokenizer, head, question, context, limit=5):
     return sorted(pool, key=lambda c: (-c["relevance_score"], c["id"]))
 
 
-def generated(model, tokenizer, question, chunk, context, max_new_tokens, answer_format="plain-v1"):
+def generated(model, tokenizer, question, chunk, context, max_new_tokens, answer_format="plain-v1",
+              *, usage_observer=None):
     import torch
     encoder = chat_encoded if answer_format == "chat-nonthinking-v2" else encoded
     row = encoder(tokenizer, answer_prompt(question, chunk), context=context)
@@ -491,11 +492,29 @@ def generated(model, tokenizer, question, chunk, context, max_new_tokens, answer
     if remaining < 1:
         raise ValueError("no planned context remains for generation")
     ids = torch.tensor([row["input_ids"]])
-    with torch.no_grad():
-        output = model.generate(input_ids=ids, attention_mask=torch.ones_like(ids),
-                                max_new_tokens=min(max_new_tokens, remaining), do_sample=False,
-                                use_cache=True, pad_token_id=tokenizer.eos_token_id)
-    answer = tokenizer.decode(output[0, ids.shape[1]:], skip_special_tokens=True).strip()
+    # Native tensor lengths include template/special input tokens and every
+    # generated token, including EOS. Decoded/retokenized text is not usage.
+    usage = {"schema": "kilix.help-native-usage/v1", "status": "started",
+             "model_calls": 1, "input_tokens": int(ids.shape[1]), "output_tokens": None,
+             "semantics": "input-tensor-and-generated-suffix-including-special-tokens"}
+    if usage_observer is not None:
+        usage_observer(dict(usage))  # Trusted caller records dispatch first.
+    try:
+        with torch.no_grad():
+            output = model.generate(input_ids=ids, attention_mask=torch.ones_like(ids),
+                                    max_new_tokens=min(max_new_tokens, remaining), do_sample=False,
+                                    use_cache=True, pad_token_id=tokenizer.eos_token_id)
+        suffix = output[0, ids.shape[1]:]
+        usage.update(status="observed", output_tokens=len(suffix))
+    except BaseException as error:
+        usage.update(status="unknown", unknown_reason="generation-did-not-return-native-output")
+        error.native_usage = dict(usage)
+        if usage_observer is not None:
+            usage_observer(dict(usage))
+        raise
+    if usage_observer is not None:
+        usage_observer(dict(usage))
+    answer = tokenizer.decode(suffix, skip_special_tokens=True).strip()
     citations = re.findall(r"\[([^\[\]\n]+)\]", answer)
     valid = bool(citations) and all(c == chunk["id"] for c in citations)
     refusal = explicit_refusal(answer)
@@ -503,7 +522,7 @@ def generated(model, tokenizer, question, chunk, context, max_new_tokens, answer
     return {"answer": answer if accepted else None, "draft": answer if not accepted else None,
             "citation_valid": valid, "explicit_refusal": refusal, "abstained": refusal or not valid,
             "source": {k: chunk[k] for k in ("id", "path", "line", "text")},
-            "factual_support": "not-automatically-verified"}
+            "factual_support": "not-automatically-verified", "native_usage": usage}
 
 
 def query(name, task, question, sizer=None, limit=5, max_new_tokens=96, rank_name=None):

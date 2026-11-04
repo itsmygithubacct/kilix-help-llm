@@ -28,6 +28,17 @@ Local generation uses CPU FP32, eager attention, the native non-thinking chat
 template, a 384-token context and at most 96 generated tokens. No GGUF conversion
 or adapter merge is implied. Model files stay outside Git and the source tree.
 
+JSON generation results include `native_usage`: input tensor length and the
+returned generated suffix length, including special tokens and EOS before text
+decoding. These counts are never estimated from the displayed answer. A query
+without matching evidence reports `not-dispatched` with no token counts. The
+Python generation and published-query APIs accept a `usage_observer` callback
+for dispatch and completion events; a failed or interrupted generation reports
+unknown output usage and re-raises its original exception. Collectors must record
+an unresolved call when the process exits without a completion event. These
+application fields do not authenticate a benchmark ledger: a trusted collector
+must independently bind call, model, runtime and timing identities.
+
 Answers include the generated command, a brief explanation, and documentation
 links resolved from exact source identities. `--json` returns these fields under
 `presentation`. The compact index selects evidence; it contains no stored target

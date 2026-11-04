@@ -34,12 +34,13 @@ def load(value, sizer=None):
     return model, tokenizer
 
 
-def answer_with(model, tokenizer, value, question, source, registry):
+def answer_with(model, tokenizer, value, question, source, registry, *, usage_observer=None):
     # Never truncate evidence or reduce the frozen 96-token answer allowance.
     row = chat_encoded(tokenizer, answer_prompt(question, source), context=384)
     if len(row["input_ids"]) + 96 > 384:
         raise ValueError("question and evidence exceed the Help context; shorten the question or use kilix help-search")
-    result = generated(model, tokenizer, question, source, 384, 96, "chat-nonthinking-v2")
+    result = generated(model, tokenizer, question, source, 384, 96, "chat-nonthinking-v2",
+                       usage_observer=usage_observer)
     result.pop("draft", None)
     result["model"] = value["id"]
     result["parent_revision"] = value["parent"]["revision"]
@@ -49,14 +50,19 @@ def answer_with(model, tokenizer, value, question, source, registry):
     return result
 
 
-def query(question, sizer=None):
+def query(question, sizer=None, *, usage_observer=None):
     source, registry = published.evidence(question)
     if source is None:
         result = {"answer": "I do not know. No matching Help documentation was found.",
-                  "explicit_refusal": True}
+                  "explicit_refusal": True,
+                  "native_usage": {"schema": "kilix.help-native-usage/v1", "status": "not-dispatched",
+                                   "model_calls": 0, "input_tokens": None, "output_tokens": None,
+                                   "reason": "no-matching-evidence"}}
+        if usage_observer is not None:
+            usage_observer(dict(result["native_usage"]))
         result["presentation"] = present(result, registry)
         return result
     value = published.manifest()
     with published.model_lock():
         model, tokenizer = load(value, sizer)
-        return answer_with(model, tokenizer, value, question, source, registry)
+        return answer_with(model, tokenizer, value, question, source, registry, usage_observer=usage_observer)
