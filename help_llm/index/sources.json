@@ -2,8 +2,8 @@
  {
   "label": "kilix",
   "path": "docs/kilix/AGENTS.md",
-  "commit": "c2253379f575032aadc8cfc6209487180b151549",
-  "sha256": "bfb182c8d4271b42b1a3125de0f3bc8ec18181d1a761d42a04cafec7a3ff6bd7"
+  "commit": "5ce7e68ecd168d4bee543db65314400e4f669f4a",
+  "sha256": "ce6215dee9dd3be038395785ba318c4b92e51301bf16be3c172012dceb10c317"
  },
  {
   "label": "kilix",
@@ -242,14 +242,14 @@
  {
   "label": "kilix",
   "path": "docs/kilix/session.md",
-  "commit": "c2253379f575032aadc8cfc6209487180b151549",
-  "sha256": "a91ed740774067ddaa71715241e7ad7d35b561041c360c1c7603438da758874c"
+  "commit": "5ce7e68ecd168d4bee543db65314400e4f669f4a",
+  "sha256": "aa8dad3d8d03e99980472912ca0795c176cd37e075be140c35b9f0caadc85635"
  },
  {
   "label": "kilix",
   "path": "docs/kilix/structured-actions.md",
-  "commit": "c2253379f575032aadc8cfc6209487180b151549",
-  "sha256": "e6f944424cf49f331751aee15230a0795237d46ec081c3ae0f8e513093341c0b"
+  "commit": "5ce7e68ecd168d4bee543db65314400e4f669f4a",
+  "sha256": "2b6d233dadf171c660b95f400164aa8d621f968d8f9e9497d7f25036fa4e5867"
  },
  {
   "label": "kilix",

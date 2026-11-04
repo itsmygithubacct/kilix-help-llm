@@ -81,6 +81,12 @@ their previous citations. There are now 502 passages. All 3,380 expansion
 questions move only with the same document, heading and complete preserved
 passage text or leading text; none are generated or removed. New or changed
 facts require separate source-support and retrieval review.
+The later selected host `1cbb369662cb307b43641211ef3561bffdebeb0d` adds
+AGENTS, session and structured-actions guidance for pane-local interactive
+Codex launches and verified attach recovery. Only those three documents change;
+their source records cite snapshot `5ce7e68ecd168d4bee543db65314400e4f669f4a`.
+All other document bytes and source citations remain unchanged. Passage count
+remains 502, with all 3,380 expansion questions retained and none generated.
 Historical metrics above do not evaluate this analyzer
 or establish release qualification. Results are cited source passages, without
 generated answers, live-state access or semantic abstention guarantees.
@@ -111,8 +117,8 @@ To reproduce the RC1 source/question manifests from the committed document snaps
 
 ```sh
 python3 -B -m help_llm.refresh \
-  --base e160c7a6aa1ca3f3a08eb9b7f7e2fa41753ddc1f \
-  --documents-revision 71d6db71abb159a1bb06255954c89096ac5fb29b \
+  --base 65d8ef427670fe70812e85050e029bdf688367a9 \
+  --documents-revision 5ce7e68ecd168d4bee543db65314400e4f669f4a \
   --report ../refresh-report.json
 ```
 
