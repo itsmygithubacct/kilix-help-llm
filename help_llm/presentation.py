@@ -79,6 +79,16 @@ def _html(text):
                    for p in re.split(r"(`[^`\n]+`)", text))
 
 
+def _without_references(answer, source_id):
+    token = r"`?\[" + re.escape(source_id) + r"\]`?"
+    text = re.sub(r"\[Source\s+" + token + r"\]\s*:?", "", answer, flags=re.I)
+    text = re.sub(r"^The source ID is " + token + r"[.,]?\s*(?:(?:and )?the answer is:?\s*(?:that\s+)?)?",
+                  "", text, flags=re.I)
+    text = re.sub(r"(?:^|\s+)(?:Source(?: ID)?\s*:?\s*)?" + token + r"\s*[.:]?\s*$", "", text, flags=re.I)
+    text = re.sub(token, "", text).strip()
+    return re.sub(r"^Answer:\s*", "", text, flags=re.I).strip()
+
+
 def _result(status, body, links, reason=None):
     # Only an explicitly leading command is lifted into a code block. Never
     # search the evidence or reorder alternatives to manufacture instructions.
@@ -132,7 +142,7 @@ def present(output, registry):
     entry = registry["sources"].get(key)
     if not entry or entry["source"] != identity:
         return _result("withheld", UNAVAILABLE, [], "unmapped-source")
-    body = re.sub(r"\[" + re.escape(source["id"]) + r"\]", "", answer).strip()
+    body = _without_references(answer, source["id"])
     if not body:
         return _result("withheld", UNAVAILABLE, [], "empty-answer")
     links = list({x["url"]: {"title": x["title"], "url": x["url"]} for x in entry["links"]}.values())

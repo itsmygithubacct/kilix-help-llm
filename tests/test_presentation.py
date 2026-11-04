@@ -83,6 +83,20 @@ class PresentationTests(unittest.TestCase):
         self.assertEqual(result["html"].count("href="), 1)
         self.assertEqual([x["url"] for x in result["help"]], [self.url])
 
+    def test_source_wrappers_do_not_leave_presentation_debris(self):
+        for answer in ["Answer: Run `kilix ls --panes`. Lists panes. [Source [panes:1]]",
+                       "The source ID is [panes:1], and the answer is: Run `kilix ls --panes`. Lists panes.",
+                       "Run `kilix ls --panes`. Lists panes.\nSource [panes:1]"]:
+            self.output["answer"] = answer
+            result = present(self.output, self.registry)
+            self.assertEqual(result["command"], "kilix ls --panes")
+            self.assertEqual(result["explanation"], "Lists panes.")
+
+    def test_citation_only_boilerplate_is_not_a_useful_answer(self):
+        for answer in ["The source ID is [panes:1].", "[Source [panes:1]]", "Source [panes:1]"]:
+            self.output["answer"] = answer
+            self.assertEqual(present(self.output, self.registry)["reason"], "empty-answer")
+
     def test_tui_and_duplicate_citations_preserve_instructions(self):
         self.output["answer"] = "Press `?` to see the keys. [panes:1] [panes:1]"
         result = present(self.output, self.registry)
