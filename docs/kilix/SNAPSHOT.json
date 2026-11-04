@@ -6,15 +6,16 @@
     {
       "path": "docs/kilix/AGENTS.md",
       "upstream_repository": "kilix",
-      "upstream_revision": "9049a1a645e6a670a57ae9bc028ef0e6a0265ac6",
+      "upstream_revision": "1cbb369662cb307b43641211ef3561bffdebeb0d",
       "upstream_path": "docs/AGENTS.md",
-      "upstream_sha256": "16cc2be35841f7bc53214f7ae14a957ea121debd52ced85f23a54107cae41f94",
-      "bundled_sha256": "bfb182c8d4271b42b1a3125de0f3bc8ec18181d1a761d42a04cafec7a3ff6bd7",
+      "upstream_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360",
+      "bundled_sha256": "ce6215dee9dd3be038395785ba318c4b92e51301bf16be3c172012dceb10c317",
       "adaptations": [
         "Replace superseded selector-end advice with pinned controller/CLI refusal boundary.",
         "Include max in the pinned Codex reasoning-effort validator values.",
         "Keep log selection, missing-log refusal and ambiguous exit-status facts together under a descriptive heading.",
-        "Import the exact selected-source delta from a77cac5 to 9049a1a while retaining the separately recorded earlier local reconciliations and immutable links."
+        "Import the exact selected-source delta from a77cac5 to 9049a1a while retaining the separately recorded earlier local reconciliations and immutable links.",
+        "Import the exact selected RC1 upstream delta while retaining the recorded local adaptations and immutable link rewrites."
       ],
       "link_rewrites": []
     },
@@ -167,25 +168,27 @@
     {
       "path": "docs/kilix/session.md",
       "upstream_repository": "kilix",
-      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_revision": "1cbb369662cb307b43641211ef3561bffdebeb0d",
       "upstream_path": "docs/session.md",
-      "upstream_sha256": "5b6e8fbd6af05a4b3216476297aff959ee5a8b62e868c0cad0adbf01da73b453",
-      "bundled_sha256": "a91ed740774067ddaa71715241e7ad7d35b561041c360c1c7603438da758874c",
+      "upstream_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae",
+      "bundled_sha256": "aa8dad3d8d03e99980472912ca0795c176cd37e075be140c35b9f0caadc85635",
       "adaptations": [
         "Name the existing private managed-run storage and retention policy.",
-        "Separate library installation from private run data without editing either body."
+        "Separate library installation from private run data without editing either body.",
+        "Import the exact selected RC1 upstream delta while retaining the recorded local adaptations and immutable link rewrites."
       ],
       "link_rewrites": []
     },
     {
       "path": "docs/kilix/structured-actions.md",
       "upstream_repository": "kilix",
-      "upstream_revision": "a77cac52799d0279a5ce3f74525fba40fc281dcd",
+      "upstream_revision": "1cbb369662cb307b43641211ef3561bffdebeb0d",
       "upstream_path": "docs/structured-actions.md",
-      "upstream_sha256": "35be60d33af6c9ee4e435e1298fc500bc85b5e7c6477d216bdc54b4a7a238973",
-      "bundled_sha256": "e6f944424cf49f331751aee15230a0795237d46ec081c3ae0f8e513093341c0b",
+      "upstream_sha256": "a78053139ce6187cae0e423c39cc42f4ed814a7b11f8464c448fd2f30dd7c3c2",
+      "bundled_sha256": "2b6d233dadf171c660b95f400164aa8d621f968d8f9e9497d7f25036fa4e5867",
       "adaptations": [
-        "Use a generic workspace/title in the example; preserve request semantics."
+        "Use a generic workspace/title in the example; preserve request semantics.",
+        "Import the exact selected RC1 upstream delta while retaining the recorded local adaptations and immutable link rewrites."
       ],
       "link_rewrites": []
     },
@@ -396,6 +399,15 @@
     "changed_paths": [
       "docs/kilix/README.md",
       "docs/kilix/help/settings.md"
+    ],
+    "method": "Three-way merge exact upstream Git revisions into the prior adapted snapshot; reverse merge recovers prior bytes; unchanged source bytes and all previous adaptations/link rewrites retained."
+  },
+  "selected_host_reconciliation": {
+    "selected_upstream_revision": "1cbb369662cb307b43641211ef3561bffdebeb0d",
+    "changed_paths": [
+      "docs/kilix/AGENTS.md",
+      "docs/kilix/session.md",
+      "docs/kilix/structured-actions.md"
     ],
     "method": "Three-way merge exact upstream Git revisions into the prior adapted snapshot; reverse merge recovers prior bytes; unchanged source bytes and all previous adaptations/link rewrites retained."
   }
