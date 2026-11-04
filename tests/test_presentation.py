@@ -64,6 +64,32 @@ class PresentationTests(unittest.TestCase):
         self.assertIn("&lt;script&gt;", shown["html"])
         self.assertEqual(shown["command"], 'echo "<script>"')
 
+    def test_registry_rejects_raw_url_controls_before_rendering(self):
+        for code in [*range(32), *range(127, 160)]:
+            for url in ["https://example.org/help/" + chr(code) + "suffix",
+                        chr(code) + "https://example.org/help"]:
+                with self.subTest(code=code, url=url):
+                    reg = copy.deepcopy(self.registry)
+                    next(iter(reg["sources"].values()))["links"][0]["url"] = url
+                    with self.assertRaises(ValueError): validate_registry(reg)
+                    with self.assertRaises(ValueError): present(self.output, reg)
+
+    def test_valid_https_links_preserve_identity_and_escaping(self):
+        for url in ["https://example.org/help?q=panes&lang=fr#listing",
+                    "https://example.org/a%20b/%1B/%00",
+                    "https://example.org/café", "https://example.org:8443/help"]:
+            with self.subTest(url=url):
+                reg = copy.deepcopy(self.registry)
+                next(iter(reg["sources"].values()))["links"][0]["url"] = url
+                before = copy.deepcopy((self.output, reg))
+                result = present(self.output, reg)
+                self.assertEqual(result["status"], "answer")
+                self.assertEqual(result["help"][0]["url"], url)
+                self.assertIn("](<" + url + ">)", result["markdown"])
+                self.assertIn(url.replace("&", "&amp;"), result["html"])
+                self.assertIn(url, result["text"])
+                self.assertEqual((self.output, reg), before)
+
     def test_formatting_never_supplies_a_missing_command(self):
         self.output["answer"] = "Lists pane numbers and programs. [panes:1]"
         result = present(self.output, self.registry)

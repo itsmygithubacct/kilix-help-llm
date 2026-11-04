@@ -53,7 +53,8 @@ def validate_registry(registry):
             title, url = link.get("title"), link.get("url")
             if not isinstance(title, str) or not title.strip() or any(ord(c) < 32 for c in title):
                 raise ValueError("invalid help-link title")
-            if not isinstance(url, str) or any(c.isspace() or c in '<>\\\"' for c in url):
+            if not isinstance(url, str) or any(c.isspace() or ord(c) < 32 or 127 <= ord(c) < 160
+                                               or c in '<>\\\"' for c in url):
                 raise ValueError("invalid help-link URL")
             parts = urlsplit(url)
             if parts.scheme != "https" or not parts.hostname or parts.username or parts.password:
