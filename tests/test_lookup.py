@@ -13,7 +13,7 @@ from help_llm.lookup import INDEX, MAX_WORDS, Lookup, load_passages, render, tok
 ROOT = Path(__file__).resolve().parents[1]
 # A single paragraph longer than MAX_WORDS stays whole so passage ids match the question index.
 OVERSIZED = {"kilix:docs/kilix/README.md#20", "kilix:docs/kilix/README.md#27", "kilix:docs/kilix/README.md#42",
-             "kilix:docs/kilix/README.md#46", "kilix:docs/kilix/README.md#73",
+             "kilix:docs/kilix/README.md#46", "kilix:docs/kilix/README.md#57", "kilix:docs/kilix/README.md#76",
              "kitty:docs/kitty/README.md#2", "pleb:README.md#20", "plebian-os:README.md#4", "plebian-os:README.md#6",
              "plebian-os:releases/0.2.0-notes.md#2"}
 
@@ -33,7 +33,7 @@ class IndexSnapshotTest(unittest.TestCase):
             self.assertTrue(p["text"].strip() and p["path"] and len(p["commit"]) == 40, p["id"])
         if all(hashlib.sha256((ROOT / s["path"]).read_bytes()).hexdigest() == s["sha256"] for s in sources):
             ids = {p["id"] for p in load_passages()[0]}
-            self.assertEqual(len(ids), 497)
+            self.assertEqual(len(ids), 502)
             self.assertLessEqual(set(questions), ids)
 
     def test_passage_length_bound_or_known_exception(self):

@@ -1,6 +1,6 @@
 # Lookup index
 
-Passages (497) come from MIT-licensed documentation:
+Passages (502) come from MIT-licensed documentation:
 
 - `docs/kilix/` and `docs/kitty/` in this repository are cut into passages at runtime by `help_llm/lookup.py`
   (split at headings, short sections merged, long ones split). `sources.json` records each file's commit and
@@ -69,10 +69,18 @@ words around a recognized name do not rename the page. Equally named pages can
 remain ambiguous; unknown recognized page names return no results. These
 constraints may reduce recall and require retention evaluation.
 
-The selected-source reconciliation changes five passage bodies and updates the
+The earlier selected-source reconciliation changed five passage bodies and updated the
 13 bundled source citations. Passage IDs and all 3,380 question attachments are
 preserved; the five changed passages had no expansion questions. Its source
 identity and retained adaptations are recorded in `docs/kilix/SNAPSHOT.json`.
+The RC1 reconciliation then imports README and settings changes from Kilix
+`311e4653891c1aea4191c1e9430164d7ba41d36a`, retaining those adaptations and
+immutable link targets. The two changed source records cite document snapshot
+`71d6db71abb159a1bb06255954c89096ac5fb29b`; all unchanged source records keep
+their previous citations. There are now 502 passages. All 3,380 expansion
+questions move only with the same document, heading and complete preserved
+passage text or leading text; none are generated or removed. New or changed
+facts require separate source-support and retrieval review.
 Historical metrics above do not evaluate this analyzer
 or establish release qualification. Results are cited source passages, without
 generated answers, live-state access or semantic abstention guarantees.
@@ -96,20 +104,22 @@ verification. Cache-hit and fallback results must be identical. Cold process
 startup and uncached construction cost are separate performance measurements.
 
 Passages use the existing heading/paragraph cutter with a 450-word target; a single
-paragraph longer than that stays whole (10 passages in this snapshot, enumerated in
+paragraph longer than that stays whole (11 passages in this snapshot, enumerated in
 `tests/test_lookup.py`; the original corpus had eight).
 
-To reproduce the source/question manifests from the committed document snapshot:
+To reproduce the RC1 source/question manifests from the committed document snapshot:
 
 ```sh
 python3 -B -m help_llm.refresh \
-  --base 6bbdb9fb4407f3dd96d55f58eb3116882e35bd82 \
-  --documents-revision c2253379f575032aadc8cfc6209487180b151549 \
+  --base e160c7a6aa1ca3f3a08eb9b7f7e2fa41753ddc1f \
+  --documents-revision 71d6db71abb159a1bb06255954c89096ac5fb29b \
   --report ../refresh-report.json
 ```
 
 The helper requires exact Git revisions, verifies document bytes against the
 committed snapshot and refuses unlisted document changes. It writes only the two
-index manifests and an explicit report outside the source checkout. External
+index manifests and an explicit report outside the source checkout. After this
+generic refresh, retain the base source record for each byte-unchanged document
+to reproduce the RC1 citation policy, then rebuild the prepared cache. External
 passages and unchanged source records are preserved. Commit documents first so
 every source citation names an existing Git blob, then commit the refreshed index.

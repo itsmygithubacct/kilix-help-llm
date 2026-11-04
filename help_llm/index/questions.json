@@ -141,7 +141,7 @@
   "before i build kilix from source, can i check my machine has all the deps without it changing anything",
   "How do I get kilix installed from scratch, and roughly how long does the first-run fork build take?"
  ],
- "kilix:docs/kilix/README.md#53": [
+ "kilix:docs/kilix/README.md#55": [
   "What is the little keyboard button on each pane's title bar for?",
   "what does the tiny keyboard icon on every pane's title bar do?",
   "select every pane synchronized input",
@@ -156,7 +156,7 @@
   "kilix keys for splitting a pane to the right or down, and for closing it?",
   "What do the little arrow buttons on a Kilix pane's title bar do, and can I rearrange their order?"
  ],
- "kilix:docs/kilix/README.md#56": [
+ "kilix:docs/kilix/README.md#58": [
   "Can I rearrange panes by dragging them?",
   "In Tilix I could drag a terminal onto another one to re-split. Does kilix let me move panes around like that?",
   "I tried dragging a pane onto a maximized one and the drop didn't work",
@@ -164,7 +164,7 @@
   "why are my pane buttons missing, the prebuilt kilix should have them",
   "why don't my panes have any buttons? i thought the prebuilt kilix came with them"
  ],
- "kilix:docs/kilix/README.md#59": [
+ "kilix:docs/kilix/README.md#62": [
   "rename page kilix key",
   "what key renames a page in kilix",
   "Is there a way to see all pages visually and pick one?",
@@ -183,7 +183,7 @@
   "how many panes have i got open on each page right now",
   "In Kilix, how do I rename the page I'm on and get a list of all open pages, and is there a limit to how many pages I can have open at once?"
  ],
- "kilix:docs/kilix/README.md#60": [
+ "kilix:docs/kilix/README.md#63": [
   "kilix list pane ids",
   "how do I see the id numbers of my kilix panes",
   "How do I open a new pane below with htop in it?",
@@ -203,7 +203,7 @@
   "keep watching pane 74 read only whil I work",
   "i want to keep an eye on what pane 74 is doing w/o being able to type into it, while i keep wroking in mine"
  ],
- "kilix:docs/kilix/README.md#61": [
+ "kilix:docs/kilix/README.md#64": [
   "kilix calculator",
   "is there a calculator built into kilix",
   "Can I use the Kilix calculator from the keyboard, and how do I close it?",
@@ -211,7 +211,7 @@
   "If the pane is too small, the calculator just draws a clipped keypad?",
   "if I shrink the pane, does the kilix calculator just get chopped off?"
  ],
- "kilix:docs/kilix/README.md#66": [
+ "kilix:docs/kilix/README.md#69": [
   "How do I start the matrix screensaver in kilix, and how do I quit it?",
   "how do I start that matrix screensaver thing in kilix, and how do I get out of it?",
   "I wrote a little C animation, can I use it as a kilix screensaver?",
@@ -222,7 +222,7 @@
   "the matrix screensaver in kilix looks cool but surely it burns a whole cpu core when fullscreen?",
   "How do I start the Matrix screensaver in Kilix, and can it kick in automatically after I've been idle for a while?"
  ],
- "kilix:docs/kilix/README.md#67": [
+ "kilix:docs/kilix/README.md#70": [
   "How do I open the Kilix Cap desktop through kilix desktop instead of Kilix 95?",
   "I want kilix's desktop command to bring up Cap instead of Kilix 95. how?",
   "Setting KILIX_DESKTOP_FLAVOR=xp is enough to make XP my Pleb login desktop, right?",
@@ -242,7 +242,7 @@
   "is kilix desktop using the bundled or external checkout for me",
   "is my kilix desktop running the copy that ships with kilix or my own separate checkout?"
  ],
- "kilix:docs/kilix/README.md#68": [
+ "kilix:docs/kilix/README.md#71": [
   "where does kilix cap get cloned to",
   "where does kilix put the kilix-cap source when it downloads it",
   "What do I need installed to build Kilix Cap?",
@@ -254,7 +254,7 @@
   "Started the capture thing in kilix and it printed that my checkout was REWOUND. Should I be worried, what does that mean?",
   "How do I start Kilix Cap, and how much disk space does its source checkout and build take?"
  ],
- "kilix:docs/kilix/README.md#69": [
+ "kilix:docs/kilix/README.md#72": [
   "What command opens the text-mode Kilix desktop?",
   "Kilix apparently has a text-only desktop. How do I start it?",
   "stop kilix tui auto cloning",
@@ -265,7 +265,7 @@
   "is the kilix text ui only ever drawn with text characters or can it look graphical too",
   "How do I start the Kilix TUI desktop, and roughly how much disk space does it need when it clones on first use?"
  ],
- "kilix:docs/kilix/README.md#70": [
+ "kilix:docs/kilix/README.md#73": [
   "What happens the first time I run kilix land?",
   "first time I launched Kilix Land it took ages before anything showed up. what was it doing?",
   "stop kilix land cloning on first use",
@@ -274,7 +274,7 @@
   "if I launch Land again, is it going to wipe the changes I made in its source checkout?",
   "How do I start the Kilix Land desktop and where does it get downloaded to, and roughly how much disk space does its first build need?"
  ],
- "kilix:docs/kilix/README.md#71": [
+ "kilix:docs/kilix/README.md#74": [
   "kilix icewm command",
   "how do i start kilix with the IceWM desktop instead of the default one",
   "Does the Kilix IceWM provider always compile IceWM?",
@@ -283,7 +283,7 @@
   "I have my own development clone of the Kilix IceWM desktop and Kilix keeps wanting to move/replace it. How do I make it leave my checkout alone?",
   "How do I open the IceWM desktop inside Kilix, and can it use my existing ~/.icewm theme and preferences?"
  ],
- "kilix:docs/kilix/README.md#74": [
+ "kilix:docs/kilix/README.md#77": [
   "quit kilix 95",
   "how do i get out of kilix 95",
   "Kilix 95 bundles the original Windows 95 artwork, right?",
@@ -291,13 +291,13 @@
   "can i turn off the win95 mouse pointer kilix 95 draws",
   "kilix 95 draws its own old win95 mouse pointer, can i turn that off?"
  ],
- "kilix:docs/kilix/README.md#75": [
+ "kilix:docs/kilix/README.md#78": [
   "Does kilix session streaming expose my terminal on the LAN by default?",
   "If I stream my kilix session so I can pick it up from my laptop, can anyone on my wifi get at it out of the box?",
   "watch kilix session from phone",
   "can I watch my kilix session from my phone"
  ],
- "kilix:docs/kilix/README.md#76": [
+ "kilix:docs/kilix/README.md#79": [
   "How do I start a terminal session that survives disconnects so I can attach from another device?",
   "Coming from tmux: how do I get a kilix session that keeps running when I disconnect, so I can attach to it from another device?",
   "I want a coworker to watch my session over SSH without being able to type. What do they run?",
@@ -317,7 +317,7 @@
   "Someone attached to my work session earlier. Is that session still alive?",
   "a coworker joined my shared terminal session earlier. is that session still running?"
  ],
- "kilix:docs/kilix/README.md#77": [
+ "kilix:docs/kilix/README.md#80": [
   "How can I share a pane that's already running in Kilix with another machine?",
   "remote serve read only",
   "I want to share my kilix session remotely but people should only be able to watch, not type.",
@@ -329,7 +329,7 @@
   "Exposing my Kilix session to another machine on the local network: does the other side only need the token to connect?",
   "How do I share a running Kilix pane with another device, and how many people can attach to the same pane at once?"
  ],
- "kilix:docs/kilix/README.md#79": [
+ "kilix:docs/kilix/README.md#82": [
   "How can I control a kilix run app from another machine, not just watch it?",
   "I'm running a GUI app inside Kilix and want to actually use it from another computer, not just watch it. Is that possible?",
   "lowest latency kilix run stream",
@@ -348,7 +348,7 @@
   "I opened a web app in a contained kilix tab. is there any log that tells me when it actually finished loading?",
   "How can I view and control a GUI app running in kilix from another computer's browser, and how many people can control it at the same time?"
  ],
- "kilix:docs/kilix/README.md#80": [
+ "kilix:docs/kilix/README.md#83": [
   "How can I show my whole Kilix, including video panes, in a browser on another device?",
   "I want my entire kilix screen, video panes and all, visible in a web browser on my tablet. How?",
   "I use kilix desktop to stream my whole kilix to my browser, right?",
@@ -359,7 +359,7 @@
   "i started sharing my kilix screen but my tablet on the same wifi can't connect to it",
   "How do I stream my whole kilix to a browser on another computer on my network, and how much bandwidth does that stream need?"
  ],
- "kilix:docs/kilix/README.md#81": [
+ "kilix:docs/kilix/README.md#84": [
   "kilix split right",
   "kilix shortcut to split a pane side by side",
   "What's the shortcut to zoom one pane to fill the page?",
@@ -373,7 +373,7 @@
   "How do I resize a pane from the keyboard?",
   "tilix let me resize splits with the keyboard, how do i do that in kilix"
  ],
- "kilix:docs/kilix/README.md#82": [
+ "kilix:docs/kilix/README.md#85": [
   "I'm in htop and dragging the mouse doesn't select anything",
   "can't select any text with the mouse while htop is open, dragging does nothing",
   "my selection highlight vanishes in a busy TUI so the copy failed",
@@ -384,7 +384,7 @@
   "i'm in a TUI that hogs the mouse and i can't drag-select its output to copy it. any way around that?",
   "How do I select and copy text inside a full-screen app like htop in Kilix, and does the copied text keep its colours when I paste it?"
  ],
- "kilix:docs/kilix/README.md#84": [
+ "kilix:docs/kilix/README.md#87": [
   "My fingers keep hitting tmux prefix keys. Does Kilix have something similar?",
   "years of tmux muscle memory, I keep hitting the prefix key. is there anything like that in Kilix?",
   "Why doesn't Ctrl+B work as the Kilix leader like in tmux?",
@@ -397,7 +397,7 @@
   "What's the leader-key combo in Kilix for renaming the page I'm on?",
   "Is there a tmux-style prefix key in Kilix for splitting panes, and can I change it to Ctrl+A like screen?"
  ],
- "kilix:docs/kilix/README.md#85": [
+ "kilix:docs/kilix/README.md#88": [
   "on wayland my kilix windows show a generic icon instead of the fire kitty",
   "on wayland my kilix windows show a generic icon instead of the fire kitty one",
   "Kilix windows get lumped together with my kitty windows in the taskbar since it's the same binary, right?",
@@ -408,7 +408,7 @@
   "if I remove kilix's desktop integration, will it also delete desktop files I've customized?",
   "Why does kilix show a generic icon in my Wayland taskbar, and can I swap in a custom icon of my own?"
  ],
- "kilix:docs/kilix/README.md#86": [
+ "kilix:docs/kilix/README.md#89": [
   "My kilix title bars are plain with no buttons.",
   "My kilix window title bars are just plain, none of the clickable buttons from the screenshots. What's wrong?",
   "taskbar shows kittys icon not the kilix flame",
@@ -425,7 +425,7 @@
   "which kitty binary is kilix actually running under the hood on my machine?",
   "My taskbar shows kitty's icon instead of the Kilix flame; how do I fix it, and will that also fix the icon in the Alt+Tab switcher?"
  ],
- "kilix:docs/kilix/README.md#87": [
+ "kilix:docs/kilix/README.md#90": [
   "How do I remove the desktop launcher Kilix installed?",
   "Kilix added itself to my app menu and I'd like that launcher gone. How?",
   "I ran kilix --uninstall-desktop and it exited non-zero, naming my kilix.desktop. What happened?",
@@ -436,7 +436,7 @@
   "removing kilix by hand and there's no uninstall manifest. how do i get rid of its app menu entry and icon",
   "How do I fully uninstall kilix, and does that also remove the ~/.local/bin/kilix symlink I made to put it on my PATH?"
  ],
- "kilix:docs/kilix/README.md#88": [
+ "kilix:docs/kilix/README.md#91": [
   "Why does kilix need its own fork of kitty?",
   "why can't kilix just use regular kitty? why the fork?",
   "kilix wayland works?",
@@ -445,7 +445,7 @@
   "all those buttons on the pane title bars must make kilix slower than plain kitty",
   "Will installing kilix mess with my existing kitty setup, and can I import my existing kitty.conf into kilix?"
  ],
- "kilix:docs/kilix/README.md#90": [
+ "kilix:docs/kilix/README.md#93": [
   "rebuild kilix command",
   "pulled new kilix changes, how do I rebuild it",
   "What versions of Go and Python does building Kilix need?",
@@ -460,7 +460,7 @@
   "The little buttons on each pane's title bar in Kilix - where do I change what they do when clicked?",
   "How do I rebuild kilix and make the build go faster, and roughly how much RAM does each extra build job use?"
  ],
- "kilix:docs/kilix/README.md#91": [
+ "kilix:docs/kilix/README.md#94": [
   "Which file in the kilix checkout do I actually run?",
   "I cloned the kilix repo. What in there do I actually run to start it?",
   "diffrence between build.sh and bootstrap.sh in kilix",

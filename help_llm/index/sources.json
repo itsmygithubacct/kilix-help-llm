@@ -8,8 +8,8 @@
  {
   "label": "kilix",
   "path": "docs/kilix/README.md",
-  "commit": "c2253379f575032aadc8cfc6209487180b151549",
-  "sha256": "af472795983eb667da232f014ddf916eaa764c4db1030866a496b4ebdeb0f650"
+  "commit": "71d6db71abb159a1bb06255954c89096ac5fb29b",
+  "sha256": "cebe6b33b5491429ccf68a9d3dee18f602cab5da3fe726a8269233ea8cfd3f7e"
  },
  {
   "label": "kilix",
@@ -140,8 +140,8 @@
  {
   "label": "kilix",
   "path": "docs/kilix/help/settings.md",
-  "commit": "c2253379f575032aadc8cfc6209487180b151549",
-  "sha256": "dcf2c058056061de11196a321cfa3169cd73c38051c0acb18994e733f243207e"
+  "commit": "71d6db71abb159a1bb06255954c89096ac5fb29b",
+  "sha256": "7da7e7712e5bf6dd845a4c7cab19328478fce175349e569e852fa219d7ed04f0"
  },
  {
   "label": "kilix",
