@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import subprocess
 import time
 
 from .data import SOURCE, SPLITS, load_dataset, prepare, read_json, retrieve, state_root
@@ -25,6 +26,15 @@ def parser():
     lookup.add_argument("-k", type=int, default=5, help="number of passages (default 5)")
     lookup.add_argument("--full", action="store_true", help="print whole passages")
     lookup.add_argument("--json", action="store_true", help="print JSON")
+    answer = commands.add_parser("answer", help="answer with the default Kilix Qwen 2B model")
+    answer.add_argument("question")
+    answer.add_argument("--sizer")
+    answer.add_argument("--json", action="store_true")
+    setup = commands.add_parser("setup", help="explicitly install the default model and locked CPU runtime")
+    setup.add_argument("--sizer")
+    setup.add_argument("--base-dir", help="copy a verified parent checkpoint instead of downloading it")
+    setup.add_argument("--adapter-dir", help="copy verified release assets instead of downloading them")
+    commands.add_parser("model-status", help="verify the selected default model and show setup status")
     search = commands.add_parser("search", help="BM25 retrieval baseline; no model needed")
     search.add_argument("--dataset", required=True)
     search.add_argument("question")
@@ -85,7 +95,7 @@ def runtime_python():
     python = state_root() / "runtimes/cpu/bin/python"
     if Path(sys.prefix).resolve() != python.parent.parent.resolve():
         if not python.is_file():
-            raise ValueError("CPU training runtime is not installed; see README runtime setup")
+            raise ValueError("CPU runtime is not installed; run kilix help-setup (or kilix-help-llm setup)")
         os.execv(str(python), [str(python), str(SOURCE / "kilix-help-llm"), *sys.argv[1:]])
 
 
@@ -99,6 +109,19 @@ def main(argv=None):
             os.execv(executable, [executable, "recommend", "help-llm", "--catalog", str(SOURCE / "candidates.json"), *rest])
         if rest:
             root.error("unrecognized arguments: " + " ".join(rest))
+        if args.command in {"answer", "setup", "model-status"}:
+            from . import published
+            if args.command == "answer":
+                published.evidence(args.question)
+                runtime_python()
+                from .published_runtime import query
+                result = query(args.question, args.sizer)
+                print(json.dumps(result, indent=2, ensure_ascii=False) if args.json else result["presentation"]["text"])
+            else:
+                result = (published.setup(args.base_dir, args.adapter_dir, args.sizer)
+                          if args.command == "setup" else published.status())
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            return 0
         if args.command == "ask" and args.format != "json" and not args.help_links:
             raise ValueError("formatted answers require --help-links")
         if args.command == "format-answer" or (args.command == "ask" and args.help_links):
@@ -193,6 +216,6 @@ def main(argv=None):
     except FileNotFoundError:
         print("kilix-help-llm: required file or executable is missing", file=sys.stderr)
         return 69
-    except (ValueError, OSError, KeyError, TypeError) as error:
+    except (ValueError, OSError, KeyError, TypeError, subprocess.SubprocessError) as error:
         print(f"kilix-help-llm: {error}", file=sys.stderr)
         return 2

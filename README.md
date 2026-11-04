@@ -4,7 +4,43 @@ Document-trained help models for Kilix: answer questions with source references,
 and select or rank relevant help topics. The intended inference host for prose
 answers is `kilix-llm`; model selection belongs to `plebian-model-sizer`.
 
-**Current state: local CPU training prototype.** Prepare revision-bound document
+**0.2.3 RC1 default: `kilix-qwen-sft1-2b`.** This is the seed-17, epoch-6
+adapter trained from the pinned Qwen3.5-2B parent. Setup is explicit:
+
+```sh
+kilix help-setup
+kilix help-answer "How do I launch a Kilix pane?"
+kilix help-answer "How do I list panes?"
+```
+
+From this checkout, use `./kilix-help-llm setup --sizer /path/to/plebian-model-sizer`,
+then `./kilix-help-llm answer --sizer /path/to/plebian-model-sizer 'How do I use the TUI?'`.
+Setup requires `uv`, installs the locked Python 3.12 CPU environment, and downloads
+about 4.6 GB of weights and tokenizer files. It checks live resource estimates
+first. `--base-dir` and `--adapter-dir` accept existing copies with the same hashes.
+`model-status` verifies installation. Answers never download missing weights.
+
+We host the adapter, model card, Apache-2.0 license and notice as versioned
+[release assets](https://github.com/itsmygithubacct/kilix-help-llm/releases/tag/kilix-qwen-sft1-2b).
+The exact upstream parent is downloaded separately from Hugging Face. All file
+sizes and SHA256 digests are pinned in [published-model.json](help_llm/published-model.json).
+Local generation uses CPU FP32, eager attention, the native non-thinking chat
+template, a 384-token context and at most 96 generated tokens. No GGUF conversion
+or adapter merge is implied. Model files stay outside Git and the source tree.
+
+Answers include the generated command, a brief explanation, and documentation
+links resolved from exact source identities. `--json` returns these fields under
+`presentation`. The compact index selects evidence; it contains no stored target
+answers. Suggested commands are never executed. The model cannot read live
+machine state. Use `kilix help-search` or `lookup` for broader documentation.
+
+The selected model scored **30/32** on everyday supported questions, **17/19**
+on command tasks, and **8/8** on unknown-state refusals. Its parent scored 21/32.
+On the older retention set, the trained model scored **41/72**, versus 49/72 for
+its parent. These assistant-reviewed, exposed development results used fixed
+evidence; they are not an end-to-end retrieval score or independent qualification.
+
+The research tools also prepare revision-bound document
 datasets, retrieve source excerpts, size candidates, and train separate LoRA
 adapters for cited answers and relevance ranking. The optional runtime can
 reload those adapters, answer questions, rank excerpts and record evaluation
@@ -26,8 +62,7 @@ candidate comparisons remain experimental. Existing v1 reports remain readable.
 It needs only Python's standard library and answers in under a second. Read the top few results: a related
 passage sometimes ranks above the most direct one. The index covers Kilix, kitty,
 pleb and plebian-os; see [help_llm/index/README.md](help_llm/index/README.md). It shows the documentation rather
-than writing an answer, so it cannot invent commands. Small local answer models were tried and did not yet
-answer reliably enough to ship.
+than writing an answer, so it cannot invent commands.
 
 ## Show an answer with related help
 
@@ -163,8 +198,8 @@ all-linear LoRA, AdamW, context 384 and rank four. `--context` accepts 128-512;
 `--lora-rank` accepts 1-64. Training is bounded by `--steps` (default 32, maximum
 10000). Oversized examples fail instead of silently truncating their evidence
 or answers. `--candidate` requests a particular resource-eligible checkpoint.
-Only the dense-attention families are enabled in this runtime; hybrid Qwen3.5
-families remain sizing candidates until their training path is verified.
+These legacy training commands enable dense-attention families. The separately
+published default-model path supports the verified Qwen3.5-2B adapter.
 
 Answer training uses the checkpoint's native chat template with thinking
 disabled, masks the entire generation prefix and retains assistant end tokens.

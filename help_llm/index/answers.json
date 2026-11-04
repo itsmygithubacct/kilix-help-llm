@@ -1,0 +1,1280 @@
+{
+  "schema": "kilix.help-llm.answer-index/v1",
+  "sources": [
+    {
+      "source": {
+        "id": "panes-open:1",
+        "path": "public/panes-open.txt",
+        "line": 1,
+        "text": "| `kilix pane right --cwd DIR --porcelain -- bash` | Open a shell beside the caller; print its new pane ID. |"
+      },
+      "title": "panes open",
+      "queries": [
+        "I need another shell beside this one.",
+        "What should I type to create a pane on the right?",
+        "Open another terminal pane: what is the command?",
+        "How do I launch a Kilix pane?",
+        "How do I open a new pane?"
+      ],
+      "links": [
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "guide",
+          "line": 64,
+          "text": "| `kilix pane right --cwd DIR --porcelain -- bash` | Open a shell beside the caller; print its new pane ID. |",
+          "sha256": "e28319418f37168f0db3f3209d7df4fbdbd86251f1e72cc8634e7625243090cd"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "panes-list:1",
+        "path": "public/panes-list.txt",
+        "line": 1,
+        "text": "| `kilix ls --panes` | List panes, IDs, titles, foreground programs, and cwd. |"
+      },
+      "title": "panes list",
+      "queries": [
+        "Show me the command for viewing all my panes.",
+        "Where can I get the pane numbers?",
+        "I need a list of panes and what each is running."
+      ],
+      "links": [
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "guide",
+          "line": 62,
+          "text": "| `kilix ls --panes` | List panes, IDs, titles, foreground programs, and cwd. |",
+          "sha256": "df8d6dfd7c88e9738a1f3d3da782a2e253a78c7576276168f8b61e52d5e79247"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "panes-below:1",
+        "path": "public/panes-below.txt",
+        "line": 1,
+        "text": "| `kilix pane right --cwd DIR --porcelain -- bash` | Open a shell beside the caller; print its new pane ID. |\n\nSplits anchor to the caller. Directions are `right`, `left`, `up`, and `down`;\nolder engines can reject left/up. Identify an existing spatial neighbor from\nlayout, not listing order; `pane right` creates a new pane."
+      },
+      "title": "panes below",
+      "queries": [
+        "I want a second shell underneath this one.",
+        "Which command splits the current pane downward?",
+        "Can you show the command for a lower pane?"
+      ],
+      "links": [
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "guide",
+          "line": 64,
+          "text": "| `kilix pane right --cwd DIR --porcelain -- bash` | Open a shell beside the caller; print its new pane ID. |",
+          "sha256": "e28319418f37168f0db3f3209d7df4fbdbd86251f1e72cc8634e7625243090cd"
+        },
+        {
+          "document": "guide",
+          "line": 75,
+          "text": "Splits anchor to the caller. Directions are `right`, `left`, `up`, and `down`;\nolder engines can reject left/up. Identify an existing spatial neighbor from\nlayout, not listing order; `pane right` creates a new pane.",
+          "sha256": "b434693a2f67f62ab85483664708a397215464e30c290a7283e7c9e45b51682c"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "panes-tab:1",
+        "path": "public/panes-tab.txt",
+        "line": 1,
+        "text": "| `kilix new-tab --title TITLE --cwd DIR -- PROGRAM ARGS` | Open a tab running a program; use `codex` to launch Codex. |"
+      },
+      "title": "panes tab",
+      "queries": [
+        "Give me a command for a fresh terminal tab.",
+        "I would like a shell in a tab called notes.",
+        "What do I type to create a notes tab?"
+      ],
+      "links": [
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "guide",
+          "line": 66,
+          "text": "| `kilix new-tab --title TITLE --cwd DIR -- PROGRAM ARGS` | Open a tab running a program; use `codex` to launch Codex. |",
+          "sha256": "a1a323173ec50bb26326d631d42e59451464e7a203840cd656b76ae017751725"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "panes-hold:1",
+        "path": "public/panes-hold.txt",
+        "line": 1,
+        "text": "| `kilix pane right --cwd DIR --hold --porcelain -- PROGRAM ARGS` | Run a job and keep its output visible after exit. |"
+      },
+      "title": "panes hold",
+      "queries": [
+        "My command exits and its pane vanishes. How can I keep the output?",
+        "Show a pane launch that stays open when the program ends.",
+        "Which launch option keeps finished output visible?"
+      ],
+      "links": [
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "guide",
+          "line": 65,
+          "text": "| `kilix pane right --cwd DIR --hold --porcelain -- PROGRAM ARGS` | Run a job and keep its output visible after exit. |",
+          "sha256": "ac711b2a984ff76884d3b38440a0b93acd9b3e6f1b574ffc959356517acca1ef"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "panes-read:1",
+        "path": "public/panes-read.txt",
+        "line": 1,
+        "text": "| `kilix watch ID --once --plain` | Read the visible screen. |"
+      },
+      "title": "panes read",
+      "queries": [
+        "What command reads the screen of a different pane?",
+        "I want a text snapshot of pane 12.",
+        "Can I read pane 12 without switching to it?"
+      ],
+      "links": [
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "guide",
+          "line": 69,
+          "text": "| `kilix watch ID --once --plain` | Read the visible screen. |",
+          "sha256": "77b944e2edd19ffb59ed3d927c390148d2fecff3347c2da180d7ad5db4c22393"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "panes-focus:1",
+        "path": "public/panes-focus.txt",
+        "line": 1,
+        "text": "| `kilix focus pane:ID` / `kilix focus tab:ID` | Focus the explicitly typed target; only from the pane the user is typing in. |"
+      },
+      "title": "panes focus",
+      "queries": [
+        "What do I type to move to pane 12?",
+        "I want to focus a specific pane by number.",
+        "Show the command for selecting pane 12."
+      ],
+      "links": [
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "guide",
+          "line": 68,
+          "text": "| `kilix focus pane:ID` / `kilix focus tab:ID` | Focus the explicitly typed target; only from the pane the user is typing in. |",
+          "sha256": "6e46d94fd44e56557c615251cc852dace547dfc78ab302291086787e15f43d02"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "panes-close:1",
+        "path": "public/panes-close.txt",
+        "line": 1,
+        "text": "| `kilix pane close pane:ID` | Close this exact pane and terminate its foreground program. |\n\nAlways target\n`pane close` explicitly: omitting its target selects the caller. Close only the\nrequested pane or completed temporary panes you created."
+      },
+      "title": "panes close",
+      "queries": [
+        "What command closes pane 12 only?",
+        "I want to terminate one chosen pane, not every pane.",
+        "Show me how to shut pane 12."
+      ],
+      "links": [
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "guide",
+          "line": 73,
+          "text": "| `kilix pane close pane:ID` | Close this exact pane and terminate its foreground program. |",
+          "sha256": "61c611e12b34a4b21308f8da90201708f255d7df3fb4f063ca0bfbf2ad5c211d"
+        },
+        {
+          "document": "guide",
+          "line": 80,
+          "text": "Always target\n`pane close` explicitly: omitting its target selects the caller. Close only the\nrequested pane or completed temporary panes you created.",
+          "sha256": "1a73625d6106d863ebb5611d57dde43589da5107aa9946f941b971bfe2ac80d2"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "agents-launch:1",
+        "path": "public/agents-launch.txt",
+        "line": 1,
+        "text": "`kilix session` and `kilix-session` launch Codex, Claude Code or Grok and retain\ntheir run records.\n\n- For a managed coding run, use `kilix session launch PROVIDER --cwd DIR\n  --trust-folder --model MODEL --effort LEVEL --prompt-file FILE`. Native UI in\n  a pane of the `agent-sessions` grid (columns up to four, then another row, at most twelve panes per tab) is\n  the default; `--new-tab` gives it a tab of its own and `--headless\n  --background` records a detached run. All new tabs/grid panes preserve focus. `--trust-folder` uses client trust\n  without enabling permission bypass. Save the returned run ID and inspect it\n  with `kilix session show|logs|wait`; `stop` cancels only that run and retains\n  its pane. Requested model, process startup and task completion are distinct."
+      },
+      "title": "agents launch",
+      "queries": [
+        "What is the usual way to start a coding agent?",
+        "Show me a managed agent launch command.",
+        "I need an agent working in a project folder."
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        },
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 3,
+          "text": "`kilix session` and `kilix-session` launch Codex, Claude Code or Grok and retain\ntheir run records.",
+          "sha256": "84326fb884cdccf7a0e8324711c4d287906bc5d4478d5735462732e616d84d78"
+        },
+        {
+          "document": "guide",
+          "line": 300,
+          "text": "- For a managed coding run, use `kilix session launch PROVIDER --cwd DIR\n  --trust-folder --model MODEL --effort LEVEL --prompt-file FILE`. Native UI in\n  a pane of the `agent-sessions` grid (columns up to four, then another row, at most twelve panes per tab) is\n  the default; `--new-tab` gives it a tab of its own and `--headless\n  --background` records a detached run. All new tabs/grid panes preserve focus. `--trust-folder` uses client trust\n  without enabling permission bypass. Save the returned run ID and inspect it\n  with `kilix session show|logs|wait`; `stop` cancels only that run and retains\n  its pane. Requested model, process startup and task completion are distinct.",
+          "sha256": "912b78d52cab63ca394d22e9f0249f2a8bce266759ab48046c0f0158c34efb59"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "agents-codex:1",
+        "path": "public/agents-codex.txt",
+        "line": 1,
+        "text": "kilix session launch codex --cwd /path/to/worktree --trust-folder \\\n  --model gpt-6-astra --effort max --prompt-file /path/to/BRIEF.txt"
+      },
+      "title": "agents codex",
+      "queries": [
+        "Give me the managed Codex launch command.",
+        "I want a Codex session for a folder.",
+        "What command opens Codex through Kilix sessions?",
+        "How do I launch agents?",
+        "Start an agent in my project folder."
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 10,
+          "text": "kilix session launch codex --cwd /path/to/worktree --trust-folder \\\n  --model gpt-6-astra --effort max --prompt-file /path/to/BRIEF.txt",
+          "sha256": "5a8bb2d0a62e56628fdd4971a50126ac6fad328cb8001b342b104f7784e0d609"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "agents-claude:1",
+        "path": "public/agents-claude.txt",
+        "line": 1,
+        "text": "kilix session launch claude --cwd /path/to/worktree --trust-folder --grid Reviews"
+      },
+      "title": "agents claude",
+      "queries": [
+        "Show me a Claude session launch command.",
+        "I want Claude working in a particular folder.",
+        "What should I type to launch Claude through Kilix?"
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 12,
+          "text": "kilix session launch claude --cwd /path/to/worktree --trust-folder --grid Reviews",
+          "sha256": "02a818f8338b7de0d345497f19def6d0121ffae43976a5d5975720deb8d7d873"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "agents-task:1",
+        "path": "public/agents-task.txt",
+        "line": 1,
+        "text": "kilix session launch codex --cwd /path/to/worktree --trust-folder \\\n  --model gpt-6-astra --effort max --prompt-file /path/to/BRIEF.txt\n\n`--prompt TEXT` is a literal string. `--prompt-file FILE` reads at most 1 MiB of\nUTF-8, preserving CRLF, Unicode, final newlines and whitespace. `--prompt-file -`\nexplicitly reads stdin. Nothing is evaluated by a shell; implicit stdin is never\nconsumed."
+      },
+      "title": "agents task",
+      "queries": [
+        "My instructions are saved in a file; how do I start an agent with them?",
+        "Show an agent launch that reads a task file.",
+        "Where do I put the path to my agent brief?"
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 10,
+          "text": "kilix session launch codex --cwd /path/to/worktree --trust-folder \\\n  --model gpt-6-astra --effort max --prompt-file /path/to/BRIEF.txt",
+          "sha256": "5a8bb2d0a62e56628fdd4971a50126ac6fad328cb8001b342b104f7784e0d609"
+        },
+        {
+          "document": "session",
+          "line": 71,
+          "text": "`--prompt TEXT` is a literal string. `--prompt-file FILE` reads at most 1 MiB of\nUTF-8, preserving CRLF, Unicode, final newlines and whitespace. `--prompt-file -`\nexplicitly reads stdin. Nothing is evaluated by a shell; implicit stdin is never\nconsumed.",
+          "sha256": "943ea3d1043e30385a93cfc2a9daae78f78b1f7a8174a8e653eaa5bf92a792b1"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "agents-tab:1",
+        "path": "public/agents-tab.txt",
+        "line": 1,
+        "text": "`kilix session` and `kilix-session` launch Codex, Claude Code or Grok and retain\ntheir run records.\n\n- For a managed coding run, use `kilix session launch PROVIDER --cwd DIR\n  --trust-folder --model MODEL --effort LEVEL --prompt-file FILE`. Native UI in\n  a pane of the `agent-sessions` grid (columns up to four, then another row, at most twelve panes per tab) is\n  the default; `--new-tab` gives it a tab of its own and `--headless\n  --background` records a detached run. All new tabs/grid panes preserve focus. `--trust-folder` uses client trust\n  without enabling permission bypass. Save the returned run ID and inspect it\n  with `kilix session show|logs|wait`; `stop` cancels only that run and retains\n  its pane. Requested model, process startup and task completion are distinct."
+      },
+      "title": "agents tab",
+      "queries": [
+        "I want the coding session in a separate tab.",
+        "What launch flag gives an agent a tab of its own?",
+        "Can I start Codex outside the shared session grid?"
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        },
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 3,
+          "text": "`kilix session` and `kilix-session` launch Codex, Claude Code or Grok and retain\ntheir run records.",
+          "sha256": "84326fb884cdccf7a0e8324711c4d287906bc5d4478d5735462732e616d84d78"
+        },
+        {
+          "document": "guide",
+          "line": 300,
+          "text": "- For a managed coding run, use `kilix session launch PROVIDER --cwd DIR\n  --trust-folder --model MODEL --effort LEVEL --prompt-file FILE`. Native UI in\n  a pane of the `agent-sessions` grid (columns up to four, then another row, at most twelve panes per tab) is\n  the default; `--new-tab` gives it a tab of its own and `--headless\n  --background` records a detached run. All new tabs/grid panes preserve focus. `--trust-folder` uses client trust\n  without enabling permission bypass. Save the returned run ID and inspect it\n  with `kilix session show|logs|wait`; `stop` cancels only that run and retains\n  its pane. Requested model, process startup and task completion are distinct.",
+          "sha256": "912b78d52cab63ca394d22e9f0249f2a8bce266759ab48046c0f0158c34efb59"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "agents-list:1",
+        "path": "public/agents-list.txt",
+        "line": 1,
+        "text": "Launch prints a JSON receipt with an exact `run_id`. Use that ID:\n\n```sh\nkilix session list\nkilix session show RUN_ID\nkilix session logs RUN_ID --stream events --follow\nkilix session logs RUN_ID --stream stderr\nkilix session logs RUN_ID --stream final\nkilix session wait RUN_ID --timeout 600\nkilix session stop RUN_ID --timeout 10"
+      },
+      "title": "agents list",
+      "queries": [
+        "What command lists the recorded coding runs?",
+        "Where do I find the IDs of my agent runs?",
+        "Show me how to list managed sessions."
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 196,
+          "text": "Launch prints a JSON receipt with an exact `run_id`. Use that ID:\n\n```sh\nkilix session list\nkilix session show RUN_ID\nkilix session logs RUN_ID --stream events --follow\nkilix session logs RUN_ID --stream stderr\nkilix session logs RUN_ID --stream final\nkilix session wait RUN_ID --timeout 600\nkilix session stop RUN_ID --timeout 10",
+          "sha256": "b242107987795b6308f93c92592ecde821acc604c5fb13065c1ccf3970d79c7e"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "agents-progress:1",
+        "path": "public/agents-progress.txt",
+        "line": 1,
+        "text": "Launch prints a JSON receipt with an exact `run_id`. Use that ID:\n\n```sh\nkilix session list\nkilix session show RUN_ID\nkilix session logs RUN_ID --stream events --follow\nkilix session logs RUN_ID --stream stderr\nkilix session logs RUN_ID --stream final\nkilix session wait RUN_ID --timeout 600\nkilix session stop RUN_ID --timeout 10"
+      },
+      "title": "agents progress",
+      "queries": [
+        "How can I inspect a recorded run by ID?",
+        "Show me the command for a run status.",
+        "I have a run ID and want to inspect the run."
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 196,
+          "text": "Launch prints a JSON receipt with an exact `run_id`. Use that ID:\n\n```sh\nkilix session list\nkilix session show RUN_ID\nkilix session logs RUN_ID --stream events --follow\nkilix session logs RUN_ID --stream stderr\nkilix session logs RUN_ID --stream final\nkilix session wait RUN_ID --timeout 600\nkilix session stop RUN_ID --timeout 10",
+          "sha256": "b242107987795b6308f93c92592ecde821acc604c5fb13065c1ccf3970d79c7e"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "agents-stop:1",
+        "path": "public/agents-stop.txt",
+        "line": 1,
+        "text": "Launch prints a JSON receipt with an exact `run_id`. Use that ID:\n\n```sh\nkilix session list\nkilix session show RUN_ID\nkilix session logs RUN_ID --stream events --follow\nkilix session logs RUN_ID --stream stderr\nkilix session logs RUN_ID --stream final\nkilix session wait RUN_ID --timeout 600\nkilix session stop RUN_ID --timeout 10\n\nwith `kilix session show|logs|wait`; `stop` cancels only that run and retains\n  its pane."
+      },
+      "title": "agents stop",
+      "queries": [
+        "Give me the command to cancel a particular managed run.",
+        "I have a run ID; how do I cancel it?",
+        "How can I stop just the selected coding session?"
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        },
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 196,
+          "text": "Launch prints a JSON receipt with an exact `run_id`. Use that ID:\n\n```sh\nkilix session list\nkilix session show RUN_ID\nkilix session logs RUN_ID --stream events --follow\nkilix session logs RUN_ID --stream stderr\nkilix session logs RUN_ID --stream final\nkilix session wait RUN_ID --timeout 600\nkilix session stop RUN_ID --timeout 10",
+          "sha256": "b242107987795b6308f93c92592ecde821acc604c5fb13065c1ccf3970d79c7e"
+        },
+        {
+          "document": "guide",
+          "line": 306,
+          "text": "with `kilix session show|logs|wait`; `stop` cancels only that run and retains\n  its pane.",
+          "sha256": "045dbf564b60a4b2e8c43079fa39e5d4a9cfd06ff92532d41f56a493fc4b65a3"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "tui-use:1",
+        "path": "public/tui-use.txt",
+        "line": 1,
+        "text": "`kilix tui` and `kilix desktop tui` select\n`KILIX_DESKTOP_PROVIDER=tui`. If no installed `kilix-tui` command exists,\nKilix clones its immutable pinned `kilix-tui-utils` commit into\n`~/.local/gpu_terminal/sources/kilix-desktops/kilix-tui-utils`, runs that repository’s installer,\nand opens its text-native desktop.\n\nEnter or Right walks into a place; Esc or Left walks back out.\n/ filters the list you are looking at as you type.\n! opens a prompt that runs a command of your own.\n? shows every key, on any screen.\n1-6 jump straight to a section; Tab cycles them."
+      },
+      "title": "tui use",
+      "queries": [
+        "How can I open the text desktop and move around it?",
+        "I am new to the Kilix text interface. Where do I start?",
+        "Tell me the basic TUI launch and navigation keys."
+      ],
+      "links": [
+        {
+          "title": "Kilix help",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/README.md",
+          "document": "kilix",
+          "document_sha256": "c659830e18a5ee46c39999dd76dd87097376cf77608fc8e2bab1054a7456332a"
+        },
+        {
+          "title": "Using the TUI",
+          "url": "https://github.com/itsmygithubacct/kilix-tui-utils/blob/61a514f536a804d82f20bda7e65c7bf3145a229a/README.md#the-desktop-kilix-tui",
+          "document": "tui",
+          "document_sha256": "7d50cd7f2fb2571576a402ce19b7b41c7a1eb3b8d4eb06c55144fb7178a53719"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "kilix",
+          "line": 2499,
+          "text": "`kilix tui` and `kilix desktop tui` select\n`KILIX_DESKTOP_PROVIDER=tui`. If no installed `kilix-tui` command exists,\nKilix clones its immutable pinned `kilix-tui-utils` commit into\n`~/.local/gpu_terminal/sources/kilix-desktops/kilix-tui-utils`, runs that repository’s installer,\nand opens its text-native desktop.",
+          "sha256": "27fcea3337ee73a09e3691b75ba8a722c178296c28abe3abf5e329e9389ad968"
+        },
+        {
+          "document": "manual",
+          "topic": "welcome",
+          "extraction": "AST literal TOPICS displayed text; no execution",
+          "text": "Enter or Right walks into a place; Esc or Left walks back out.\n/ filters the list you are looking at as you type.\n! opens a prompt that runs a command of your own.\n? shows every key, on any screen.\n1-6 jump straight to a section; Tab cycles them.",
+          "sha256": "8a130d514fb004829ea24fdfb633bc3805df3104bd985e96d47d8e31d1c3498a"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "tui-apps:1",
+        "path": "public/tui-apps.txt",
+        "line": 1,
+        "text": "Programs ▸ **Kilix applications** filters that same host response to\napplications and launches each through `kilix app run ID`. The row is generic:\nnew catalog apps appear in TUI panes and in Kilix Land's shared Programs\ncomputer without another desktop-specific edit."
+      },
+      "title": "tui apps",
+      "queries": [
+        "Where are the Kilix apps in the text desktop?",
+        "I want to launch a Kilix application from the menus.",
+        "Which TUI menu contains Kilix applications?"
+      ],
+      "links": [
+        {
+          "title": "Using the TUI",
+          "url": "https://github.com/itsmygithubacct/kilix-tui-utils/blob/61a514f536a804d82f20bda7e65c7bf3145a229a/README.md#the-desktop-kilix-tui",
+          "document": "tui",
+          "document_sha256": "7d50cd7f2fb2571576a402ce19b7b41c7a1eb3b8d4eb06c55144fb7178a53719"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "tui",
+          "line": 140,
+          "text": "Programs ▸ **Kilix applications** filters that same host response to\napplications and launches each through `kilix app run ID`. The row is generic:\nnew catalog apps appear in TUI panes and in Kilix Land's shared Programs\ncomputer without another desktop-specific edit.",
+          "sha256": "ed9e5ef7e7fd4fb4e7a69183a05b832510c8925665ad8e08111314f6de36d932"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "tui-find:1",
+        "path": "public/tui-find.txt",
+        "line": 1,
+        "text": "Enter or Right walks into a place; Esc or Left walks back out.\n/ filters the list you are looking at as you type.\n! opens a prompt that runs a command of your own.\n? shows every key, on any screen.\n1-6 jump straight to a section; Tab cycles them."
+      },
+      "title": "tui find",
+      "queries": [
+        "Can I search the current TUI list?",
+        "The menu is long; how can I narrow it down?",
+        "Which key filters the text desktop list?"
+      ],
+      "links": [
+        {
+          "title": "Using the TUI",
+          "url": "https://github.com/itsmygithubacct/kilix-tui-utils/blob/61a514f536a804d82f20bda7e65c7bf3145a229a/README.md#the-desktop-kilix-tui",
+          "document": "tui",
+          "document_sha256": "7d50cd7f2fb2571576a402ce19b7b41c7a1eb3b8d4eb06c55144fb7178a53719"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "manual",
+          "topic": "welcome",
+          "extraction": "AST literal TOPICS displayed text; no execution",
+          "text": "Enter or Right walks into a place; Esc or Left walks back out.\n/ filters the list you are looking at as you type.\n! opens a prompt that runs a command of your own.\n? shows every key, on any screen.\n1-6 jump straight to a section; Tab cycles them.",
+          "sha256": "8a130d514fb004829ea24fdfb633bc3805df3104bd985e96d47d8e31d1c3498a"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "tui-command:1",
+        "path": "public/tui-command.txt",
+        "line": 1,
+        "text": "Four more Programs surfaces follow the same discipline. **Run a command**\n(also `!` from anywhere) opens a one-line prompt on the summary row; what you\ntype is split like a shell would split it but never given to one — argv only,\ninto a Kilix page when remote control is live and in place otherwise, with\npipes refused by name rather than half-working."
+      },
+      "title": "tui command",
+      "queries": [
+        "Where can I type a command in the text desktop?",
+        "Which key opens the TUI command prompt?",
+        "Show me the menu for running my own command."
+      ],
+      "links": [
+        {
+          "title": "Using the TUI",
+          "url": "https://github.com/itsmygithubacct/kilix-tui-utils/blob/61a514f536a804d82f20bda7e65c7bf3145a229a/README.md#the-desktop-kilix-tui",
+          "document": "tui",
+          "document_sha256": "7d50cd7f2fb2571576a402ce19b7b41c7a1eb3b8d4eb06c55144fb7178a53719"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "tui",
+          "line": 145,
+          "text": "Four more Programs surfaces follow the same discipline. **Run a command**\n(also `!` from anywhere) opens a one-line prompt on the summary row; what you\ntype is split like a shell would split it but never given to one — argv only,\ninto a Kilix page when remote control is live and in place otherwise, with\npipes refused by name rather than half-working.",
+          "sha256": "1d6154cd0f7f10fdde1d7a65fafed2dfc327e1c8e3bbd30e11b3453e0e5bd309"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "tui-back:1",
+        "path": "public/tui-back.txt",
+        "line": 1,
+        "text": "Enter or Right walks into a place; Esc or Left walks back out.\n/ filters the list you are looking at as you type.\n! opens a prompt that runs a command of your own.\n? shows every key, on any screen.\n1-6 jump straight to a section; Tab cycles them."
+      },
+      "title": "tui back",
+      "queries": [
+        "Which key takes me to the previous TUI place?",
+        "I opened a menu; how can I return?",
+        "How can I leave a TUI submenu?"
+      ],
+      "links": [
+        {
+          "title": "Using the TUI",
+          "url": "https://github.com/itsmygithubacct/kilix-tui-utils/blob/61a514f536a804d82f20bda7e65c7bf3145a229a/README.md#the-desktop-kilix-tui",
+          "document": "tui",
+          "document_sha256": "7d50cd7f2fb2571576a402ce19b7b41c7a1eb3b8d4eb06c55144fb7178a53719"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "manual",
+          "topic": "welcome",
+          "extraction": "AST literal TOPICS displayed text; no execution",
+          "text": "Enter or Right walks into a place; Esc or Left walks back out.\n/ filters the list you are looking at as you type.\n! opens a prompt that runs a command of your own.\n? shows every key, on any screen.\n1-6 jump straight to a section; Tab cycles them.",
+          "sha256": "8a130d514fb004829ea24fdfb633bc3805df3104bd985e96d47d8e31d1c3498a"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "tui-help:1",
+        "path": "public/tui-help.txt",
+        "line": 1,
+        "text": "Enter or Right walks into a place; Esc or Left walks back out.\n/ filters the list you are looking at as you type.\n! opens a prompt that runs a command of your own.\n? shows every key, on any screen.\n1-6 jump straight to a section; Tab cycles them."
+      },
+      "title": "tui help",
+      "queries": [
+        "Which key shows help in the text desktop?",
+        "Where are the keys for the current TUI screen?",
+        "I have forgotten the TUI controls. How can I see them?"
+      ],
+      "links": [
+        {
+          "title": "Using the TUI",
+          "url": "https://github.com/itsmygithubacct/kilix-tui-utils/blob/61a514f536a804d82f20bda7e65c7bf3145a229a/README.md#the-desktop-kilix-tui",
+          "document": "tui",
+          "document_sha256": "7d50cd7f2fb2571576a402ce19b7b41c7a1eb3b8d4eb06c55144fb7178a53719"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "manual",
+          "topic": "welcome",
+          "extraction": "AST literal TOPICS displayed text; no execution",
+          "text": "Enter or Right walks into a place; Esc or Left walks back out.\n/ filters the list you are looking at as you type.\n! opens a prompt that runs a command of your own.\n? shows every key, on any screen.\n1-6 jump straight to a section; Tab cycles them.",
+          "sha256": "8a130d514fb004829ea24fdfb633bc3805df3104bd985e96d47d8e31d1c3498a"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "tui-pin:1",
+        "path": "public/tui-pin.txt",
+        "line": 1,
+        "text": "Home also carries the desk's one piece of durable state: rows pinned with\n`p` from any plain entry, and the last few launches, kept in one small JSON\nrecord (`$XDG_STATE_HOME/kilix-tui/desk.json`; `KILIX_TUI_STATE` relocates\nit) written atomically and only on change. `src/kilix_desk/durable.py`\nrecords the decision to break the desk's read-only purity exactly this far\nand no further — confirmed actions never become one-Enter rows, and there is\nno last-place restore: Home stays the fixed landing."
+      },
+      "title": "tui pin",
+      "queries": [
+        "Can I pin a favorite app on the TUI Home screen?",
+        "How can I add a frequently used entry to Home?",
+        "Which key pins the selected desktop entry?"
+      ],
+      "links": [
+        {
+          "title": "Using the TUI",
+          "url": "https://github.com/itsmygithubacct/kilix-tui-utils/blob/61a514f536a804d82f20bda7e65c7bf3145a229a/README.md#the-desktop-kilix-tui",
+          "document": "tui",
+          "document_sha256": "7d50cd7f2fb2571576a402ce19b7b41c7a1eb3b8d4eb06c55144fb7178a53719"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "tui",
+          "line": 179,
+          "text": "Home also carries the desk's one piece of durable state: rows pinned with\n`p` from any plain entry, and the last few launches, kept in one small JSON\nrecord (`$XDG_STATE_HOME/kilix-tui/desk.json`; `KILIX_TUI_STATE` relocates\nit) written atomically and only on change. `src/kilix_desk/durable.py`\nrecords the decision to break the desk's read-only purity exactly this far\nand no further — confirmed actions never become one-Enter rows, and there is\nno last-place restore: Home stays the fixed landing.",
+          "sha256": "dcfd69cc4474964578e92daf6b2b651ac2961cbc784a14deea107fb7dba201c4"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "tui-install:1",
+        "path": "public/tui-install.txt",
+        "line": 1,
+        "text": "Programs ▸ **Install software** is a place, not a shortcut out to a command:\nit lists everything installable — the pinned catalog and the coding agents —\nwith its installed state, filterable like any other list, and Enter installs\nthe highlighted entry. The list comes from `kilix install --json` rather than\nfrom a catalogue kept here, because a second reader is a second thing to keep\ntrue. It is fetched once per visit and re-asked on `r`."
+      },
+      "title": "tui install",
+      "queries": [
+        "Which TUI menu installs apps?",
+        "I want to add software using the text desktop.",
+        "Where do I choose a program to install?"
+      ],
+      "links": [
+        {
+          "title": "Using the TUI",
+          "url": "https://github.com/itsmygithubacct/kilix-tui-utils/blob/61a514f536a804d82f20bda7e65c7bf3145a229a/README.md#the-desktop-kilix-tui",
+          "document": "tui",
+          "document_sha256": "7d50cd7f2fb2571576a402ce19b7b41c7a1eb3b8d4eb06c55144fb7178a53719"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "tui",
+          "line": 133,
+          "text": "Programs ▸ **Install software** is a place, not a shortcut out to a command:\nit lists everything installable — the pinned catalog and the coding agents —\nwith its installed state, filterable like any other list, and Enter installs\nthe highlighted entry. The list comes from `kilix install --json` rather than\nfrom a catalogue kept here, because a second reader is a second thing to keep\ntrue. It is fetched once per visit and re-asked on `r`.",
+          "sha256": "0395aae5c896ace616efce0ed7536e94daf7944f70aab6a6d41f7fbedac86920"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "desktop-settings:1",
+        "path": "public/desktop-settings.txt",
+        "line": 1,
+        "text": "Run `kilix settings` to open the shared settings interface. The three-line\nStart button opens the Kilix menu; `Ctrl+Alt+M` toggles the same menu. Use arrow\nkeys and Enter to choose an item, or Escape to dismiss it. Outside clicks\ndismiss floating menus without activating the underlying pane."
+      },
+      "title": "desktop settings",
+      "queries": [
+        "What command opens the settings screen?",
+        "Where can I change the shared desktop settings?",
+        "I need the Kilix settings interface."
+      ],
+      "links": [
+        {
+          "title": "Desktop settings",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/help/settings.md",
+          "document": "settings",
+          "document_sha256": "7da7e7712e5bf6dd845a4c7cab19328478fce175349e569e852fa219d7ed04f0"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "settings",
+          "line": 3,
+          "text": "Run `kilix settings` to open the shared settings interface. The three-line\nStart button opens the Kilix menu; `Ctrl+Alt+M` toggles the same menu. Use arrow\nkeys and Enter to choose an item, or Escape to dismiss it. Outside clicks\ndismiss floating menus without activating the underlying pane.",
+          "sha256": "069e657c6376f7df8f124e9ca951607412673d527778ff71ed88712468c24abd"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "desktop-text:1",
+        "path": "public/desktop-text.txt",
+        "line": 1,
+        "text": "Use `kilix screen-size larger` or `kilix screen-size smaller` to change terminal\nscale. `Ctrl+Shift+Backspace` resets the terminal scale."
+      },
+      "title": "desktop text",
+      "queries": [
+        "The terminal writing is too small. What command enlarges it?",
+        "How can I increase terminal text size?",
+        "Give me the command for larger terminal text."
+      ],
+      "links": [
+        {
+          "title": "Desktop settings",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/help/settings.md",
+          "document": "settings",
+          "document_sha256": "7da7e7712e5bf6dd845a4c7cab19328478fce175349e569e852fa219d7ed04f0"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "settings",
+          "line": 20,
+          "text": "Use `kilix screen-size larger` or `kilix screen-size smaller` to change terminal\nscale. `Ctrl+Shift+Backspace` resets the terminal scale.",
+          "sha256": "11ec2fd94f6a944ac64dd1b1a7a4c27ce912ad76345bf74c94fb108ab947feef"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "desktop-network:1",
+        "path": "public/desktop-network.txt",
+        "line": 1,
+        "text": "The volume control opens `pulsemixer`, with\n`alsamixer` as a fallback. It appears immediately left of the network/Wi-Fi\ncontrol; Network remains immediately left of the calendar and opens `nmtui`."
+      },
+      "title": "desktop network",
+      "queries": [
+        "Where is the Wi-Fi setup screen?",
+        "How can I open the network connection tool?",
+        "What opens network settings on the Pleb desktop?"
+      ],
+      "links": [
+        {
+          "title": "Using Plebian-OS",
+          "url": "https://github.com/itsmygithubacct/plebian-os/blob/bd8a8ac79ed3ef7e9e70a72a1691a54b9944d052/README.md",
+          "document": "os",
+          "document_sha256": "709c877dddcd1238472dc1a3e5b1685e3871f22aebf2e8759d1ce349caf74732"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "os",
+          "line": 360,
+          "text": "The volume control opens `pulsemixer`, with\n`alsamixer` as a fallback. It appears immediately left of the network/Wi-Fi\ncontrol; Network remains immediately left of the calendar and opens `nmtui`.",
+          "sha256": "1d703658ad3820aa6def51ac6fe7d1a9ed97b1717a65b79060eadb72d652709e"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "desktop-volume:1",
+        "path": "public/desktop-volume.txt",
+        "line": 1,
+        "text": "The volume control opens `pulsemixer`, with\n`alsamixer` as a fallback. It appears immediately left of the network/Wi-Fi\ncontrol; Network remains immediately left of the calendar and opens `nmtui`."
+      },
+      "title": "desktop volume",
+      "queries": [
+        "Where is the sound volume control?",
+        "How can I open the audio mixer?",
+        "Which control adjusts the speaker volume?"
+      ],
+      "links": [
+        {
+          "title": "Using Plebian-OS",
+          "url": "https://github.com/itsmygithubacct/plebian-os/blob/bd8a8ac79ed3ef7e9e70a72a1691a54b9944d052/README.md",
+          "document": "os",
+          "document_sha256": "709c877dddcd1238472dc1a3e5b1685e3871f22aebf2e8759d1ce349caf74732"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "os",
+          "line": 360,
+          "text": "The volume control opens `pulsemixer`, with\n`alsamixer` as a fallback. It appears immediately left of the network/Wi-Fi\ncontrol; Network remains immediately left of the calendar and opens `nmtui`.",
+          "sha256": "1d703658ad3820aa6def51ac6fe7d1a9ed97b1717a65b79060eadb72d652709e"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "desktop-login:1",
+        "path": "public/desktop-login.txt",
+        "line": 1,
+        "text": "Log out, and at the LightDM greeter the session menu now offers **Pleb**."
+      },
+      "title": "desktop login",
+      "queries": [
+        "Where do I choose Pleb at login?",
+        "I have installed Pleb. How do I select that desktop?",
+        "What session should I choose to enter Pleb?"
+      ],
+      "links": [
+        {
+          "title": "Using Plebian-OS",
+          "url": "https://github.com/itsmygithubacct/plebian-os/blob/bd8a8ac79ed3ef7e9e70a72a1691a54b9944d052/README.md",
+          "document": "os",
+          "document_sha256": "709c877dddcd1238472dc1a3e5b1685e3871f22aebf2e8759d1ce349caf74732"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "os",
+          "line": 354,
+          "text": "Log out, and at the LightDM greeter the session menu now offers **Pleb**.",
+          "sha256": "62178b07fcc6a3ea7a0aaf2dbf6f3af0c060e5c1c6b0cc66fbfb12583427bccd"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "desktop-tmux:1",
+        "path": "public/desktop-tmux.txt",
+        "line": 1,
+        "text": "The Kilix 95 Start menu includes **Tmux Manager**. It opens in a new tab and\nuses the pinned `tmux-tui` plus `tmux-cli` closure installed during firstboot.\nBoth `tmux-tui` and the `tb` alias are also available directly from a shell."
+      },
+      "title": "desktop tmux",
+      "queries": [
+        "Where is Tmux Manager in the desktop?",
+        "What command starts the tmux manager screen?",
+        "How can I launch the tmux management menu?"
+      ],
+      "links": [
+        {
+          "title": "Using Plebian-OS",
+          "url": "https://github.com/itsmygithubacct/plebian-os/blob/bd8a8ac79ed3ef7e9e70a72a1691a54b9944d052/README.md",
+          "document": "os",
+          "document_sha256": "709c877dddcd1238472dc1a3e5b1685e3871f22aebf2e8759d1ce349caf74732"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "os",
+          "line": 395,
+          "text": "The Kilix 95 Start menu includes **Tmux Manager**. It opens in a new tab and\nuses the pinned `tmux-tui` plus `tmux-cli` closure installed during firstboot.\nBoth `tmux-tui` and the `tb` alias are also available directly from a shell.",
+          "sha256": "67d8a40f47fd9bbf5186ba1ff804e0cb9ef897a107e8b374edb82905875551ed"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "desktop-sessions:1",
+        "path": "public/desktop-sessions.txt",
+        "line": 1,
+        "text": "The same Programs menu includes **PTY Sessions**, a terminal UI for Kilix's\npersistent panes. It lists detached sessions first and can attach, refresh, or\nterminate one after confirmation; `kilix pty` opens it directly from a shell."
+      },
+      "title": "desktop sessions",
+      "queries": [
+        "Where can I reconnect to a detached terminal?",
+        "Show me the persistent session manager.",
+        "What opens the list of detached terminal panes?"
+      ],
+      "links": [
+        {
+          "title": "Using Plebian-OS",
+          "url": "https://github.com/itsmygithubacct/plebian-os/blob/bd8a8ac79ed3ef7e9e70a72a1691a54b9944d052/README.md",
+          "document": "os",
+          "document_sha256": "709c877dddcd1238472dc1a3e5b1685e3871f22aebf2e8759d1ce349caf74732"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "os",
+          "line": 399,
+          "text": "The same Programs menu includes **PTY Sessions**, a terminal UI for Kilix's\npersistent panes. It lists detached sessions first and can attach, refresh, or\nterminate one after confirmation; `kilix pty` opens it directly from a shell.",
+          "sha256": "9cbe9f94590be660ecedc5945cdabe5fa275ef297aae5c1101d0f5cbf80e65bc"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "desktop-browser:1",
+        "path": "public/desktop-browser.txt",
+        "line": 1,
+        "text": "Run `kilix run chromium` to launch a contained browser in a new tab.\nContained Chromium and Firefox launches normally get a private disposable\nprofile. This isolates them from an existing native browser, but each launch\nstarts with a fresh login."
+      },
+      "title": "desktop browser",
+      "queries": [
+        "Give me the command to start Chromium inside Kilix.",
+        "How can I put a browser in a Kilix tab?",
+        "What command launches a contained Chromium browser?"
+      ],
+      "links": [
+        {
+          "title": "Browsers in Kilix",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/help/browsers.md",
+          "document": "browser",
+          "document_sha256": "57f87fbffa3263c69a2cb03a3a5c5ece048ae921036b2778d18a322b95b01aca"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "browser",
+          "line": 3,
+          "text": "Run `kilix run chromium` to launch a contained browser in a new tab.\nContained Chromium and Firefox launches normally get a private disposable\nprofile. This isolates them from an existing native browser, but each launch\nstarts with a fresh login.",
+          "sha256": "44ef71803cb0814686b73cad200e70a41ac7695515cf108cc50d335fa1e7e337"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "val-tabs:1",
+        "path": "public/val-tabs.txt",
+        "line": 1,
+        "text": "| `kilix ls` | List tabs. |"
+      },
+      "title": "val tabs",
+      "queries": [
+        "How can I list the tabs rather than panes?",
+        "What command lists Kilix pages?",
+        "Show me the tab listing command."
+      ],
+      "links": [
+        {
+          "title": "Pane commands and preferred workflows",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/AGENTS.md",
+          "document": "guide",
+          "document_sha256": "fa251b5b6ca511d672f12f22a225c580da1ffc1bcc602fb5c31522cede9f8360"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "guide",
+          "line": 61,
+          "text": "| `kilix ls` | List tabs. |",
+          "sha256": "4689ce1e19e66bad32bf194ab6ee28676751a866c00252b30882209483b9f9b2"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "val-providers:1",
+        "path": "public/val-providers.txt",
+        "line": 1,
+        "text": "kilix session providers\n```\n\n`kilix session codex ...` is shorthand for `kilix session launch codex ...`.\nClients must already be installed and authenticated. `providers` uses the same\nPATH and vendor-prefix lookup as `kilix install` and `agent-control`; it starts\nno client. Missing clients require an explicit `kilix install PROVIDER`."
+      },
+      "title": "val providers",
+      "queries": [
+        "Which coding clients can Kilix find?",
+        "How do I check available agent providers?",
+        "Show the command that checks agent clients without starting one."
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 16,
+          "text": "kilix session providers\n```\n\n`kilix session codex ...` is shorthand for `kilix session launch codex ...`.\nClients must already be installed and authenticated. `providers` uses the same\nPATH and vendor-prefix lookup as `kilix install` and `agent-control`; it starts\nno client. Missing clients require an explicit `kilix install PROVIDER`.",
+          "sha256": "e0aa6b877512f212291ebf729d69b122643f193fd3f815c4a23b861fc44c6a45"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "val-wait:1",
+        "path": "public/val-wait.txt",
+        "line": 1,
+        "text": "Launch prints a JSON receipt with an exact `run_id`. Use that ID:\n\n```sh\nkilix session list\nkilix session show RUN_ID\nkilix session logs RUN_ID --stream events --follow\nkilix session logs RUN_ID --stream stderr\nkilix session logs RUN_ID --stream final\nkilix session wait RUN_ID --timeout 600\nkilix session stop RUN_ID --timeout 10"
+      },
+      "title": "val wait",
+      "queries": [
+        "What command waits for a managed run?",
+        "How do I wait up to ten minutes for a run?",
+        "Show how to wait on a recorded run ID."
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 196,
+          "text": "Launch prints a JSON receipt with an exact `run_id`. Use that ID:\n\n```sh\nkilix session list\nkilix session show RUN_ID\nkilix session logs RUN_ID --stream events --follow\nkilix session logs RUN_ID --stream stderr\nkilix session logs RUN_ID --stream final\nkilix session wait RUN_ID --timeout 600\nkilix session stop RUN_ID --timeout 10",
+          "sha256": "b242107987795b6308f93c92592ecde821acc604c5fb13065c1ccf3970d79c7e"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "val-trust:1",
+        "path": "public/val-trust.txt",
+        "line": 1,
+        "text": "Folder trust **does not turn on permission bypass**. The launcher preserves the\nclient's configured approvals and sandbox. `--coding-yolo` adds the existing\nclient-specific bypass flag only when Kilix's shared coding-yolo setting is also\non. It never changes that setting, installs clients, or modifies model defaults."
+      },
+      "title": "val trust",
+      "queries": [
+        "Does trusting a folder disable approval prompts?",
+        "Will --trust-folder turn off permission checks?",
+        "Is folder trust the same as permission bypass?"
+      ],
+      "links": [
+        {
+          "title": "Launching and managing agents",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/session.md",
+          "document": "session",
+          "document_sha256": "ea72a814dbcb861f7531c14b9ab526a6ae3f343b00dd5d60a74471fac5c4dbae"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "session",
+          "line": 63,
+          "text": "Folder trust **does not turn on permission bypass**. The launcher preserves the\nclient's configured approvals and sandbox. `--coding-yolo` adds the existing\nclient-specific bypass flag only when Kilix's shared coding-yolo setting is also\non. It never changes that setting, installs clients, or modifies model defaults.",
+          "sha256": "d9f8eceac2de0f43d7a87b596d2fb59edbc41e27112cbb1e3cd559936218249a"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "val-temperature:1",
+        "path": "public/val-temperature.txt",
+        "line": 1,
+        "text": "Temperature displays default to Fahrenheit. Set the shared preference with\n`kilix settings --set temperature_unit=celsius` or `temperature_unit=fahrenheit`.\nThe **Top bar** section of `kilix settings` and the **Temperature units** choice\nin Kilix95 Settings offer the same persistent control."
+      },
+      "title": "val temperature",
+      "queries": [
+        "How do I show temperatures in Celsius?",
+        "Give me the persistent Celsius setting.",
+        "What command changes the temperature units to Celsius?"
+      ],
+      "links": [
+        {
+          "title": "Desktop settings",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/help/settings.md",
+          "document": "settings",
+          "document_sha256": "7da7e7712e5bf6dd845a4c7cab19328478fce175349e569e852fa219d7ed04f0"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "settings",
+          "line": 70,
+          "text": "Temperature displays default to Fahrenheit. Set the shared preference with\n`kilix settings --set temperature_unit=celsius` or `temperature_unit=fahrenheit`.\nThe **Top bar** section of `kilix settings` and the **Temperature units** choice\nin Kilix95 Settings offer the same persistent control.",
+          "sha256": "d981283a958eafc7d448436bfc9ec313b707e1862cc11de758481864d7de0e68"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "val-start-button:1",
+        "path": "public/val-start-button.txt",
+        "line": 1,
+        "text": "Run `kilix settings --set start_menu=on` to enable the Start button, or use\n`start_menu=off` to hide it. Run `kilix settings --set tab_bar_edge=bottom`\nto move the page strip to the bottom; use `tab_bar_edge=top` for the top.\nAn explicit setting wins across hosts. With no explicit choice, standalone\nKilix puts the strip at the top and Pleb/Plebian-OS sessions put it at the\nbottom. The Start button defaults off for standalone Kilix and on in Pleb."
+      },
+      "title": "val start button",
+      "queries": [
+        "What command enables the Start button?",
+        "How can I show the Start button?",
+        "Give me the setting that turns the Start menu button on."
+      ],
+      "links": [
+        {
+          "title": "Desktop settings",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/help/settings.md",
+          "document": "settings",
+          "document_sha256": "7da7e7712e5bf6dd845a4c7cab19328478fce175349e569e852fa219d7ed04f0"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "settings",
+          "line": 8,
+          "text": "Run `kilix settings --set start_menu=on` to enable the Start button, or use\n`start_menu=off` to hide it. Run `kilix settings --set tab_bar_edge=bottom`\nto move the page strip to the bottom; use `tab_bar_edge=top` for the top.\nAn explicit setting wins across hosts. With no explicit choice, standalone\nKilix puts the strip at the top and Pleb/Plebian-OS sessions put it at the\nbottom. The Start button defaults off for standalone Kilix and on in Pleb.",
+          "sha256": "af3b98cc33af4bfed77ce288af4611742c6641599cf16fb0d3f3a957c4762e1f"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "val-strip:1",
+        "path": "public/val-strip.txt",
+        "line": 1,
+        "text": "Run `kilix settings --set start_menu=on` to enable the Start button, or use\n`start_menu=off` to hide it. Run `kilix settings --set tab_bar_edge=bottom`\nto move the page strip to the bottom; use `tab_bar_edge=top` for the top.\nAn explicit setting wins across hosts. With no explicit choice, standalone\nKilix puts the strip at the top and Pleb/Plebian-OS sessions put it at the\nbottom. The Start button defaults off for standalone Kilix and on in Pleb."
+      },
+      "title": "val strip",
+      "queries": [
+        "How do I move the tab strip to the bottom?",
+        "Which setting puts the page bar along the bottom?",
+        "Give me the command for a bottom page strip."
+      ],
+      "links": [
+        {
+          "title": "Desktop settings",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/help/settings.md",
+          "document": "settings",
+          "document_sha256": "7da7e7712e5bf6dd845a4c7cab19328478fce175349e569e852fa219d7ed04f0"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "settings",
+          "line": 8,
+          "text": "Run `kilix settings --set start_menu=on` to enable the Start button, or use\n`start_menu=off` to hide it. Run `kilix settings --set tab_bar_edge=bottom`\nto move the page strip to the bottom; use `tab_bar_edge=top` for the top.\nAn explicit setting wins across hosts. With no explicit choice, standalone\nKilix puts the strip at the top and Pleb/Plebian-OS sessions put it at the\nbottom. The Start button defaults off for standalone Kilix and on in Pleb.",
+          "sha256": "af3b98cc33af4bfed77ce288af4611742c6641599cf16fb0d3f3a957c4762e1f"
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "val-reset-text:1",
+        "path": "public/val-reset-text.txt",
+        "line": 1,
+        "text": "Use `kilix screen-size larger` or `kilix screen-size smaller` to change terminal\nscale. `Ctrl+Shift+Backspace` resets the terminal scale."
+      },
+      "title": "val reset text",
+      "queries": [
+        "How do I restore the normal terminal text size?",
+        "Which shortcut resets the terminal scale?",
+        "How can I undo my text scaling?"
+      ],
+      "links": [
+        {
+          "title": "Desktop settings",
+          "url": "https://github.com/itsmygithubacct/kilix/blob/3437103a3b4f7a174aba3f884d821889bd85efad/docs/help/settings.md",
+          "document": "settings",
+          "document_sha256": "7da7e7712e5bf6dd845a4c7cab19328478fce175349e569e852fa219d7ed04f0"
+        }
+      ],
+      "provenance": [
+        {
+          "document": "settings",
+          "line": 20,
+          "text": "Use `kilix screen-size larger` or `kilix screen-size smaller` to change terminal\nscale. `Ctrl+Shift+Backspace` resets the terminal scale.",
+          "sha256": "11ec2fd94f6a944ac64dd1b1a7a4c27ce912ad76345bf74c94fb108ab947feef"
+        }
+      ]
+    }
+  ],
+  "scope": "Compact documentation excerpts and query expansion for local Help retrieval; no answer lookup table."
+}

@@ -1,0 +1,142 @@
+{
+  "schema": "kilix.help-llm.published-model/v1",
+  "id": "kilix-qwen-sft1-2b",
+  "label": "Kilix Qwen SFT1 2B",
+  "release_target": "0.2.3-rc1",
+  "default": true,
+  "parent": {
+    "model_id": "Qwen/Qwen3.5-2B",
+    "revision": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+    "files": {
+      "video_preprocessor_config.json": {
+        "sha256": "7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13",
+        "bytes": 385,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/video_preprocessor_config.json"
+      },
+      "chat_template.jinja": {
+        "sha256": "273d8e0e683b885071fb17e08d71e5f2a5ddfb5309756181681de4f5a1822d80",
+        "bytes": 7755,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/chat_template.jinja"
+      },
+      "model.safetensors.index.json": {
+        "sha256": "aca8afed9da75b0f050b408d270766fd77627f1af401e240f61c3b47d0db02f9",
+        "bytes": 64460,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/model.safetensors.index.json"
+      },
+      "tokenizer_config.json": {
+        "sha256": "49e2b6e395f959f077f1e992b338919c0d4a9732fc6e613995e06557f843500c",
+        "bytes": 16709,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/tokenizer_config.json"
+      },
+      "merges.txt": {
+        "sha256": "a9d356d7bdf1ef4949e3e748e95b8e10ad9d4e2e838eddc38a0a7b6b94d1db8d",
+        "bytes": 3353259,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/merges.txt"
+      },
+      "model.safetensors-00001-of-00001.safetensors": {
+        "sha256": "aa33250c4fc64891ddfaba3a314fd9542ea371843c387178b425fbcc5ed680b1",
+        "bytes": 4548221488,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/model.safetensors-00001-of-00001.safetensors"
+      },
+      "LICENSE": {
+        "sha256": "bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a",
+        "bytes": 11544,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/LICENSE"
+      },
+      "preprocessor_config.json": {
+        "sha256": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516",
+        "bytes": 390,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/preprocessor_config.json"
+      },
+      "README.md": {
+        "sha256": "c0e83a849c776e6fa843d011f023132d942a0f0140d903205bf1c363adad2275",
+        "bytes": 62814,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/README.md"
+      },
+      "vocab.json": {
+        "sha256": "ce99b4cb2983d118806ce0a8b777a35b093e2000a503ebde25853284c9dfa003",
+        "bytes": 6722759,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/vocab.json"
+      },
+      "config.json": {
+        "sha256": "ed1c1723241f23f7f4e23430759cbd7dcfb4103cbdfe052bfe7626b57c2615b4",
+        "bytes": 2908,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/config.json"
+      },
+      "tokenizer.json": {
+        "sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+        "bytes": 12807982,
+        "url": "https://huggingface.co/Qwen/Qwen3.5-2B/resolve/15852e8c16360a2fea060d615a32b45270f8a8fc/tokenizer.json"
+      }
+    }
+  },
+  "adapter": {
+    "rank": 16,
+    "alpha": 32,
+    "files": {
+      "LICENSE": {
+        "sha256": "bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a",
+        "bytes": 11544,
+        "url": "https://github.com/itsmygithubacct/kilix-help-llm/releases/download/kilix-qwen-sft1-2b/LICENSE"
+      },
+      "MODEL_CARD.md": {
+        "sha256": "d8967d660a6e6d00f3f9fdd015374b306871dd34023c8727c98e14be30ba9d06",
+        "bytes": 1853,
+        "url": "https://github.com/itsmygithubacct/kilix-help-llm/releases/download/kilix-qwen-sft1-2b/MODEL_CARD.md"
+      },
+      "NOTICE": {
+        "sha256": "8274f50aef8e741abfc5e96d693517db762cc7846b2dcb90176d8dade0a2c2e4",
+        "bytes": 339,
+        "url": "https://github.com/itsmygithubacct/kilix-help-llm/releases/download/kilix-qwen-sft1-2b/NOTICE"
+      },
+      "adapter_config.json": {
+        "sha256": "7725b795f0f45bceb0539d40c5f8137b5dba5056af3a3ab130758f80ba6d3755",
+        "bytes": 1296,
+        "url": "https://github.com/itsmygithubacct/kilix-help-llm/releases/download/kilix-qwen-sft1-2b/adapter_config.json"
+      },
+      "adapter_model.safetensors": {
+        "sha256": "0fc4bf8ea79364f9b3ad555ca3711fb0c650f666dccd7eb471c045c0cc4eb4a4",
+        "bytes": 67332688,
+        "url": "https://github.com/itsmygithubacct/kilix-help-llm/releases/download/kilix-qwen-sft1-2b/adapter_model.safetensors"
+      }
+    }
+  },
+  "inference": {
+    "backend": "cpu",
+    "dtype": "float32",
+    "attention": "eager",
+    "context": 384,
+    "max_new_tokens": 96,
+    "thinking": false,
+    "do_sample": false,
+    "adapter_name": "sft"
+  },
+  "selection": {
+    "seed": 17,
+    "epoch": 6,
+    "validation_supported": 18,
+    "validation_supported_total": 24,
+    "validation_unknown": 8,
+    "validation_unknown_total": 8,
+    "method": "Three fixed seeds; all unknowns correct, then supported answers, then lower seed."
+  },
+  "quality": {
+    "scope": "assistant-reviewed exposed development",
+    "independent_qualification": false,
+    "practical": {
+      "supported": 30,
+      "total": 32,
+      "command_tasks": 17,
+      "command_total": 19,
+      "unknown": 8,
+      "unknown_total": 8
+    },
+    "historical": {
+      "supported": 41,
+      "total": 72,
+      "unknown": 6,
+      "unknown_total": 6
+    }
+  },
+  "licence": "Apache-2.0"
+}
