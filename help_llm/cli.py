@@ -28,6 +28,10 @@ def parser():
     search = commands.add_parser("search", help="BM25 retrieval baseline; no model needed")
     search.add_argument("--dataset", required=True)
     search.add_argument("question")
+    display = commands.add_parser("format-answer", help="format a saved admitted answer with reviewed help links; no model needed")
+    display.add_argument("--input", required=True, help="saved output JSON or a record containing output")
+    display.add_argument("--help-links", required=True, help="source-bound help-link registry")
+    display.add_argument("--format", choices=["json", "markdown", "html", "text"], default="markdown")
     for name in ("review-template", "review-import"):
         command = commands.add_parser(name, help="prepare or import manual factual review of saved v2 outputs")
         command.add_argument("--evaluation", required=True)
@@ -70,6 +74,8 @@ def parser():
         if name == "ask":
             command.add_argument("--max-new-tokens", type=int, default=96)
             command.add_argument("--rank-run", help="rerank evidence with a matching run before loading the answer model")
+            command.add_argument("--help-links", help="source-bound help-link registry for formatted output")
+            command.add_argument("--format", choices=["json", "markdown", "html", "text"], default="json")
         if name == "rank":
             command.add_argument("--limit", type=int, default=5)
     return root
@@ -93,6 +99,18 @@ def main(argv=None):
             os.execv(executable, [executable, "recommend", "help-llm", "--catalog", str(SOURCE / "candidates.json"), *rest])
         if rest:
             root.error("unrecognized arguments: " + " ".join(rest))
+        if args.command == "ask" and args.format != "json" and not args.help_links:
+            raise ValueError("formatted answers require --help-links")
+        if args.command == "format-answer" or (args.command == "ask" and args.help_links):
+            from .presentation import present, validate_registry
+            help_links = validate_registry(read_json(Path(args.help_links)))
+        if args.command == "format-answer":
+            saved = read_json(Path(args.input))
+            if not isinstance(saved, dict):
+                raise ValueError("saved answer must be an object")
+            display = present(saved.get("output", saved), help_links)
+            print(json.dumps(display, indent=2, ensure_ascii=False) if args.format == "json" else display[args.format])
+            return 0
         if args.command in {"fetch", "train", "ask", "rank", "evaluate", "baseline"}:
             runtime_python()
             from . import runtime
@@ -161,6 +179,11 @@ def main(argv=None):
             result = runtime.query(args.run, "answer" if args.command == "ask" else "rank", args.question, args.sizer,
                                    limit=getattr(args, "limit", 5), max_new_tokens=getattr(args, "max_new_tokens", 96),
                                    rank_name=getattr(args, "rank_run", None))
+            if args.command == "ask" and args.help_links:
+                result["presentation"] = present(result, help_links)
+                if args.format != "json":
+                    print(result["presentation"][args.format])
+                    return 0
         elif args.command == "evaluate":
             result = runtime.evaluate(args.run, args.split, args.sizer)
         elif args.command == "baseline":

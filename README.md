@@ -29,6 +29,51 @@ pleb and plebian-os; see [help_llm/index/README.md](help_llm/index/README.md). I
 than writing an answer, so it cannot invent commands. Small local answer models were tried and did not yet
 answer reliably enough to ship.
 
+## Show an answer with related help
+
+Answers can display a command, a short explanation and clickable documentation
+references. Keep the model's source citation in its output; the display layer
+resolves it through a reviewed help-link registry. URLs are supplied by that
+registry and consume no model generation tokens.
+
+```sh
+./kilix-help-llm format-answer --input answer.json --help-links help-links.json
+./kilix-help-llm ask --run answer-r1 --help-links help-links.json --format markdown 'How do I list panes?'
+```
+
+`format-answer` uses only the standard library and accepts a saved output object
+or a record containing `output`. Both commands support `json`, `markdown`,
+`html` and `text`. Plain text includes the full URLs. `ask` defaults to its
+existing JSON output; adding `--help-links` adds a `presentation` object.
+
+For shell instructions, author the target as `Run ` followed by a backtick-
+quoted command, a period and a brief explanation. The presenter lifts that
+leading command into a code block. Menu routes, keys and conceptual explanations
+keep their natural wording. Preserve clear replacement instructions for paths
+and run IDs. Plain unknown-state refusals carry no unrelated help links.
+
+Build a registry from the exact retrieved source and reviewed public document
+URLs. Verify the destination and its document revision before adding a link:
+
+```python
+from help_llm.presentation import SCHEMA, source_identity, source_key
+
+registry = {"schema": SCHEMA, "sources": {
+    source_key(source): {
+        "source": source_identity(source),
+        "links": [{"title": "Panes and tabs", "url": "https://example.org/help/panes"}],
+    }
+}}
+```
+
+The registry binds the source ID, path, line and SHA256 of its exact text.
+Changed evidence requires a new mapping. The presenter accepts credential-free
+HTTPS links, escapes HTML, never executes commands and never promotes a withheld
+draft. Invalid citations or missing mappings produce an unavailable answer.
+Presentation does not establish factual correctness or add commands the model
+omitted. The existing prompt, admission rules and raw evaluation outputs stay
+separate from display formatting.
+
 ## Prepare a document dataset
 
 Python 3.11+ runs preparation, inspection, retrieval and sizing without model
